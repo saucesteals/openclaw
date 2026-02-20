@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "1510d7badcd57a3680f58ae449220c1da9ac6bb2",
+  "prev": "9aa2bcf08dac452616f04e10b0ffb0cdda8f7028",
   "head": "bea51c3c4fb98a4ea856e34057faa61962c82656",
   "applied": [
     "bluebubbles-hook",
@@ -8,9 +8,7 @@
     "scope-compat-write",
     "session-key-env"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "bluebubbles-hook": {
@@ -24,9 +22,6 @@
     },
     "session-key-env": {
       "oid": "bea51c3c4fb98a4ea856e34057faa61962c82656"
-    },
-    "version-bump": {
-      "oid": "a3ef693b7c92710b7fe9cae30e2a2945f4cfe4de"
     }
   }
 }
