@@ -1,11 +1,12 @@
 {
   "version": 5,
-  "prev": "d14d5b190a64066d6df0848eb4ac13e5a6c90bca",
-  "head": "13d0dc9d67f76e8fe13964a1b0731093e3003b62",
+  "prev": "cb8ab4ccf820062099f605191d1192e4456513ee",
+  "head": "bea51c3c4fb98a4ea856e34057faa61962c82656",
   "applied": [
     "bluebubbles-hook",
     "pairing-scope-read",
-    "scope-compat-write"
+    "scope-compat-write",
+    "session-key-env"
   ],
   "unapplied": [
     "version-bump"
@@ -20,6 +21,9 @@
     },
     "scope-compat-write": {
       "oid": "13d0dc9d67f76e8fe13964a1b0731093e3003b62"
+    },
+    "session-key-env": {
+      "oid": "bea51c3c4fb98a4ea856e34057faa61962c82656"
     },
     "version-bump": {
       "oid": "3728672fe1c3b02f27a24dd7888ac29c40b6ae89"
