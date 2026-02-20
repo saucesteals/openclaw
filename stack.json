@@ -1,14 +1,15 @@
 {
   "version": 5,
-  "prev": "6ebab94477ec24ffa3f5648e30a9f04431c2d0e1",
-  "head": "511c0a1b1467225bb3b025c830d39163f8d8f29d",
+  "prev": "e2b0276bac99e2a9576b06c4bd935e9faa729a55",
+  "head": "13d0dc9d67f76e8fe13964a1b0731093e3003b62",
   "applied": [
     "bluebubbles-hook",
     "pairing-scope-read",
-    "scope-compat-write",
+    "scope-compat-write"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "bluebubbles-hook": {
