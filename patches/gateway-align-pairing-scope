@@ -1,0 +1,6 @@
+Bottom: eb68d06f98fdcefdf501997db3b36f8b1d259949
+Top:    84dca8752ee93d1f3df2ea97ef6246ccbb8f4d1b
+Author: Shakker <shakkerdroid@gmail.com>
+Date:   2026-02-20 00:26:23 -0800
+
+Gateway: align pairing scope checks for read access

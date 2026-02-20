@@ -1,0 +1,6 @@
+Bottom: 84dca8752ee93d1f3df2ea97ef6246ccbb8f4d1b
+Top:    e320fe0e094a1d76b6d6d046a5f764afb3270ebc
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-02-20 00:26:23 -0800
+
+fix(auth): operator.admin satisfies operator.write scope requests
