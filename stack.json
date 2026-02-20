@@ -1,11 +1,11 @@
 {
   "version": 5,
-  "prev": "11034fa0e01950428460168d58e88b744ccc655c",
+  "prev": "bfbb2905d9b584adb7bc2340c2e520a0f8ab9484",
   "head": "13d0dc9d67f76e8fe13964a1b0731093e3003b62",
   "applied": [
     "bluebubbles-hook",
     "pairing-scope-read",
-    "fix-auth-operator.admin"
+    "scope-compat-write"
   ],
   "unapplied": [],
   "hidden": [],
@@ -13,11 +13,11 @@
     "bluebubbles-hook": {
       "oid": "3d1a4395d67b786535f0fd68726727ad7301d73a"
     },
-    "fix-auth-operator.admin": {
-      "oid": "13d0dc9d67f76e8fe13964a1b0731093e3003b62"
-    },
     "pairing-scope-read": {
       "oid": "a2fd5926d914ec260e3df571d2861f1a79a077e1"
+    },
+    "scope-compat-write": {
+      "oid": "13d0dc9d67f76e8fe13964a1b0731093e3003b62"
     }
   }
 }
