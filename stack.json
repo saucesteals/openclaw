@@ -1,16 +1,16 @@
 {
   "version": 5,
-  "prev": "56155634e2f60f51048897e9702017dfe2f741c9",
+  "prev": "446c67041478406cf5dae5cad8dd96a19f6084f1",
   "head": "13d0dc9d67f76e8fe13964a1b0731093e3003b62",
   "applied": [
-    "feat-hooks-add-bluebubbles-to",
+    "bluebubbles-hook",
     "gateway-align-pairing-scope",
     "fix-auth-operator.admin"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
-    "feat-hooks-add-bluebubbles-to": {
+    "bluebubbles-hook": {
       "oid": "3d1a4395d67b786535f0fd68726727ad7301d73a"
     },
     "fix-auth-operator.admin": {
