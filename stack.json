@@ -1,15 +1,13 @@
 {
   "version": 5,
-  "prev": "1cb42e649464cd64a8a3687544aafc5660f0a3c7",
+  "prev": "ea52e7d80292cf7f6ceaded38d93e966fc612749",
   "head": "13d0dc9d67f76e8fe13964a1b0731093e3003b62",
   "applied": [
     "bluebubbles-hook",
     "pairing-scope-read",
     "scope-compat-write"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "bluebubbles-hook": {
@@ -20,9 +18,6 @@
     },
     "scope-compat-write": {
       "oid": "13d0dc9d67f76e8fe13964a1b0731093e3003b62"
-    },
-    "version-bump": {
-      "oid": "4d29c206670ba981dc3b187b330d8aabea08d70d"
     }
   }
 }
