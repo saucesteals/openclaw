@@ -443,6 +443,7 @@ export function createExecTool(
           storeEnv: host === "gateway" ? storeEnv.env : undefined,
           storeSecretEnv: useSecretEgress ? storeEnv.secretSentinels : undefined,
           secretEgressEnv,
+          sessionKey: defaults?.sessionKey,
           ...preparedRunEnvironment,
           warnings,
         });
