@@ -381,6 +381,10 @@ export function createExecTool(
           })
         : mergedEnv;
 
+      if (defaults?.sessionKey) {
+        env.OPENCLAW_SESSION_KEY = defaults.sessionKey;
+      }
+
       if (!sandbox && host === "gateway" && !params.env?.PATH) {
         const shellPath = getShellPathFromLoginShell({
           env: process.env,
