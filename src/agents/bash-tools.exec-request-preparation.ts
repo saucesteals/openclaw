@@ -375,6 +375,7 @@ export function resolvePreparedExecEnvironment(params: {
   localIdentityEnv?: Readonly<Record<string, string>>;
   managedLocalIdentity?: boolean;
   localProcessEnv?: Readonly<Record<string, string>>;
+  sessionKey?: string;
   warnings: string[];
 }): { env: Record<string, string>; requestedEnv?: Record<string, string> } {
   if (params.localProcessEnv && params.host !== "gateway") {
@@ -483,6 +484,10 @@ export function resolvePreparedExecEnvironment(params: {
           containerWorkdir: params.containerWorkdir ?? params.sandbox.containerWorkdir,
         })
       : (hostEnvResult?.env ?? inheritedBaseEnv);
+
+  if (params.sessionKey) {
+    env.OPENCLAW_SESSION_KEY = params.sessionKey;
+  }
 
   if (!params.sandbox && params.host === "gateway" && !requestedEnv?.PATH) {
     const shellPath = getShellPathFromLoginShell({
