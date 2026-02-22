@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "107c2d0de0dd54c55d1169ea8c6e4f9e90347408",
-  "head": "4dafc5f0fe96f756215891c6163310c056a8ec68",
+  "prev": "e28b29a4a9c821d52cd3ae1e7984648ad678663f",
+  "head": "cf350c15420d29e817f9013a6b852a59c2821639",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
