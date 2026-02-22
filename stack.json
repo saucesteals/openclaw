@@ -1,31 +1,31 @@
 {
   "version": 5,
-  "prev": "afff1de59f76a32777a40701760f5be179d2b57b",
-  "head": "fbcae85112621ea52c14b3f5a96ccd9b4927635b",
-  "applied": [],
-  "unapplied": [
+  "prev": "c28dcf9c02866086a45d7f4595b3d1f85ab097b8",
+  "head": "b790e187e1c96f05471ced546ac068c6b688305b",
+  "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
     "feat-exec-inject",
     "deps-add-snazzah-davey-for",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "deps-add-snazzah-davey-for": {
-      "oid": "138e4eace4433727c62fd9f141b3803300c1a903"
+      "oid": "5f05446583d9cc5d4906f173d5e0b0284ef5fd0c"
     },
     "feat-exec-inject": {
-      "oid": "3827f5b4eefe9659296afa9cdcc7202ef3b224a2"
+      "oid": "ce1fa0a2ebd40d8d046d7473bb293ad0bc01257b"
     },
     "feat-hooks-add-bluebubbles-to": {
-      "oid": "ba51473b17bf3e8cc3d8519eb8896ac2bb4acddf"
+      "oid": "2cf647ec59e9a6cb520b1c075ca97463baf2f01b"
     },
     "fix-auth-operator.admin": {
-      "oid": "a9305ce9706342bd210c218407aa23b2ed486d73"
+      "oid": "54233ffabd3662b2594aca5e6a81eca3d7521450"
     },
     "version-bump": {
-      "oid": "4dafc5f0fe96f756215891c6163310c056a8ec68"
+      "oid": "b790e187e1c96f05471ced546ac068c6b688305b"
     }
   }
 }
