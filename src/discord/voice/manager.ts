@@ -375,6 +375,7 @@ export class DiscordVoiceManager {
       adapterCreator,
       selfDeaf: false,
       selfMute: false,
+      daveEncryption: false,
     });
 
     try {
