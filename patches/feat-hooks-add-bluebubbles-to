@@ -1,0 +1,6 @@
+Bottom: 324e0c12b20b40a423b7010db0010681b1654348
+Top:    eacd85f03ab76e05942304a45ef242f961e6389c
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-02-22 07:03:24 -0800
+
+feat(hooks): add bluebubbles to hook mapping channel enum
