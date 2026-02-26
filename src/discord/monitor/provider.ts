@@ -482,7 +482,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
       {
         baseUrl: "http://localhost",
         deploySecret: "a",
-        clientId: applicationId,
+        clientId: applicationId ?? "",
         publicKey: "a",
         token,
         autoDeploy: false,
@@ -503,7 +503,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
     let botUserId: string | undefined;
     let voiceManager: DiscordVoiceManager | null = null;
 
-    if (nativeDisabledExplicit) {
+    if (nativeDisabledExplicit && applicationId) {
       await clearDiscordNativeCommands({
         client,
         applicationId,
