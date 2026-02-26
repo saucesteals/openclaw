@@ -304,7 +304,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
   }
 
   const applicationId = await fetchDiscordApplicationId(token, 4000, discordRestFetch);
-  if (!applicationId) {
+  if (!applicationId && token.startsWith("Bot ")) {
     throw new Error("Failed to resolve Discord application id");
   }
 
@@ -480,7 +480,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
       {
         baseUrl: "http://localhost",
         deploySecret: "a",
-        clientId: applicationId,
+        clientId: applicationId ?? "0",
         publicKey: "a",
         token,
         autoDeploy: false,
@@ -497,7 +497,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
     const earlyGatewayErrorGuard = attachEarlyGatewayErrorGuard(client);
     releaseEarlyGatewayErrorGuard = earlyGatewayErrorGuard.release;
 
-    await deployDiscordCommands({ client, runtime, enabled: nativeEnabled });
+    await deployDiscordCommands({ client, runtime, enabled: nativeEnabled && !!applicationId });
 
     const logger = createSubsystemLogger("discord/monitor");
     const guildHistories = new Map<string, HistoryEntry[]>();
@@ -505,7 +505,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
     let botUserName: string | undefined;
     let voiceManager: DiscordVoiceManager | null = null;
 
-    if (nativeDisabledExplicit) {
+    if (nativeDisabledExplicit && applicationId) {
       await clearDiscordNativeCommands({
         client,
         applicationId,
