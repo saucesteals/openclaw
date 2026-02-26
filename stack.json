@@ -1,14 +1,13 @@
 {
   "version": 5,
-  "prev": "66f337e8c615d4363f8e635c2c089902cbb87b5d",
-  "head": "c018927b473224bd5caa5529d19262c25b1dc720",
+  "prev": "23d5b87d57eeb29c6f6be4fce5de82924c823b69",
+  "head": "4479968f087d60790412b2cba5083a884581b45a",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
     "feat-exec-inject",
     "deps-add-snazzah-davey-for",
-    "feat-discord-user-token",
-    "refresh-temp"
+    "feat-discord-user-token"
   ],
   "unapplied": [
     "version-bump"
@@ -19,7 +18,7 @@
       "oid": "5f05446583d9cc5d4906f173d5e0b0284ef5fd0c"
     },
     "feat-discord-user-token": {
-      "oid": "7c071ef6aa0b0ce85c46532a699566254f3c1ffd"
+      "oid": "4479968f087d60790412b2cba5083a884581b45a"
     },
     "feat-exec-inject": {
       "oid": "ce1fa0a2ebd40d8d046d7473bb293ad0bc01257b"
@@ -29,9 +28,6 @@
     },
     "fix-auth-operator.admin": {
       "oid": "54233ffabd3662b2594aca5e6a81eca3d7521450"
-    },
-    "refresh-temp": {
-      "oid": "c018927b473224bd5caa5529d19262c25b1dc720"
     },
     "version-bump": {
       "oid": "b866949edb8d46d3fd7cfb5b85c309312c6017c2"

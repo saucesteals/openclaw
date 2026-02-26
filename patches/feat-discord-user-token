@@ -1,7 +1,7 @@
 Bottom: 2436f3ac91153f6c88d535868a96e2ae2d666517
-Top:    ae7b08a5c0cf2691a245a61a5dac7bea0195424b
+Top:    df7fc1396305e06b442c48b09e1a0bf683d811bb
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-02-26 02:12:27 -0800
+Date:   2026-02-26 02:20:15 -0800
 
 feat(discord): user account token support — token prefix drives bot vs user auth
 
