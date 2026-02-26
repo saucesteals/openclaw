@@ -1,0 +1,51 @@
+diff --git a/dist/src/classes/RequestClient.js b/dist/src/classes/RequestClient.js
+index 1cd3130df8b2cd71a240f8b028a71680628cf0fd..3645642e47470d5f29d08a649ebcca4d1efa6b43 100644
+--- a/dist/src/classes/RequestClient.js
++++ b/dist/src/classes/RequestClient.js
+@@ -109,7 +109,7 @@ export class RequestClient {
+         const headers = this.token === "webhook"
+             ? new Headers()
+             : new Headers({
+-                Authorization: `${this.options.tokenHeader} ${this.token}`
++                Authorization: `${this.token}`
+             });
+         // Add custom headers if provided
+         if (data?.headers) {
+diff --git a/dist/src/plugins/gateway/GatewayPlugin.js b/dist/src/plugins/gateway/GatewayPlugin.js
+index c03ce2be0cb3e1772684e72f3ed56f9175e8d5e2..cc5bca8e31223798718028e8042ad23bbb26d9a5 100644
+--- a/dist/src/plugins/gateway/GatewayPlugin.js
++++ b/dist/src/plugins/gateway/GatewayPlugin.js
+@@ -62,9 +62,13 @@ export class GatewayPlugin extends Plugin {
+         this.client = client;
+         if (!this.gatewayInfo) {
+             try {
+-                const response = await fetch("https://discord.com/api/v10/gateway/bot", {
++                const isBot = client.options.token.startsWith("Bot ");
++                const gatewayUrl = isBot
++                    ? "https://discord.com/api/v10/gateway/bot"
++                    : "https://discord.com/api/v10/gateway";
++                const response = await fetch(gatewayUrl, {
+                     headers: {
+-                        Authorization: `Bot ${client.options.token}`
++                        Authorization: client.options.token
+                     }
+                 });
+                 this.gatewayInfo = (await response.json());
+@@ -362,7 +366,7 @@ export class GatewayPlugin extends Plugin {
+         if (!this.client || !this.state.sessionId || this.sequence === null)
+             return;
+         const payload = createResumePayload({
+-            token: this.client.options.token,
++            token: this.client.options.token.replace(/^Bot /, ""),
+             sessionId: this.state.sessionId,
+             sequence: this.sequence
+         });
+@@ -391,7 +395,7 @@ export class GatewayPlugin extends Plugin {
+         if (!this.client)
+             return;
+         const payload = createIdentifyPayload({
+-            token: this.client.options.token,
++            token: this.client.options.token.replace(/^Bot /, ""),
+             intents: this.options.intents,
+             properties: {
+                 os: process.platform,

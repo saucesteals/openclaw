@@ -282,6 +282,9 @@
       "node-llama-cpp",
       "protobufjs",
       "sharp"
-    ]
+    ],
+    "patchedDependencies": {
+      "@buape/carbon": "patches/@buape__carbon.patch"
+    }
   }
 }
