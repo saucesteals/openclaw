@@ -326,7 +326,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
   }
 
   const applicationId = await fetchDiscordApplicationId(token, 4000, discordRestFetch);
-  if (!applicationId) {
+  if (!applicationId && token.startsWith("Bot ")) {
     throw new Error("Failed to resolve Discord application id");
   }
 
