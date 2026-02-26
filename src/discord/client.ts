@@ -21,7 +21,8 @@ function resolveToken(params: { explicit?: string; accountId: string; fallbackTo
   const fallback = normalizeDiscordToken(params.fallbackToken);
   if (!fallback) {
     throw new Error(
-      `Discord bot token missing for account "${params.accountId}" (set discord.accounts.${params.accountId}.token or DISCORD_BOT_TOKEN for default).`,
+      `Discord token missing for account "${params.accountId}" (set discord.accounts.${params.accountId}.token or DISCORD_BOT_TOKEN for default). ` +
+        `Use "Bot <token>" for bot accounts, or a bare token for selfbot/user accounts.`,
     );
   }
   return fallback;
