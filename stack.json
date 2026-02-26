@@ -1,16 +1,17 @@
 {
   "version": 5,
-  "prev": "5647624532820697f1722a40105eb722cf6f4884",
-  "head": "82b4433571fbc2bf37c7f1421e7cd86f3b08cffc",
+  "prev": "cf814fbc86fbc99c8b4022dddbe8a90d6d69da3c",
+  "head": "f13364897f35060fc46a977434df0797056b1ced",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
     "feat-exec-inject",
     "deps-add-snazzah-davey-for",
-    "feat-discord-user-token",
+    "feat-discord-user-token"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "deps-add-snazzah-davey-for": {
