@@ -482,7 +482,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
       {
         baseUrl: "http://localhost",
         deploySecret: "a",
-        clientId: applicationId,
+        clientId: applicationId ?? "",
         publicKey: "a",
         token,
         autoDeploy: false,
@@ -496,14 +496,14 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
       clientPlugins,
     );
 
-    await deployDiscordCommands({ client, runtime, enabled: nativeEnabled });
+    await deployDiscordCommands({ client, runtime, enabled: nativeEnabled && !!applicationId });
 
     const logger = createSubsystemLogger("discord/monitor");
     const guildHistories = new Map<string, HistoryEntry[]>();
     let botUserId: string | undefined;
     let voiceManager: DiscordVoiceManager | null = null;
 
-    if (nativeDisabledExplicit) {
+    if (nativeDisabledExplicit && applicationId) {
       await clearDiscordNativeCommands({
         client,
         applicationId,
