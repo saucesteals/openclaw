@@ -1,13 +1,14 @@
 {
   "version": 5,
-  "prev": "cbad6e91b84a1953c61a51ccf6ed24daea383baa",
-  "head": "058db72a5f3940244be2d3df35260380d9fc0283",
+  "prev": "910ebb3b5cf8187d6fe9d7cf2ba5eaf7da97e6c3",
+  "head": "52e13f0c4751c23c1f028cf1b42e204a8a0258b3",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
     "feat-exec-inject",
     "deps-add-snazzah-davey-for",
-    "feat-discord-selfbot"
+    "feat-discord-selfbot",
+    "refresh-temp"
   ],
   "unapplied": [
     "version-bump"
@@ -28,6 +29,9 @@
     },
     "fix-auth-operator.admin": {
       "oid": "54233ffabd3662b2594aca5e6a81eca3d7521450"
+    },
+    "refresh-temp": {
+      "oid": "52e13f0c4751c23c1f028cf1b42e204a8a0258b3"
     },
     "version-bump": {
       "oid": "b790e187e1c96f05471ced546ac068c6b688305b"
