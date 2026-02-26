@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "0e4334fb9c6f045da25466fdb9539fbf4a098da0",
-  "head": "6c9848c2cf7db74b2d0c8b3b0dd806c7eb8bd3a7",
+  "prev": "e267e623d35927afe2dce2f05a7ba9d6f1f2bba2",
+  "head": "3e10a3a7eb7f6c3a4bdde48f9992c759a88f7c24",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
@@ -18,7 +18,7 @@
       "oid": "5f05446583d9cc5d4906f173d5e0b0284ef5fd0c"
     },
     "feat-discord-user-token": {
-      "oid": "6c9848c2cf7db74b2d0c8b3b0dd806c7eb8bd3a7"
+      "oid": "3e10a3a7eb7f6c3a4bdde48f9992c759a88f7c24"
     },
     "feat-exec-inject": {
       "oid": "ce1fa0a2ebd40d8d046d7473bb293ad0bc01257b"

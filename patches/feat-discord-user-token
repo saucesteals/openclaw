@@ -1,13 +1,13 @@
 Bottom: 2436f3ac91153f6c88d535868a96e2ae2d666517
 Top:    b7bccf3414f0552290103ec25431e945e9c31da3
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-02-26 02:11:46 -0800
+Date:   2026-02-26 02:11:53 -0800
 
-feat(discord): selfbot support — token prefix drives bot vs user auth
+feat(discord): user account token support — token prefix drives bot vs user auth
 
 - Remove normalizeDiscordToken stripping of 'Bot ' prefix; tokens stored as-is
 - Bot accounts: prefix token with 'Bot ' (e.g. 'Bot MTxxxxxx')
-- User/selfbot accounts: use bare token (e.g. 'MTxxxxxx')
+- User accounts: use bare token (e.g. 'MTxxxxxx')
 - Patch @buape/carbon: use token as-is for REST Authorization header
 - GatewayPlugin: detect bot vs user from token prefix, fetch /gateway vs /gateway/bot
 - Strip 'Bot ' from IDENTIFY and RESUME payloads (gateway expects raw token)
