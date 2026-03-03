@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "1c8ffd607d13b72c836fa5dc3253aaea86a518a4",
+  "prev": "a0dab04268d2cc606ca34c684044d1e7b8a536d2",
   "head": "86586177c357564236e05330f298a3f472caa167",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
@@ -9,16 +9,12 @@
     "deps-add-snazzah-davey-for"
   ],
   "unapplied": [
-    "feat-discord-user-token",
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "deps-add-snazzah-davey-for": {
       "oid": "86586177c357564236e05330f298a3f472caa167"
-    },
-    "feat-discord-user-token": {
-      "oid": "2634016d46a5f39d5d8d5040a58a6431db4d754e"
     },
     "feat-exec-inject": {
       "oid": "974674b51737e82fec25c6dc4bebcd2e8c5d95cf"
