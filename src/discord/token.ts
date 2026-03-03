@@ -14,7 +14,14 @@ export function normalizeDiscordToken(raw: unknown, path: string): string | unde
   if (!trimmed) {
     return undefined;
   }
-  return trimmed.replace(/^Bot\s+/i, "");
+  // Token is stored as-is. Prefix with "Bot " for bot accounts (e.g. "Bot MTxxxxxx"),
+  // or leave as a bare token for user/selfbot accounts (e.g. "MTxxxxxx").
+  return trimmed;
+}
+
+/** Returns true if the token is a bot token (prefixed with "Bot "). */
+export function isDiscordBotToken(token: string): boolean {
+  return token.startsWith("Bot ");
 }
 
 export function resolveDiscordToken(

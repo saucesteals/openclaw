@@ -1,7 +1,7 @@
 import type { BaseProbeResult } from "../channels/plugins/types.js";
 import { resolveFetch } from "../infra/fetch.js";
 import { fetchWithTimeout } from "../utils/fetch-timeout.js";
-import { normalizeDiscordToken } from "./token.js";
+import { isDiscordBotToken, normalizeDiscordToken } from "./token.js";
 
 const DISCORD_API_BASE = "https://discord.com/api/v10";
 
@@ -38,6 +38,11 @@ async function fetchDiscordApplicationMe(
   timeoutMs: number,
   fetcher: typeof fetch,
 ): Promise<{ id?: string; flags?: number } | undefined> {
+  // /oauth2/applications/@me is bot-only; skip for user accounts
+  const normalized = normalizeDiscordToken(token);
+  if (!normalized || !isDiscordBotToken(normalized)) {
+    return undefined;
+  }
   try {
     const appResponse = await fetchDiscordApplicationMeResponse(token, timeoutMs, fetcher);
     if (!appResponse || !appResponse.ok) {
@@ -143,7 +148,7 @@ export async function probeDiscord(
   try {
     const res = await fetchWithTimeout(
       `${DISCORD_API_BASE}/users/@me`,
-      { headers: { Authorization: `Bot ${normalized}` } },
+      { headers: { Authorization: normalized } },
       timeoutMs,
       getResolvedFetch(fetcher),
     );
