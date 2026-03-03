@@ -39,7 +39,7 @@ async function fetchDiscordApplicationMe(
   fetcher: typeof fetch,
 ): Promise<{ id?: string; flags?: number } | undefined> {
   // /oauth2/applications/@me is bot-only; skip for user accounts
-  const normalized = normalizeDiscordToken(token);
+  const normalized = normalizeDiscordToken(token, "channels.discord.token");
   if (!normalized || !isDiscordBotToken(normalized)) {
     return undefined;
   }
