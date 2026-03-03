@@ -1,12 +1,13 @@
 {
   "version": 5,
-  "prev": "4ead02815366c6cf89e4c70516d0e7be6b32782e",
-  "head": "86586177c357564236e05330f298a3f472caa167",
+  "prev": "5bb05e2096e93be8e5c29946995c843054f5c04d",
+  "head": "88e5d926c6033ef6736d31779a19846de5c5c837",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
     "feat-exec-inject",
-    "deps-add-snazzah-davey-for"
+    "deps-add-snazzah-davey-for",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -22,6 +23,9 @@
     },
     "fix-auth-operator.admin": {
       "oid": "5123db8b24b8c19e0ec526a18673aa4d88f3e82e"
+    },
+    "version-bump": {
+      "oid": "88e5d926c6033ef6736d31779a19846de5c5c837"
     }
   }
 }
