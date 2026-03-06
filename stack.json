@@ -1,13 +1,14 @@
 {
   "version": 5,
-  "prev": "5d29474c0dbdb61980154bcdbbd8a85a7849975e",
-  "head": "a41d9d81cd975ab4214b5db48bed4e5c1ffe9c41",
+  "prev": "f8ea17a26c4be30f178a5fbb1931bafb475b5124",
+  "head": "a89d77e2fef23cfe4b6667983d95e8792ac5374b",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "fix-auth-operator.admin",
     "feat-exec-inject",
     "deps-add-snazzah-davey-for",
-    "fix-discord-attachment-download"
+    "fix-discord-attachment-download",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -26,6 +27,9 @@
     },
     "fix-discord-attachment-download": {
       "oid": "a41d9d81cd975ab4214b5db48bed4e5c1ffe9c41"
+    },
+    "version-bump": {
+      "oid": "a89d77e2fef23cfe4b6667983d95e8792ac5374b"
     }
   }
 }
