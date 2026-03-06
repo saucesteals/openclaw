@@ -11,7 +11,6 @@ import { danger, logVerbose } from "../../globals.js";
 import { formatDurationSeconds } from "../../infra/format-time/format-duration.ts";
 import { enqueueSystemEvent } from "../../infra/system-events.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
-import { KeyedAsyncQueue } from "../../plugin-sdk/keyed-async-queue.js";
 import { resolveAgentRoute } from "../../routing/resolve-route.js";
 import {
   readStoreAllowFromForDmPolicy,
@@ -123,34 +122,24 @@ export function registerDiscordListener(listeners: Array<object>, listener: obje
 }
 
 export class DiscordMessageListener extends MessageCreateListener {
-  private readonly channelQueue = new KeyedAsyncQueue();
-
   constructor(
     private handler: DiscordMessageHandler,
     private logger?: Logger,
-    private onEvent?: () => void,
   ) {
     super();
   }
 
   async handle(data: DiscordMessageEvent, client: Client) {
-    this.onEvent?.();
-    const channelId = data.channel_id;
-    // Serialize messages within the same channel to preserve ordering,
-    // but allow different channels to proceed in parallel so that
-    // channel-bound agents are not blocked by each other.
-    void this.channelQueue.enqueue(channelId, () =>
-      runDiscordListenerWithSlowLog({
-        logger: this.logger,
-        listener: this.constructor.name,
-        event: this.type,
-        run: () => this.handler(data, client),
-        onError: (err) => {
-          const logger = this.logger ?? discordEventQueueLog;
-          logger.error(danger(`discord handler failed: ${String(err)}`));
-        },
-      }),
-    );
+    await runDiscordListenerWithSlowLog({
+      logger: this.logger,
+      listener: this.constructor.name,
+      event: this.type,
+      run: () => this.handler(data, client),
+      onError: (err) => {
+        const logger = this.logger ?? discordEventQueueLog;
+        logger.error(danger(`discord handler failed: ${String(err)}`));
+      },
+    });
   }
 }
 
