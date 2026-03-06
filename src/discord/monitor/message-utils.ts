@@ -245,7 +245,7 @@ async function appendResolvedMediaFromAttachments(params: {
         maxBytes: params.maxBytes,
         fetchImpl: params.fetchImpl,
         ssrfPolicy: DISCORD_MEDIA_SSRF_POLICY,
-        timeoutMs: 15_000,
+        requestInit: { signal: AbortSignal.timeout(15_000) },
       });
       const saved = await saveMediaBuffer(
         fetched.buffer,
