@@ -1,14 +1,11 @@
 {
   "version": 5,
-  "prev": "7531dd8306e2ef6c518177a4ee7462fb1aaf7d01",
-  "head": "561d111a782255a9aed1f044f0f95d207a2748a8",
+  "prev": "b4135c5583b9760ece1423b39259f7d06947367b",
+  "head": "6c7cd86e390a5069768b42d7567c8fe843ae9e78",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
-    "fix-auth-operator.admin",
     "feat-exec-inject",
-    "deps-add-snazzah-davey-for",
-    "fix-discord-attachment-download",
-    "fix-discord-listener-queue"
+    "deps-add-snazzah-davey-for"
   ],
   "unapplied": [
     "version-bump"
@@ -16,22 +13,13 @@
   "hidden": [],
   "patches": {
     "deps-add-snazzah-davey-for": {
-      "oid": "86586177c357564236e05330f298a3f472caa167"
+      "oid": "6c7cd86e390a5069768b42d7567c8fe843ae9e78"
     },
     "feat-exec-inject": {
-      "oid": "974674b51737e82fec25c6dc4bebcd2e8c5d95cf"
+      "oid": "0b8918f619ab72a76e51d6a9f51712d83b36b25c"
     },
     "feat-hooks-add-bluebubbles-to": {
       "oid": "bc1e0832c253ea185634c110ae86182604e790b6"
-    },
-    "fix-auth-operator.admin": {
-      "oid": "5123db8b24b8c19e0ec526a18673aa4d88f3e82e"
-    },
-    "fix-discord-attachment-download": {
-      "oid": "a41d9d81cd975ab4214b5db48bed4e5c1ffe9c41"
-    },
-    "fix-discord-listener-queue": {
-      "oid": "561d111a782255a9aed1f044f0f95d207a2748a8"
     },
     "version-bump": {
       "oid": "231aca0f45688d0fe50d6941311fabdd7fa4ab01"

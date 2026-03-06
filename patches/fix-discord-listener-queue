@@ -1,6 +1,0 @@
-Bottom: a991b58e803e70aab29b80858c058ad1b347f5be
-Top:    bac0a27a171c33197475b8b701b349ec2c9ab32c
-Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-03-06 12:15:20 -0800
-
-fix(discord): remove per-channel KeyedAsyncQueue from message listener
