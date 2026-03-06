@@ -228,6 +228,16 @@ async function appendResolvedMediaFromAttachments(params: {
     return;
   }
   for (const attachment of attachments) {
+    // Only download images — videos, binaries, and documents are not useful
+    // to the model and can cause indefinite hangs on large files.
+    if (!isImageAttachment(attachment)) {
+      params.out.push({
+        path: attachment.url,
+        contentType: attachment.content_type,
+        placeholder: inferPlaceholder(attachment),
+      });
+      continue;
+    }
     try {
       const fetched = await fetchRemoteMedia({
         url: attachment.url,
@@ -235,6 +245,7 @@ async function appendResolvedMediaFromAttachments(params: {
         maxBytes: params.maxBytes,
         fetchImpl: params.fetchImpl,
         ssrfPolicy: DISCORD_MEDIA_SSRF_POLICY,
+        requestInit: { signal: AbortSignal.timeout(15_000) },
       });
       const saved = await saveMediaBuffer(
         fetched.buffer,
