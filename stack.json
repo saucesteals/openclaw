@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "4ead44a4bde226cdde9668945c9fcd9f28fa990b",
+  "prev": "49c3f66947c8f83ace4c969623901485b75eaa55",
   "head": "561d111a782255a9aed1f044f0f95d207a2748a8",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
@@ -10,9 +10,7 @@
     "fix-discord-attachment-download",
     "fix-discord-listener-queue"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "deps-add-snazzah-davey-for": {
@@ -32,9 +30,6 @@
     },
     "fix-discord-listener-queue": {
       "oid": "561d111a782255a9aed1f044f0f95d207a2748a8"
-    },
-    "version-bump": {
-      "oid": "613b5aa870e41a155fe4eba6d60ff05146b646af"
     }
   }
 }
