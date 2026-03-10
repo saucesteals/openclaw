@@ -160,9 +160,12 @@ export async function ensureSkillSnapshot(params: {
   let systemSent = sessionEntry?.systemSent ?? false;
   const remoteEligibility = getRemoteSkillEligibility();
   ensureSkillsWatcher({ workspaceDir, config: cfg });
-  const snapshotStale = nextEntry?.skillsSnapshot?.skills?.some(
-    (s) => cfg.skills?.entries?.[s.name]?.enabled === false,
-  );
+  const snapshotSkills = new Set(nextEntry?.skillsSnapshot?.skills?.map((s) => s.name) ?? []);
+  const cfgEntries = Object.entries(cfg.skills?.entries ?? {});
+  const snapshotStale =
+    snapshotSkills.size > 0 &&
+    (cfgEntries.some(([name, e]) => e.enabled === false && snapshotSkills.has(name)) ||
+      cfgEntries.some(([name, e]) => e.enabled !== false && !snapshotSkills.has(name)));
   if (snapshotStale) {
     bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
   }
