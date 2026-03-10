@@ -1,20 +1,16 @@
 {
   "version": 5,
-  "prev": "96ca13d6efa35bf682f813342d5a636e7322740b",
+  "prev": "e33949e33193c0e15fef1693742537ecf7c41b40",
   "head": "0b8918f619ab72a76e51d6a9f51712d83b36b25c",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject"
   ],
   "unapplied": [
-    "deps-add-snazzah-davey-for",
     "version-bump"
   ],
   "hidden": [],
   "patches": {
-    "deps-add-snazzah-davey-for": {
-      "oid": "6c7cd86e390a5069768b42d7567c8fe843ae9e78"
-    },
     "feat-exec-inject": {
       "oid": "0b8918f619ab72a76e51d6a9f51712d83b36b25c"
     },

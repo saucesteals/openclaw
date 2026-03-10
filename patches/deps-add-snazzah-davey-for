@@ -1,6 +1,0 @@
-Bottom: 5fc7314202eee5ab4bda86e5d248836d5dc24a91
-Top:    4c7b1508776c30cd9eafa7a741e38fbff734cc87
-Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-03-06 12:23:55 -0800
-
-deps: add @snazzah/davey for Discord DAVE voice protocol
