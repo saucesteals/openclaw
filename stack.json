@@ -1,14 +1,15 @@
 {
   "version": 5,
-  "prev": "0250083672a5049644889c31e447d53da00c6a03",
-  "head": "38fd595a4b22bea89d79d0a68d63df21234a449c",
+  "prev": "a573e47db87cc830a3831b1e61edfb0d4811c759",
+  "head": "6c7cd86e390a5069768b42d7567c8fe843ae9e78",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
-    "deps-add-snazzah-davey-for",
+    "deps-add-snazzah-davey-for"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "deps-add-snazzah-davey-for": {
