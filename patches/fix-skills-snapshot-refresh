@@ -1,0 +1,6 @@
+Bottom: 5fc7314202eee5ab4bda86e5d248836d5dc24a91
+Top:    5fc7314202eee5ab4bda86e5d248836d5dc24a91
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-03-10 00:53:13 -0700
+
+fix(sessions): refresh skills snapshot when enabled set changes

@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "e33949e33193c0e15fef1693742537ecf7c41b40",
-  "head": "0b8918f619ab72a76e51d6a9f51712d83b36b25c",
+  "prev": "ab73bce08143c8886bfc44be4053d2da5a40dc3d",
+  "head": "98c00f9123a050c776ba2e46ef908f8715d5441f",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
-    "feat-exec-inject"
+    "feat-exec-inject",
+    "fix-skills-snapshot-refresh"
   ],
   "unapplied": [
     "version-bump"
@@ -16,6 +17,9 @@
     },
     "feat-hooks-add-bluebubbles-to": {
       "oid": "bc1e0832c253ea185634c110ae86182604e790b6"
+    },
+    "fix-skills-snapshot-refresh": {
+      "oid": "98c00f9123a050c776ba2e46ef908f8715d5441f"
     },
     "version-bump": {
       "oid": "38fd595a4b22bea89d79d0a68d63df21234a449c"
