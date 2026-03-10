@@ -2,7 +2,8 @@ import crypto from "node:crypto";
 import { resolveUserTimezone } from "../../agents/date-time.js";
 import { buildWorkspaceSkillSnapshot } from "../../agents/skills.js";
 import { ensureSkillsWatcher, getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { SkillSnapshot } from "../../agents/skills/types.js";
+import type { OpenClawConfig, SkillConfig } from "../../config/config.js";
 import { type SessionEntry, updateSessionStore } from "../../config/sessions.js";
 import { buildChannelSummary } from "../../infra/channel-summary.js";
 import {
@@ -114,6 +115,27 @@ export async function buildQueuedSystemPrompt(params: {
   ].join("\n");
 }
 
+/** Returns true if a skill marked `enabled: false` in config is still present in the snapshot. */
+function hasSkillEnabledConfigChanged(
+  snapshot: SkillSnapshot | undefined,
+  cfg: OpenClawConfig,
+): boolean {
+  if (!snapshot) {
+    return false;
+  }
+  const entries = cfg.skills?.entries;
+  if (!entries || typeof entries !== "object") {
+    return false;
+  }
+  const snapshotNames = new Set(snapshot.skills.map((s) => s.name));
+  for (const [name, entry] of Object.entries(entries)) {
+    if ((entry as SkillConfig | undefined)?.enabled === false && snapshotNames.has(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export async function ensureSkillSnapshot(params: {
   sessionEntry?: SessionEntry;
   sessionStore?: Record<string, SessionEntry>;
@@ -158,7 +180,8 @@ export async function ensureSkillSnapshot(params: {
   const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
   ensureSkillsWatcher({ workspaceDir, config: cfg });
   const shouldRefreshSnapshot =
-    snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
+    (snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion) ||
+    hasSkillEnabledConfigChanged(nextEntry?.skillsSnapshot, cfg);
 
   if (isFirstTurnInSession && sessionStore && sessionKey) {
     const current = nextEntry ??
