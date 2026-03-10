@@ -118,24 +118,6 @@ export async function buildQueuedSystemPrompt(params: {
   ].join("\n");
 }
 
-let _lastSkillsEnabledState: Record<string, boolean> | undefined;
-function _checkSkillsConfigChanged(cfg: OpenClawConfig, workspaceDir: string) {
-  const entries = cfg.skills?.entries ?? {};
-  const current: Record<string, boolean> = {};
-  for (const [name, entry] of Object.entries(entries)) {
-    current[name] = entry.enabled !== false;
-  }
-  if (_lastSkillsEnabledState !== undefined) {
-    const changed =
-      Object.keys(current).some((k) => current[k] !== _lastSkillsEnabledState![k]) ||
-      Object.keys(_lastSkillsEnabledState).some((k) => !(k in current));
-    if (changed) {
-      bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
-    }
-  }
-  _lastSkillsEnabledState = current;
-}
-
 export async function ensureSkillSnapshot(params: {
   sessionEntry?: SessionEntry;
   sessionStore?: Record<string, SessionEntry>;
@@ -178,7 +160,12 @@ export async function ensureSkillSnapshot(params: {
   let systemSent = sessionEntry?.systemSent ?? false;
   const remoteEligibility = getRemoteSkillEligibility();
   ensureSkillsWatcher({ workspaceDir, config: cfg });
-  _checkSkillsConfigChanged(cfg, workspaceDir);
+  const snapshotStale = nextEntry?.skillsSnapshot?.skills?.some(
+    (s) => cfg.skills?.entries?.[s.name]?.enabled === false,
+  );
+  if (snapshotStale) {
+    bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
+  }
   const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
   const shouldRefreshSnapshot =
     snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
