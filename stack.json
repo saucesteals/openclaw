@@ -1,15 +1,13 @@
 {
   "version": 5,
-  "prev": "ae3f2db0af9904f7a26c552467854362e0510cbb",
+  "prev": "1d2c702d6e50b1cde011ec8ecf545b517e5b07a9",
   "head": "6f89c2020055f07f3624233dd64f31926cff73d7",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
     "fix-skills-snapshot-refresh"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "feat-exec-inject": {
@@ -20,9 +18,6 @@
     },
     "fix-skills-snapshot-refresh": {
       "oid": "6f89c2020055f07f3624233dd64f31926cff73d7"
-    },
-    "version-bump": {
-      "oid": "278da050109095c173ace36b4f85e3f0fffc2fe8"
     }
   }
 }
