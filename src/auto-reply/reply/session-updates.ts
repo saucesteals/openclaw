@@ -1,7 +1,11 @@
 import crypto from "node:crypto";
 import { resolveUserTimezone } from "../../agents/date-time.js";
 import { buildWorkspaceSkillSnapshot } from "../../agents/skills.js";
-import { ensureSkillsWatcher, getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
+import {
+  bumpSkillsSnapshotVersion,
+  ensureSkillsWatcher,
+  getSkillsSnapshotVersion,
+} from "../../agents/skills/refresh.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import { type SessionEntry, updateSessionStore } from "../../config/sessions.js";
 import { buildChannelSummary } from "../../infra/channel-summary.js";
@@ -114,6 +118,15 @@ export async function buildQueuedSystemPrompt(params: {
   ].join("\n");
 }
 
+let _lastSkillsEntriesJson: string | undefined;
+function _checkSkillsConfigChanged(cfg: OpenClawConfig, workspaceDir: string) {
+  const json = JSON.stringify(cfg.skills?.entries ?? {});
+  if (_lastSkillsEntriesJson !== undefined && json !== _lastSkillsEntriesJson) {
+    bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
+  }
+  _lastSkillsEntriesJson = json;
+}
+
 export async function ensureSkillSnapshot(params: {
   sessionEntry?: SessionEntry;
   sessionStore?: Record<string, SessionEntry>;
@@ -155,16 +168,11 @@ export async function ensureSkillSnapshot(params: {
   let nextEntry = sessionEntry;
   let systemSent = sessionEntry?.systemSent ?? false;
   const remoteEligibility = getRemoteSkillEligibility();
-  const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
   ensureSkillsWatcher({ workspaceDir, config: cfg });
-  const disabledSkillNames = new Set(
-    Object.entries(cfg.skills?.entries ?? {})
-      .filter(([, e]) => e?.enabled === false)
-      .map(([name]) => name),
-  );
+  _checkSkillsConfigChanged(cfg, workspaceDir);
+  const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
   const shouldRefreshSnapshot =
-    (snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion) ||
-    (nextEntry?.skillsSnapshot?.skills ?? []).some((s) => disabledSkillNames.has(s.name));
+    snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
 
   if (isFirstTurnInSession && sessionStore && sessionKey) {
     const current = nextEntry ??
