@@ -160,11 +160,15 @@ export async function ensureSkillSnapshot(params: {
   let shouldRefreshSnapshot =
     snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
   if (!shouldRefreshSnapshot && nextEntry?.skillsSnapshot) {
-    const snapshotSkills = new Set(nextEntry.skillsSnapshot.skills.map((s) => s.name));
-    const cfgEntries = Object.entries(cfg.skills?.entries ?? {});
+    const cfgEnabled = new Set(
+      Object.entries(cfg.skills?.entries ?? {})
+        .filter(([, e]) => e.enabled !== false)
+        .map(([name]) => name),
+    );
+    const snapshotEnabled = new Set(nextEntry.skillsSnapshot.skills.map((s) => s.name));
     shouldRefreshSnapshot =
-      cfgEntries.some(([name, e]) => e.enabled === false && snapshotSkills.has(name)) ||
-      cfgEntries.some(([name, e]) => e.enabled !== false && !snapshotSkills.has(name));
+      cfgEnabled.size !== snapshotEnabled.size ||
+      [...cfgEnabled].some((n) => !snapshotEnabled.has(n));
   }
 
   if (isFirstTurnInSession && sessionStore && sessionKey) {
