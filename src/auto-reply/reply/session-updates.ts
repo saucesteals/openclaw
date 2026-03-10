@@ -118,13 +118,22 @@ export async function buildQueuedSystemPrompt(params: {
   ].join("\n");
 }
 
-let _lastSkillsEntriesJson: string | undefined;
+let _lastSkillsEnabledState: Record<string, boolean> | undefined;
 function _checkSkillsConfigChanged(cfg: OpenClawConfig, workspaceDir: string) {
-  const json = JSON.stringify(cfg.skills?.entries ?? {});
-  if (_lastSkillsEntriesJson !== undefined && json !== _lastSkillsEntriesJson) {
-    bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
+  const entries = cfg.skills?.entries ?? {};
+  const current: Record<string, boolean> = {};
+  for (const [name, entry] of Object.entries(entries)) {
+    current[name] = entry.enabled !== false;
   }
-  _lastSkillsEntriesJson = json;
+  if (_lastSkillsEnabledState !== undefined) {
+    const changed =
+      Object.keys(current).some((k) => current[k] !== _lastSkillsEnabledState![k]) ||
+      Object.keys(_lastSkillsEnabledState).some((k) => !(k in current));
+    if (changed) {
+      bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
+    }
+  }
+  _lastSkillsEnabledState = current;
 }
 
 export async function ensureSkillSnapshot(params: {
