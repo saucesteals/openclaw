@@ -1,11 +1,7 @@
 import crypto from "node:crypto";
 import { resolveUserTimezone } from "../../agents/date-time.js";
 import { buildWorkspaceSkillSnapshot } from "../../agents/skills.js";
-import {
-  bumpSkillsSnapshotVersion,
-  ensureSkillsWatcher,
-  getSkillsSnapshotVersion,
-} from "../../agents/skills/refresh.js";
+import { ensureSkillsWatcher, getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import { type SessionEntry, updateSessionStore } from "../../config/sessions.js";
 import { buildChannelSummary } from "../../infra/channel-summary.js";
@@ -160,18 +156,16 @@ export async function ensureSkillSnapshot(params: {
   let systemSent = sessionEntry?.systemSent ?? false;
   const remoteEligibility = getRemoteSkillEligibility();
   ensureSkillsWatcher({ workspaceDir, config: cfg });
-  const snapshotSkills = new Set(nextEntry?.skillsSnapshot?.skills?.map((s) => s.name) ?? []);
-  const cfgEntries = Object.entries(cfg.skills?.entries ?? {});
-  const snapshotStale =
-    snapshotSkills.size > 0 &&
-    (cfgEntries.some(([name, e]) => e.enabled === false && snapshotSkills.has(name)) ||
-      cfgEntries.some(([name, e]) => e.enabled !== false && !snapshotSkills.has(name)));
-  if (snapshotStale) {
-    bumpSkillsSnapshotVersion({ workspaceDir, reason: "manual" });
-  }
   const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
-  const shouldRefreshSnapshot =
+  let shouldRefreshSnapshot =
     snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
+  if (!shouldRefreshSnapshot && nextEntry?.skillsSnapshot) {
+    const snapshotSkills = new Set(nextEntry.skillsSnapshot.skills.map((s) => s.name));
+    const cfgEntries = Object.entries(cfg.skills?.entries ?? {});
+    shouldRefreshSnapshot =
+      cfgEntries.some(([name, e]) => e.enabled === false && snapshotSkills.has(name)) ||
+      cfgEntries.some(([name, e]) => e.enabled !== false && !snapshotSkills.has(name));
+  }
 
   if (isFirstTurnInSession && sessionStore && sessionKey) {
     const current = nextEntry ??
