@@ -78,8 +78,17 @@ export async function ensureSkillSnapshot(params: {
   const remoteEligibility = getRemoteSkillEligibility();
   const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
   ensureSkillsWatcher({ workspaceDir, config: cfg });
-  const shouldRefreshSnapshot =
+  let shouldRefreshSnapshot =
     snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
+  if (!shouldRefreshSnapshot && nextEntry?.skillsSnapshot) {
+    const cfgEnabled = new Set(
+      Object.entries(cfg.skills?.entries ?? {})
+        .filter(([, e]) => e.enabled !== false)
+        .map(([name]) => name),
+    );
+    const snapshotEnabled = new Set(nextEntry.skillsSnapshot.skills.map((s) => s.name));
+    shouldRefreshSnapshot = cfgEnabled.symmetricDifference(snapshotEnabled).size > 0;
+  }
 
   if (isFirstTurnInSession && sessionStore && sessionKey) {
     const current = nextEntry ??
