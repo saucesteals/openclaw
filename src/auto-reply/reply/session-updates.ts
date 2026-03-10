@@ -166,9 +166,7 @@ export async function ensureSkillSnapshot(params: {
         .map(([name]) => name),
     );
     const snapshotEnabled = new Set(nextEntry.skillsSnapshot.skills.map((s) => s.name));
-    shouldRefreshSnapshot =
-      cfgEnabled.size !== snapshotEnabled.size ||
-      [...cfgEnabled].some((n) => !snapshotEnabled.has(n));
+    shouldRefreshSnapshot = cfgEnabled.symmetricDifference(snapshotEnabled).size > 0;
   }
 
   if (isFirstTurnInSession && sessionStore && sessionKey) {
