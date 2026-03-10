@@ -1,17 +1,21 @@
 {
   "version": 5,
-  "prev": "5d6baad6c7de37391c82a5a9c658d934cab4ddc5",
-  "head": "6f89c2020055f07f3624233dd64f31926cff73d7",
+  "prev": "c45da4ebe26ced5edea62eeddb3e5a528647cb68",
+  "head": "37e442e5c436ad8ee71da8c0b8740ead212596b2",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
-    "fix-skills-snapshot-refresh"
+    "fix-skills-snapshot-refresh",
+    "chore-bump-lib-es2025"
   ],
   "unapplied": [
     "version-bump"
   ],
   "hidden": [],
   "patches": {
+    "chore-bump-lib-es2025": {
+      "oid": "37e442e5c436ad8ee71da8c0b8740ead212596b2"
+    },
     "feat-exec-inject": {
       "oid": "0b8918f619ab72a76e51d6a9f51712d83b36b25c"
     },

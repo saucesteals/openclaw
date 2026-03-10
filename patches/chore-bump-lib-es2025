@@ -1,0 +1,6 @@
+Bottom: e3371d8425bc0568b09a751a812ac1829fdcd44c
+Top:    e3371d8425bc0568b09a751a812ac1829fdcd44c
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-03-10 01:24:10 -0700
+
+chore(tsconfig): bump lib target to ES2025
