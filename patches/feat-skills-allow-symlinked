@@ -1,6 +1,6 @@
-Bottom: e70795d799b8f6bc60bc5fab17a1eaa20c28d420
-Top:    f86ea1b0141f74105093d653a4cced3500d5c79d
+Bottom: 3b95e4295558ff795c79e542a29047de00d985ab
+Top:    8a6015654f4bf983450f7149c099883b9d381bb9
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-03-19 17:19:25 -0700
+Date:   2026-03-19 17:21:17 -0700
 
 feat(skills): allow symlinked skill paths via opt-in env
