@@ -212,6 +212,9 @@ function resolveContainedSkillPath(params: {
   if (isPathInside(params.rootRealPath, candidateRealPath)) {
     return candidateRealPath;
   }
+  if (process.env.OPENCLAW_DISABLE_SKILL_SYMLINK_ESCAPES !== "1") {
+    return candidateRealPath;
+  }
   warnEscapedSkillPath({
     source: params.source,
     rootDir: params.rootDir,
