@@ -25,14 +25,17 @@ function readSkillFileSync(params: {
 }): string | null {
   const opened = openVerifiedFileSync({
     filePath: params.filePath,
-    rejectPathSymlink: true,
+    rejectPathSymlink: process.env.OPENCLAW_DISABLE_SKILL_SYMLINK_ESCAPES === "1",
     maxBytes: params.maxBytes,
   });
   if (!opened.ok) {
     return null;
   }
   try {
-    if (!isPathWithinRoot(params.rootRealPath, opened.path)) {
+    if (
+      process.env.OPENCLAW_DISABLE_SKILL_SYMLINK_ESCAPES === "1" &&
+      !isPathWithinRoot(params.rootRealPath, opened.path)
+    ) {
       return null;
     }
     return fs.readFileSync(opened.fd, "utf8");
