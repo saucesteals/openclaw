@@ -1,0 +1,6 @@
+Bottom: 68135eb7b130b9e1e7a9ee4df5ba26fe32b4885e
+Top:    68135eb7b130b9e1e7a9ee4df5ba26fe32b4885e
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-03-27 05:32:49 -0700
+
+fix(gateway): trust forwarded requests from trusted proxies
