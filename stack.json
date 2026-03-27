@@ -1,14 +1,13 @@
 {
   "version": 5,
-  "prev": "21c9522f1e10011f41e735a66ae3c073fe185a3d",
-  "head": "00f18269dd79ed7ad9d7da5ebc39a51f342e327b",
+  "prev": "ce29953ba8cec15e111a5dd67e24dcb7222569e5",
+  "head": "8c6dbd9a32128b1eaba8267e114820ee524cfd92",
   "applied": [
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
     "fix-skills-snapshot-refresh",
     "chore-bump-lib-es2025",
-    "feat-skills-default-allow-symlink",
-    "fix-proxied-plugin-webhooks"
+    "feat-skills-default-allow-symlink"
   ],
   "unapplied": [
     "version-bump"
@@ -26,9 +25,6 @@
     },
     "feat-skills-default-allow-symlink": {
       "oid": "8c6dbd9a32128b1eaba8267e114820ee524cfd92"
-    },
-    "fix-proxied-plugin-webhooks": {
-      "oid": "00f18269dd79ed7ad9d7da5ebc39a51f342e327b"
     },
     "fix-skills-snapshot-refresh": {
       "oid": "d5308fca36e3466ed9a2aa20ce1f692b7f783655"
