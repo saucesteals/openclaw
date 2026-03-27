@@ -133,6 +133,9 @@ export function isLocalDirectRequest(
   );
 
   const remoteIsTrustedProxy = isTrustedProxyAddress(req.socket?.remoteAddress, trustedProxies);
+  if (remoteIsTrustedProxy && hasForwarded) {
+    return true;
+  }
   return isLocalishHost(req.headers?.host) && (!hasForwarded || remoteIsTrustedProxy);
 }
 
