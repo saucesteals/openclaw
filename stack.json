@@ -1,15 +1,14 @@
 {
   "version": 5,
-  "prev": "c868ef604f63c665e1d9e4316b19569aae86e5fb",
-  "head": "8367c86a395dbd74bd394b257c9f8a198742309a",
-  "applied": [
+  "prev": "a078e7519b09dec22146115bc7c9e52672f49dcb",
+  "head": "cff6dc94e30794a269eb7805b6e636c3634a088c",
+  "applied": [],
+  "unapplied": [
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
     "fix-skills-snapshot-refresh",
     "chore-bump-lib-es2025",
-    "feat-skills-default-allow-symlink"
-  ],
-  "unapplied": [
+    "feat-skills-default-allow-symlink",
     "version-bump"
   ],
   "hidden": [],
