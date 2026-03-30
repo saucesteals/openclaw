@@ -1,6 +1,6 @@
-Bottom: a40fa91a07fa545c203c9e4dcfbd8ac344c11408
-Top:    54cd3bfb52fd343535af8af5eb8c0ee7d51484f8
+Bottom: fbad4a0e27f4935e9fc67c45ce704b5eb4fb71a5
+Top:    0f4dd586a2e4f24c5c2c4ed19652cca4a6ea95c7
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-03-30 00:20:07 -0700
+Date:   2026-03-30 00:22:58 -0700
 
 feat(exec): inject OPENCLAW_SESSION_KEY into every command env

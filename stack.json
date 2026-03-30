@@ -1,14 +1,14 @@
 {
   "version": 5,
-  "prev": "2bc5c5f9d6301b9d8117ee8fdaecf587203456dd",
-  "head": "3ee3853a77d6a80ac249adb73384c0e4f781f1ad",
+  "prev": "2a9169504596a6cd65abe069b6ead2d614fd3251",
+  "head": "e022795947f76fa5505d8b90e0efc246b6242b93",
   "applied": [
+    "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
     "fix-skills-snapshot-refresh",
     "chore-bump-lib-es2025",
-    "feat-skills-default-allow-symlink",
-    "fix-qmd-archived-sessions"
+    "feat-skills-default-allow-symlink"
   ],
   "unapplied": [
     "version-bump"
@@ -16,22 +16,22 @@
   "hidden": [],
   "patches": {
     "chore-bump-lib-es2025": {
-      "oid": "a53f7080063b672f9102617c086655a6c08f75d0"
+      "oid": "a7fa6cb4b2c414d9ab503adf5913df95dd1e5c8b"
     },
     "feat-exec-inject": {
-      "oid": "0ffc2f605c77b5799a17a6b5d0fb47a171298577"
+      "oid": "22a4b740ee74817e7ed4280453c47d420a433537"
     },
     "feat-hooks-add-bluebubbles-to": {
-      "oid": "dc21595b968863be8811a9afc7ca0ce56ee4614f"
+      "oid": "a66ef5372036432b683e3018f45a975b77327c7f"
     },
     "feat-skills-default-allow-symlink": {
-      "oid": "8c2946ce08beb150170c5169619e296834c6fd03"
+      "oid": "e022795947f76fa5505d8b90e0efc246b6242b93"
     },
     "fix-qmd-archived-sessions": {
-      "oid": "3ee3853a77d6a80ac249adb73384c0e4f781f1ad"
+      "oid": "ad3adcca52116f844335e7a80ea69643c0db2ff4"
     },
     "fix-skills-snapshot-refresh": {
-      "oid": "0e463b8b90ea1b31dde640c09c27c9762593fe5c"
+      "oid": "c7157b3dd874fbd3b2e8d8a03b7717117616ebf3"
     },
     "version-bump": {
       "oid": "fb381927a5f969b4c630038ee0789e560016d20a"
