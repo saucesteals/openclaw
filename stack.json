@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "f2a52591d6907428030d7d140ac8405b1443d1bc",
+  "prev": "6f2490ec2f6c9685fa92ab8a6785055b48f5eaee",
   "head": "e022795947f76fa5505d8b90e0efc246b6242b93",
   "applied": [
     "fix-qmd-archived-sessions",
@@ -10,9 +10,7 @@
     "chore-bump-lib-es2025",
     "feat-skills-default-allow-symlink"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-bump-lib-es2025": {
@@ -32,9 +30,6 @@
     },
     "fix-skills-snapshot-refresh": {
       "oid": "c7157b3dd874fbd3b2e8d8a03b7717117616ebf3"
-    },
-    "version-bump": {
-      "oid": "6a727fb164902dfc2ceb6cbde7cde8f939246616"
     }
   }
 }
