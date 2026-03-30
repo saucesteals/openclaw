@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "b1bdad83e552a9dd2f70a5dc916ef5872efb6523",
+  "prev": "ac87629ee6b854bd3e1326aa459aec76b3906ad0",
   "head": "04a7988bb899bf987a5fc54052c06acf09e17b6f",
   "applied": [
     "fix-qmd-archived-sessions",
@@ -11,9 +11,7 @@
     "feat-skills-default-allow-symlink",
     "fix-outbound-bootstrap-missing-channel"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-bump-lib-es2025": {
@@ -36,9 +34,6 @@
     },
     "fix-skills-snapshot-refresh": {
       "oid": "c7157b3dd874fbd3b2e8d8a03b7717117616ebf3"
-    },
-    "version-bump": {
-      "oid": "75f8a4860b591f06861ae45485c40849ae0aad16"
     }
   }
 }
