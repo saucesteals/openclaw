@@ -9,6 +9,7 @@ import type {
 } from "../../channels/plugins/types.public.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
+import { resolveOutboundChannelPlugin } from "./channel-resolution.js";
 import { buildDirectoryCacheKey, DirectoryCache } from "./directory-cache.js";
 import { getRuntimeVisibleChannelPlugin } from "./runtime-visible-channels.js";
 import {
@@ -443,7 +444,20 @@ async function resolveMessagingTarget(params: {
       ),
     };
   }
-  const plugin = params.plugin ?? resolveTargetChannelPlugin(params.channel);
+  // Ensure the requested channel plugin is bootstrapped before any
+  // plugin lookup in this resolution path. When the active plugin
+  // registry is non-empty but missing the requested channel,
+  // resolveOutboundChannelPlugin triggers the same bootstrap path used by the
+  // outbound send flow, preventing "Unknown channel" / "Unknown target" errors.
+  // See: https://github.com/openclaw/openclaw/issues/55338
+  const plugin =
+    params.plugin ??
+    resolveOutboundChannelPlugin({
+      channel: params.channel,
+      cfg: params.cfg,
+      allowBootstrap: true,
+    }) ??
+    resolveTargetChannelPlugin(params.channel);
   const providerLabel = plugin?.meta?.label ?? params.channel;
   const hint = plugin?.messaging?.targetResolver?.hint;
   const kind = detectTargetKind(params.channel, raw, params.preferredKind, plugin);
@@ -581,6 +595,13 @@ export async function lookupDirectoryDisplay(params: {
   runtime?: RuntimeEnv;
 }): Promise<string | undefined> {
   const normalized = normalizeTargetForProvider(params.channel, params.targetId) ?? params.targetId;
+
+  // Ensure the channel plugin is available before directory lookups.
+  resolveOutboundChannelPlugin({
+    channel: params.channel,
+    cfg: params.cfg,
+    allowBootstrap: true,
+  });
 
   // Targets can resolve to either peers (DMs) or groups. Try both.
   const [groups, users] = await Promise.all([
