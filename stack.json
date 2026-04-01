@@ -1,8 +1,9 @@
 {
   "version": 5,
-  "prev": "f3a0e8f267c937d6367c195ce149424ab032419a",
+  "prev": "da7824bfcdfe2b750a5a7350b5944e2ebd7ad11c",
   "head": "22e4241219975e60e693d760b60d3254962e9bfa",
-  "applied": [
+  "applied": [],
+  "unapplied": [
     "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
@@ -12,7 +13,6 @@
     "fix-outbound-bootstrap-missing-channel",
     "anthropic-rate-limit-cooldown"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "anthropic-rate-limit-cooldown": {
