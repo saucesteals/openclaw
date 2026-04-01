@@ -565,12 +565,15 @@ function resolveCooldownDecision(params: {
   // For primary: try when requested model or when probe allows.
   // For same-provider fallbacks: only relax cooldown on transient provider
   // limits, which are often model-scoped and can recover on a sibling model.
-  const shouldAttemptDespiteCooldown =
+  let shouldAttemptDespiteCooldown =
     (params.isPrimary && (!params.requestedModel || shouldProbe)) ||
     (!params.isPrimary &&
       (inferredReason === "rate_limit" ||
         inferredReason === "overloaded" ||
         inferredReason === "unknown"));
+  if (inferredReason === "rate_limit") {
+    shouldAttemptDespiteCooldown = false;
+  }
   if (!shouldAttemptDespiteCooldown) {
     return {
       type: "skip",
