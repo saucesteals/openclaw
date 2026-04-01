@@ -1,13 +1,14 @@
 {
   "version": 5,
-  "prev": "a078a68fdf132e2b92f229a25078976db4a03075",
-  "head": "4390be0b70cdce8fbbd496d0002008b9706be8db",
+  "prev": "7fc5b41f1ce4f3ca30aa4ce8225fb12227719766",
+  "head": "d0f120beeabff75a2f2663403cd6edc0eac9b5fb",
   "applied": [
     "0003-feat-exec-inject",
     "0004-fix-sessions-refresh",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
-    "0007-fix-outbound-bootstrap"
+    "0007-fix-outbound-bootstrap",
+    "0008-fix-auth-anthropic-usage"
   ],
   "unapplied": [
     "fix-qmd-archived-sessions",
@@ -35,6 +36,9 @@
     },
     "0007-fix-outbound-bootstrap": {
       "oid": "4390be0b70cdce8fbbd496d0002008b9706be8db"
+    },
+    "0008-fix-auth-anthropic-usage": {
+      "oid": "d0f120beeabff75a2f2663403cd6edc0eac9b5fb"
     },
     "anthropic-rate-limit-cooldown": {
       "oid": "4f0def5bc6560f7a21c74c728a26768d6b4421ec"
