@@ -606,6 +606,7 @@ export async function markAuthProfileFailure(params: {
       if (
         reason === "rate_limit" &&
         profile.type === "token" &&
+        profile.token &&
         normalizeProviderId(profile.provider) === "anthropic" &&
         profile.token.startsWith("sk-ant-oat")
       ) {
