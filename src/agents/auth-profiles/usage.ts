@@ -1,4 +1,5 @@
 import type { OpenClawConfig } from "../../config/config.js";
+import { fetchClaudeUsage } from "../../infra/provider-usage.fetch.claude.js";
 import { normalizeProviderId } from "../model-selection.js";
 import { logAuthProfileFailureStateChange } from "./state-observation.js";
 import { saveAuthProfileStore, updateAuthProfileStoreWithLock } from "./store.js";
@@ -601,6 +602,24 @@ export async function markAuthProfileFailure(params: {
   if (updated) {
     store.usageStats = updated.usageStats;
     if (nextStats) {
+      // For Anthropic OAuth rate limits, fetch the actual reset time from the usage API
+      if (
+        reason === "rate_limit" &&
+        profile.type === "token" &&
+        normalizeProviderId(profile.provider) === "anthropic" &&
+        profile.token.startsWith("sk-ant-oat")
+      ) {
+        try {
+          const resetMs = await fetchAnthropicResetTime(profile.token);
+          if (resetMs && resetMs > (nextStats.cooldownUntil ?? 0)) {
+            nextStats.cooldownUntil = resetMs;
+            updateUsageStatsEntry(store, profileId, () => nextStats!);
+            authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
+          }
+        } catch {
+          // Usage API unavailable — fall through to calculated cooldown
+        }
+      }
       logAuthProfileFailureStateChange({
         runId,
         profileId,
@@ -697,4 +716,13 @@ export async function clearAuthProfileCooldown(params: {
 
   updateUsageStatsEntry(store, profileId, (existing) => resetUsageStats(existing));
   authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
+}
+
+async function fetchAnthropicResetTime(token: string): Promise<number | undefined> {
+  const usage = await fetchClaudeUsage(token, 5000, fetch);
+  const now = Date.now();
+  const resets = usage.windows
+    ?.map((w) => w.resetAt)
+    .filter((t): t is number => typeof t === "number" && t > now);
+  return resets?.length ? Math.min(...resets) : undefined;
 }
