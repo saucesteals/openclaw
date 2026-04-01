@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "da7824bfcdfe2b750a5a7350b5944e2ebd7ad11c",
-  "head": "22e4241219975e60e693d760b60d3254962e9bfa",
+  "prev": "2793d82d60847f64b7b744f8e57bbf89cd0a4c9a",
+  "head": "6433e923d48544436c495a4cd536aaf598ac6a94",
   "applied": [],
   "unapplied": [
     "fix-qmd-archived-sessions",
