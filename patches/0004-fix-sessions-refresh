@@ -1,9 +1,0 @@
-Bottom: 15dfcd5c3e4279d8d11f935e8b7824b67141fa1f
-Top:    91d7dc9a2ed24799eb2d4353081394685070748d
-Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-04-01 05:58:07 -0700
-
-[PATCH 4/8] fix(sessions): refresh skills snapshot when enabled set
-
-changes
-

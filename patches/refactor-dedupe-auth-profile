@@ -1,6 +1,0 @@
-Bottom: 60587c52b8bc926e8a0db2d9d8aebdaad09020bc
-Top:    5c0618f11879d2fe6e56a9bc92d13e8db1ff95fe
-Author: Peter Steinberger <steipete@gmail.com>
-Date:   2026-04-01 13:37:37 +0100
-
-refactor: dedupe auth profile store normalization

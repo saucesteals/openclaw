@@ -1,6 +1,0 @@
-Bottom: 5de4b3eaca0888ea479f0a3a0ab8965356c4900a
-Top:    60587c52b8bc926e8a0db2d9d8aebdaad09020bc
-Author: Peter Steinberger <steipete@gmail.com>
-Date:   2026-04-01 13:34:50 +0100
-
-fix: preserve telegram exec approval topic routing
