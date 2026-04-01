@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "77941d6dbe62fe5cfbd9cc86497c5d1de97816af",
-  "head": "917ffd90a7cbdd2a887e09f135dde878796b5d5a",
+  "prev": "e105dd5a400c142f5b8e2489da58ecdefb1dec94",
+  "head": "81c0dad10d964141cdb4acbbe8f11d4ab09850df",
   "applied": [
     "0003-feat-exec-inject",
-    "0004-fix-sessions-refresh"
+    "0004-fix-sessions-refresh",
+    "0005-chore-tsconfig-bump-lib"
   ],
   "unapplied": [
     "fix-qmd-archived-sessions",
@@ -23,6 +24,9 @@
     },
     "0004-fix-sessions-refresh": {
       "oid": "917ffd90a7cbdd2a887e09f135dde878796b5d5a"
+    },
+    "0005-chore-tsconfig-bump-lib": {
+      "oid": "81c0dad10d964141cdb4acbbe8f11d4ab09850df"
     },
     "anthropic-rate-limit-cooldown": {
       "oid": "4f0def5bc6560f7a21c74c728a26768d6b4421ec"
