@@ -452,6 +452,7 @@ function computeNextProfileUsageStats(params: {
   reason: AuthProfileFailureReason;
   cfgResolved: ResolvedAuthCooldownConfig;
   modelId?: string;
+  retryAfterMs?: number;
 }): ProfileUsageStats {
   const windowMs = params.cfgResolved.failureWindowMs;
   const windowExpired =
@@ -498,12 +499,16 @@ function computeNextProfileUsageStats(params: {
     updatedStats.disabledReason = params.reason;
   } else {
     const backoffMs = calculateAuthProfileCooldownMs(nextErrorCount);
+    const effectiveBackoffMs =
+      typeof params.retryAfterMs === "number" && params.retryAfterMs > backoffMs
+        ? params.retryAfterMs
+        : backoffMs;
     // Keep active cooldown windows immutable so retries within the window
     // cannot push recovery further out.
     updatedStats.cooldownUntil = keepActiveWindowOrRecompute({
       existingUntil: params.existing.cooldownUntil,
       now: params.now,
-      recomputedUntil: params.now + backoffMs,
+      recomputedUntil: params.now + effectiveBackoffMs,
     });
     // Update cooldown metadata based on whether the window is still active
     // and whether the same or a different model is failing.
@@ -557,6 +562,7 @@ export async function markAuthProfileFailure(params: {
   store: AuthProfileStore;
   profileId: string;
   reason: AuthProfileFailureReason;
+  retryAfterMs?: number;
   cfg?: OpenClawConfig;
   agentDir?: string;
   runId?: string;
@@ -592,6 +598,7 @@ export async function markAuthProfileFailure(params: {
         reason,
         cfgResolved,
         modelId,
+        retryAfterMs: params.retryAfterMs,
       });
       nextStats = computed;
       updateUsageStatsEntry(freshStore, profileId, () => computed);
@@ -631,6 +638,7 @@ export async function markAuthProfileFailure(params: {
     reason,
     cfgResolved,
     modelId,
+    retryAfterMs: params.retryAfterMs,
   });
   nextStats = computed;
   updateUsageStatsEntry(store, profileId, () => computed);

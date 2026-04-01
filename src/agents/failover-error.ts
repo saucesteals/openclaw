@@ -15,6 +15,7 @@ export class FailoverError extends Error {
   readonly profileId?: string;
   readonly status?: number;
   readonly code?: string;
+  readonly retryAfterMs?: number;
 
   constructor(
     message: string,
@@ -25,6 +26,7 @@ export class FailoverError extends Error {
       profileId?: string;
       status?: number;
       code?: string;
+      retryAfterMs?: number;
       cause?: unknown;
     },
   ) {
@@ -36,6 +38,7 @@ export class FailoverError extends Error {
     this.profileId = params.profileId;
     this.status = params.status;
     this.code = params.code;
+    this.retryAfterMs = params.retryAfterMs;
   }
 }
 
@@ -317,6 +320,7 @@ export function coerceToFailoverError(
   const message = getErrorMessage(err) || String(err);
   const status = getStatusCode(err) ?? resolveFailoverStatus(reason);
   const code = getErrorCode(err);
+  const retryAfterMs = extractRetryAfterMs(err);
 
   return new FailoverError(message, {
     reason,
@@ -325,6 +329,20 @@ export function coerceToFailoverError(
     profileId: context?.profileId,
     status,
     code,
+    retryAfterMs,
     cause: err instanceof Error ? err : undefined,
   });
+}
+
+function extractRetryAfterMs(err: unknown): number | undefined {
+  if (!err || typeof err !== "object") return undefined;
+  const headers = (err as { headers?: unknown }).headers;
+  if (!headers || typeof headers !== "object") return undefined;
+  const raw =
+    typeof (headers as Headers).get === "function"
+      ? (headers as Headers).get("retry-after")
+      : (headers as Record<string, string>)["retry-after"];
+  if (!raw) return undefined;
+  const seconds = Number(raw);
+  return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined;
 }
