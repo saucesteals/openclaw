@@ -566,8 +566,7 @@ function resolveCooldownDecision(params: {
   const shouldAttemptDespiteCooldown =
     (params.isPrimary && (!params.requestedModel || shouldProbe)) ||
     (!params.isPrimary &&
-      (inferredReason === "rate_limit" ||
-        inferredReason === "overloaded" ||
+      (inferredReason === "overloaded" ||
         inferredReason === "unknown"));
   if (!shouldAttemptDespiteCooldown) {
     return {
