@@ -1,9 +1,8 @@
 {
   "version": 5,
-  "prev": "768028fabb9d808affd6c739fe1a9dd09015e60f",
-  "head": "22e4241219975e60e693d760b60d3254962e9bfa",
-  "applied": [],
-  "unapplied": [
+  "prev": "3c315e29f31733304a9ed1c52b3967e96f0fb9e4",
+  "head": "4f0def5bc6560f7a21c74c728a26768d6b4421ec",
+  "applied": [
     "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
     "feat-exec-inject",
@@ -11,34 +10,36 @@
     "chore-bump-lib-es2025",
     "feat-skills-default-allow-symlink",
     "fix-outbound-bootstrap-missing-channel",
-    "anthropic-rate-limit-cooldown",
+    "anthropic-rate-limit-cooldown"
+  ],
+  "unapplied": [
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "anthropic-rate-limit-cooldown": {
-      "oid": "22e4241219975e60e693d760b60d3254962e9bfa"
+      "oid": "4f0def5bc6560f7a21c74c728a26768d6b4421ec"
     },
     "chore-bump-lib-es2025": {
-      "oid": "a7fa6cb4b2c414d9ab503adf5913df95dd1e5c8b"
+      "oid": "d0c439b462f2a71b52cb9684064b0cc1f9dfe14d"
     },
     "feat-exec-inject": {
-      "oid": "22a4b740ee74817e7ed4280453c47d420a433537"
+      "oid": "511082a35f59206d24fbb699f33540a76335900a"
     },
     "feat-hooks-add-bluebubbles-to": {
-      "oid": "a66ef5372036432b683e3018f45a975b77327c7f"
+      "oid": "4c96d9cb819fefca2d6f99514c99b9d4349c0fbc"
     },
     "feat-skills-default-allow-symlink": {
-      "oid": "e022795947f76fa5505d8b90e0efc246b6242b93"
+      "oid": "bf60617320d21f050240fd6f97b9d090ce45ab89"
     },
     "fix-outbound-bootstrap-missing-channel": {
-      "oid": "04a7988bb899bf987a5fc54052c06acf09e17b6f"
+      "oid": "9ac220d16971b8fee5170c8a9910c4a808060653"
     },
     "fix-qmd-archived-sessions": {
-      "oid": "ad3adcca52116f844335e7a80ea69643c0db2ff4"
+      "oid": "fb188742bff5fe12e5ce49ea0afdca8f5b456525"
     },
     "fix-skills-snapshot-refresh": {
-      "oid": "c7157b3dd874fbd3b2e8d8a03b7717117616ebf3"
+      "oid": "350958c1e88620154776869d21dbbd36f08324ac"
     },
     "version-bump": {
       "oid": "1bb0d00dc794503326c3f8618a76ae1e9a2a0dc0"
