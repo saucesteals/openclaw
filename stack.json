@@ -1,8 +1,10 @@
 {
   "version": 5,
-  "prev": "2793d82d60847f64b7b744f8e57bbf89cd0a4c9a",
-  "head": "6433e923d48544436c495a4cd536aaf598ac6a94",
-  "applied": [],
+  "prev": "0cf568bc264a62553908b6040c37eb7c32183c25",
+  "head": "df07ccb929f7246e0646d67984efe00f3cd33af7",
+  "applied": [
+    "0003-feat-exec-inject"
+  ],
   "unapplied": [
     "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
@@ -15,6 +17,9 @@
   ],
   "hidden": [],
   "patches": {
+    "0003-feat-exec-inject": {
+      "oid": "df07ccb929f7246e0646d67984efe00f3cd33af7"
+    },
     "anthropic-rate-limit-cooldown": {
       "oid": "4f0def5bc6560f7a21c74c728a26768d6b4421ec"
     },
