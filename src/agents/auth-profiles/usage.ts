@@ -615,19 +615,17 @@ export async function markAuthProfileFailure(params: {
           const resetMs = await fetchAnthropicResetTime(profile.token);
           if (resetMs && resetMs > (nextStats.cooldownUntil ?? 0)) {
             const deltaMs = resetMs - Date.now();
-            usageLog.info(
-              { event: "anthropic_usage_api_cooldown_override", profileId, resetAt: resetMs, deltaMs, previousCooldownUntil: nextStats.cooldownUntil },
-              `anthropic usage API override: cooldown extended by ${Math.round(deltaMs / 1000)}s`,
-            );
+            usageLog.info(`anthropic usage API override: cooldown extended by ${Math.round(deltaMs / 1000)}s`, {
+              event: "anthropic_usage_api_cooldown_override", profileId, resetAt: resetMs, deltaMs, previousCooldownUntil: nextStats.cooldownUntil,
+            });
             nextStats.cooldownUntil = resetMs;
             updateUsageStatsEntry(store, profileId, () => nextStats!);
             authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
           }
         } catch (err) {
-          usageLog.warn(
-            { event: "anthropic_usage_api_cooldown_error", profileId, error: err instanceof Error ? err.message : String(err) },
-            "anthropic usage API cooldown fetch failed — using calculated cooldown",
-          );
+          usageLog.warn("anthropic usage API cooldown fetch failed — using calculated cooldown", {
+            event: "anthropic_usage_api_cooldown_error", profileId, error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
       logAuthProfileFailureStateChange({
@@ -737,9 +735,8 @@ async function fetchAnthropicResetTime(token: string): Promise<number | undefine
     ?.map((w) => w.resetAt)
     .filter((t): t is number => typeof t === "number" && t > now);
   const soonest = resets?.length ? Math.min(...resets) : undefined;
-  usageLog.info(
-    { event: "anthropic_usage_api_reset_check", resetAt: soonest, windowCount: usage.windows?.length ?? 0 },
-    "anthropic usage API reset check",
-  );
+  usageLog.info("anthropic usage API reset check", {
+    event: "anthropic_usage_api_reset_check", resetAt: soonest, windowCount: usage.windows?.length ?? 0,
+  });
   return soonest;
 }
