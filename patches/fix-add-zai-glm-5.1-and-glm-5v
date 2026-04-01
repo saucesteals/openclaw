@@ -1,0 +1,21 @@
+Bottom: 5c0618f11879d2fe6e56a9bc92d13e8db1ff95fe
+Top:    0a4d58556fa9f0ab6abb9888b3242be1e110fdf2
+Author: Tomsun28 <tomsun28@outlook.com>
+Date:   2026-04-01 18:09:02 +0530
+
+fix: add ZAI GLM-5.1 and GLM-5V Turbo support (#58793) (thanks @tomsun28)
+
+* provider(zai): add GLM-5.1 and GLM-5V Turbo models
+
+* feat(zai): extract model definition builder for glm-5 forward compat
+
+* test(zai): cover persisted glm-5 dynamic metadata
+
+* fix: add ZAI GLM-5.1 and GLM-5V Turbo support (#58793) (thanks @tomsun28)
+
+* fix: preserve ZAI dynamic model transport config (#58793) (thanks @tomsun28)
+
+---------
+
+Co-authored-by: gongchao <chao.gong@aminer.cn>
+Co-authored-by: Ayaan Zaidi <hi@obviy.us>

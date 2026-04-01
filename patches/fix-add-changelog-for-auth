@@ -1,0 +1,6 @@
+Bottom: 0dfb14c4d59063da2775358f9dfa9d6d80188e47
+Top:    5de4b3eaca0888ea479f0a3a0ab8965356c4900a
+Author: Peter Steinberger <steipete@gmail.com>
+Date:   2026-04-01 21:33:10 +0900
+
+fix: add changelog for auth profile store load crash (#58923) (thanks @openperf)

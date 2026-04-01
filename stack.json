@@ -1,8 +1,16 @@
 {
   "version": 5,
-  "prev": "7fc5b41f1ce4f3ca30aa4ce8225fb12227719766",
+  "prev": "dcabb5eb3bb09e7740e56ec6e6b943105669d6ae",
   "head": "d0f120beeabff75a2f2663403cd6edc0eac9b5fb",
   "applied": [
+    "fix-add-telegram-error",
+    "fix-agents-normalize-provider",
+    "fix-unify-structured-provider",
+    "fix-auth-profiles-ensure",
+    "fix-add-changelog-for-auth",
+    "fix-preserve-telegram-exec",
+    "refactor-dedupe-auth-profile",
+    "fix-add-zai-glm-5.1-and-glm-5v",
     "0003-feat-exec-inject",
     "0004-fix-sessions-refresh",
     "0005-chore-tsconfig-bump-lib",
@@ -55,14 +63,38 @@
     "feat-skills-default-allow-symlink": {
       "oid": "bf60617320d21f050240fd6f97b9d090ce45ab89"
     },
+    "fix-add-changelog-for-auth": {
+      "oid": "f55b6b1acfb28d27884656ccb3466f788e97f8a0"
+    },
+    "fix-add-telegram-error": {
+      "oid": "74b9f22a424c73641c7e0fc8ec1605afab6b98e9"
+    },
+    "fix-add-zai-glm-5.1-and-glm-5v": {
+      "oid": "6433e923d48544436c495a4cd536aaf598ac6a94"
+    },
+    "fix-agents-normalize-provider": {
+      "oid": "c96ee423009ad7f2e8a56e72ec30e90af8eb9da5"
+    },
+    "fix-auth-profiles-ensure": {
+      "oid": "ac68321d4df3e1cbdc9c4101f596f0a9449f2923"
+    },
     "fix-outbound-bootstrap-missing-channel": {
       "oid": "9ac220d16971b8fee5170c8a9910c4a808060653"
+    },
+    "fix-preserve-telegram-exec": {
+      "oid": "ab3c646bb1bc051f71d0bfe123a00571e6ae9713"
     },
     "fix-qmd-archived-sessions": {
       "oid": "fb188742bff5fe12e5ce49ea0afdca8f5b456525"
     },
     "fix-skills-snapshot-refresh": {
       "oid": "350958c1e88620154776869d21dbbd36f08324ac"
+    },
+    "fix-unify-structured-provider": {
+      "oid": "cd4b03c5684fe0a919dbca639201894a92561a06"
+    },
+    "refactor-dedupe-auth-profile": {
+      "oid": "33fbd9b77089c7dc3d439aabeb6b7c62307cc307"
     }
   }
 }

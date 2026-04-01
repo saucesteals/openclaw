@@ -1,0 +1,8 @@
+Bottom: 95578dc841fb20ffd9fd159abab059fe037072f3
+Top:    0dfb14c4d59063da2775358f9dfa9d6d80188e47
+Author: openperf <16864032@qq.com>
+Date:   2026-04-01 21:33:10 +0900
+
+fix(auth-profiles ): ensure credential key and token are strings to prevent crash
+
+Fixes #58861

@@ -1,0 +1,6 @@
+Bottom: 8146e9796f44a12ebcb0139628d64826cf291bec
+Top:    95578dc841fb20ffd9fd159abab059fe037072f3
+Author: Peter Steinberger <steipete@gmail.com>
+Date:   2026-04-01 21:31:18 +0900
+
+fix: unify structured provider failover classification (#58856) (thanks @aaron-he-zhu)
