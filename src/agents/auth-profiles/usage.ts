@@ -618,6 +618,7 @@ export async function markAuthProfileFailure(params: {
               event: "anthropic_usage_api_cooldown_override", profileId, resetAt: resetMs, deltaMs,
             });
             nextStats.cooldownUntil = resetMs;
+            nextStats.cooldownModel = undefined; // account-level rate limit applies to all models
             updateUsageStatsEntry(store, profileId, () => nextStats!);
             authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
           }
