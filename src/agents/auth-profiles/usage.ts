@@ -1,4 +1,6 @@
 import type { OpenClawConfig } from "../../config/config.js";
+import { fetchClaudeUsage } from "../../infra/provider-usage.fetch.claude.js";
+import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { normalizeProviderId } from "../model-selection.js";
 import { logAuthProfileFailureStateChange } from "./state-observation.js";
 import { saveAuthProfileStore, updateAuthProfileStoreWithLock } from "./store.js";
@@ -795,6 +797,31 @@ export async function markAuthProfileFailure(params: {
   if (updated) {
     store.usageStats = updated.usageStats;
     if (nextStats) {
+      if (
+        reason === "rate_limit" &&
+        profile.type === "token" &&
+        profile.token &&
+        normalizeProviderId(profile.provider) === "anthropic" &&
+        profile.token.startsWith("sk-ant-oat")
+      ) {
+        try {
+          const resetMs = await fetchAnthropicResetTime(profile.token);
+          if (resetMs && resetMs > (nextStats.cooldownUntil ?? 0)) {
+            const deltaMs = resetMs - Date.now();
+            _usageLog.info(`anthropic usage API override: cooldown extended by ${Math.round(deltaMs / 1000)}s`, {
+              event: "anthropic_usage_api_cooldown_override", profileId, resetAt: resetMs, deltaMs,
+            });
+            nextStats.cooldownUntil = resetMs;
+            nextStats.cooldownModel = undefined; // account-level rate limit applies to all models
+            updateUsageStatsEntry(store, profileId, () => nextStats!);
+            authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
+          }
+        } catch (err) {
+          _usageLog.warn("anthropic usage API cooldown fetch failed — using calculated cooldown", {
+            event: "anthropic_usage_api_cooldown_error", profileId, error: err instanceof Error ? err.message : String(err),
+          });
+        }
+      }
       logAuthProfileFailureStateChange({
         runId,
         profileId,
@@ -899,4 +926,15 @@ export async function clearAuthProfileCooldown(params: {
 
   updateUsageStatsEntry(store, profileId, (existing) => resetUsageStats(existing));
   authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
+}
+
+const _usageLog = createSubsystemLogger("agent/embedded");
+
+async function fetchAnthropicResetTime(token: string): Promise<number | undefined> {
+  const usage = await fetchClaudeUsage(token, 5000, fetch);
+  const now = Date.now();
+  const resets = usage.windows
+    ?.map((w) => w.resetAt)
+    .filter((t): t is number => typeof t === "number" && t > now);
+  return resets?.length ? Math.min(...resets) : undefined;
 }
