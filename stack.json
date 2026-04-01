@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "cd22094efa192489c0f5b96f4832747e0315fa5b",
+  "prev": "0cc5c50ff96ccff2548d774884abe4a7556bad3b",
   "head": "3d9427b3755116c9b9a865f44d0c9f5a8c2b1880",
   "applied": [
     "fix-qmd-archived-sessions",
@@ -13,9 +13,7 @@
     "usage-api-cooldown",
     "version-bump-2"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-bump-lib-es2025": {
@@ -41,9 +39,6 @@
     },
     "usage-api-cooldown": {
       "oid": "38413cd15e5fb52f6c9b47cd2f80d91690027a84"
-    },
-    "version-bump": {
-      "oid": "ed1c3db2e07cdab3837c933c4358d13ad8d3a32e"
     },
     "version-bump-2": {
       "oid": "3d9427b3755116c9b9a865f44d0c9f5a8c2b1880"
