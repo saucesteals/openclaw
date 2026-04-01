@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "c178bfb49a87054e54e425c57f853369abea1d4e",
-  "head": "d599d361a31f62a8525e93019beac985a03bbde2",
+  "prev": "ec6cb657c43bc18da0c8053d9ad630a52733c0ea",
+  "head": "4ed6e1ac412fcc8a7151f13cc115ddac4df42fd9",
   "applied": [
     "0003-feat-exec-inject",
-    "0004-fix-sessions-refresh"
+    "0004-fix-sessions-refresh",
+    "0005-chore-tsconfig-bump-lib"
   ],
   "unapplied": [],
   "hidden": [],
@@ -14,6 +15,9 @@
     },
     "0004-fix-sessions-refresh": {
       "oid": "d599d361a31f62a8525e93019beac985a03bbde2"
+    },
+    "0005-chore-tsconfig-bump-lib": {
+      "oid": "4ed6e1ac412fcc8a7151f13cc115ddac4df42fd9"
     }
   }
 }
