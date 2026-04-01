@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "1a7dd0b86e411aee791eb6800dd381a8757d5409",
+  "prev": "5e078b40fa874543273a386ddc4ace23b6d4e05f",
   "head": "d1ed5fce41340b1889f7dd05a21d29282555a951",
   "applied": [
     "fix-qmd-archived-sessions",
@@ -12,9 +12,7 @@
     "fix-outbound-bootstrap-missing-channel",
     "retry-after-cooldown"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-bump-lib-es2025": {
@@ -40,9 +38,6 @@
     },
     "retry-after-cooldown": {
       "oid": "d1ed5fce41340b1889f7dd05a21d29282555a951"
-    },
-    "version-bump": {
-      "oid": "1b20c755c5b1d6032d5816ee890624dc908c549f"
     }
   }
 }
