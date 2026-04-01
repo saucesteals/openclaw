@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "0e94db8234b3291a16f433f762c260e355ad8161",
-  "head": "dbb1bf968a31751b559d99dbf99a3b20a7f2938e",
+  "prev": "85950badebd6b8305f1928be920368c3b99bf3d6",
+  "head": "6a9fa18022d04b958d6d0cdc0ad7787d0692c47c",
   "applied": [
     "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
@@ -11,7 +11,8 @@
     "feat-skills-default-allow-symlink",
     "fix-outbound-bootstrap-missing-channel",
     "anthropic-rate-limit-cooldown",
-    "version-bump"
+    "version-bump",
+    "refresh-temp"
   ],
   "unapplied": [],
   "hidden": [],
@@ -39,6 +40,9 @@
     },
     "fix-skills-snapshot-refresh": {
       "oid": "c7157b3dd874fbd3b2e8d8a03b7717117616ebf3"
+    },
+    "refresh-temp": {
+      "oid": "6a9fa18022d04b958d6d0cdc0ad7787d0692c47c"
     },
     "version-bump": {
       "oid": "dbb1bf968a31751b559d99dbf99a3b20a7f2938e"
