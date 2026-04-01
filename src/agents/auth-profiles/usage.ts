@@ -1,5 +1,6 @@
 import type { OpenClawConfig } from "../../config/config.js";
 import { fetchClaudeUsage } from "../../infra/provider-usage.fetch.claude.js";
+import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { normalizeProviderId } from "../model-selection.js";
 import { logAuthProfileFailureStateChange } from "./state-observation.js";
 import { saveAuthProfileStore, updateAuthProfileStoreWithLock } from "./store.js";
@@ -606,18 +607,25 @@ export async function markAuthProfileFailure(params: {
       if (
         reason === "rate_limit" &&
         profile.type === "token" &&
+        profile.token &&
         normalizeProviderId(profile.provider) === "anthropic" &&
         profile.token.startsWith("sk-ant-oat")
       ) {
         try {
           const resetMs = await fetchAnthropicResetTime(profile.token);
           if (resetMs && resetMs > (nextStats.cooldownUntil ?? 0)) {
+            const deltaMs = resetMs - Date.now();
+            usageLog.info(`anthropic usage API override: cooldown extended by ${Math.round(deltaMs / 1000)}s`, {
+              event: "anthropic_usage_api_cooldown_override", profileId, resetAt: resetMs, deltaMs, previousCooldownUntil: nextStats.cooldownUntil,
+            });
             nextStats.cooldownUntil = resetMs;
             updateUsageStatsEntry(store, profileId, () => nextStats!);
             authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
           }
-        } catch {
-          // Usage API unavailable — fall through to calculated cooldown
+        } catch (err) {
+          usageLog.warn("anthropic usage API cooldown fetch failed — using calculated cooldown", {
+            event: "anthropic_usage_api_cooldown_error", profileId, error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
       logAuthProfileFailureStateChange({
@@ -718,11 +726,17 @@ export async function clearAuthProfileCooldown(params: {
   authProfileUsageDeps.saveAuthProfileStore(store, agentDir);
 }
 
+const usageLog = createSubsystemLogger("agent/embedded");
+
 async function fetchAnthropicResetTime(token: string): Promise<number | undefined> {
   const usage = await fetchClaudeUsage(token, 5000, fetch);
   const now = Date.now();
   const resets = usage.windows
     ?.map((w) => w.resetAt)
     .filter((t): t is number => typeof t === "number" && t > now);
-  return resets?.length ? Math.min(...resets) : undefined;
+  const soonest = resets?.length ? Math.min(...resets) : undefined;
+  usageLog.info("anthropic usage API reset check", {
+    event: "anthropic_usage_api_reset_check", resetAt: soonest, windowCount: usage.windows?.length ?? 0,
+  });
+  return soonest;
 }
