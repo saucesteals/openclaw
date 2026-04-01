@@ -1,9 +1,15 @@
 {
   "version": 5,
-  "prev": "4be39c09f5d4e4f3062cd6ec5f1e096e2612ba96",
-  "head": "6433e923d48544436c495a4cd536aaf598ac6a94",
-  "applied": [],
+  "prev": "fc0d58b3ef28fdaafd3dfddc1a32b0a941411481",
+  "head": "26f5afbfce7693d1f23e11ce1e0dc47131e6e3a5",
+  "applied": [
+    "0003-feat-exec-inject"
+  ],
   "unapplied": [],
   "hidden": [],
-  "patches": {}
+  "patches": {
+    "0003-feat-exec-inject": {
+      "oid": "26f5afbfce7693d1f23e11ce1e0dc47131e6e3a5"
+    }
+  }
 }
