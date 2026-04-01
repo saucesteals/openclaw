@@ -1,9 +1,10 @@
 {
   "version": 5,
-  "prev": "0cf568bc264a62553908b6040c37eb7c32183c25",
-  "head": "df07ccb929f7246e0646d67984efe00f3cd33af7",
+  "prev": "77941d6dbe62fe5cfbd9cc86497c5d1de97816af",
+  "head": "917ffd90a7cbdd2a887e09f135dde878796b5d5a",
   "applied": [
-    "0003-feat-exec-inject"
+    "0003-feat-exec-inject",
+    "0004-fix-sessions-refresh"
   ],
   "unapplied": [
     "fix-qmd-archived-sessions",
@@ -19,6 +20,9 @@
   "patches": {
     "0003-feat-exec-inject": {
       "oid": "df07ccb929f7246e0646d67984efe00f3cd33af7"
+    },
+    "0004-fix-sessions-refresh": {
+      "oid": "917ffd90a7cbdd2a887e09f135dde878796b5d5a"
     },
     "anthropic-rate-limit-cooldown": {
       "oid": "4f0def5bc6560f7a21c74c728a26768d6b4421ec"
