@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "00d94975bb07443321320d0cd075e916d0db3b05",
+  "prev": "17fb68aab8013c8ecc00f580978c6f655dc2b386",
   "head": "ffb05ca5999ba524ec88e4bd80d9e31e7a81139a",
   "applied": [
     "fix-qmd-archived-sessions",
@@ -12,9 +12,7 @@
     "fix-outbound-bootstrap-missing-channel",
     "anthropic-rate-limit-cooldown"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "anthropic-rate-limit-cooldown": {
@@ -40,9 +38,6 @@
     },
     "fix-skills-snapshot-refresh": {
       "oid": "c7157b3dd874fbd3b2e8d8a03b7717117616ebf3"
-    },
-    "version-bump": {
-      "oid": "a94dfb22fb8643a942c9f129718233c4e45240ea"
     }
   }
 }
