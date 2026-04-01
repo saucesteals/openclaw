@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "11e0469ec29e94f90361f4efd91452018d47e76d",
-  "head": "1bb0d00dc794503326c3f8618a76ae1e9a2a0dc0",
+  "prev": "3fcfba4566999ece8c9b0340e8f3664e653b3020",
+  "head": "22e4241219975e60e693d760b60d3254962e9bfa",
   "applied": [
     "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
@@ -10,10 +10,11 @@
     "chore-bump-lib-es2025",
     "feat-skills-default-allow-symlink",
     "fix-outbound-bootstrap-missing-channel",
-    "anthropic-rate-limit-cooldown",
+    "anthropic-rate-limit-cooldown"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "anthropic-rate-limit-cooldown": {
