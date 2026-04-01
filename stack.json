@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "b02c41584b6284fd62bf09ac743859343cf59901",
-  "head": "bbb9ee91f1364ff553b796e7560532f92bc27b56",
+  "prev": "96c536dd4103b3848b60455b4c02913986c0700c",
+  "head": "da18b94889fa049166706f7a9645396d61c78ff6",
   "applied": [
     "fix-qmd-archived-sessions",
     "feat-hooks-add-bluebubbles-to",
@@ -10,10 +10,11 @@
     "chore-bump-lib-es2025",
     "feat-skills-default-allow-symlink",
     "fix-outbound-bootstrap-missing-channel",
-    "usage-api-cooldown",
+    "usage-api-cooldown"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-bump-lib-es2025": {
