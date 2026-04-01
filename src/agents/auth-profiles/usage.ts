@@ -719,14 +719,10 @@ export async function clearAuthProfileCooldown(params: {
 }
 
 async function fetchAnthropicResetTime(token: string): Promise<number | undefined> {
-  try {
-    const usage = await fetchClaudeUsage(token, 5000, fetch);
-    const now = Date.now();
-    const resets = usage.windows
-      ?.map((w) => w.resetAt)
-      .filter((t): t is number => typeof t === "number" && t > now);
-    return resets?.length ? Math.min(...resets) : undefined;
-  } catch {
-    return undefined;
-  }
+  const usage = await fetchClaudeUsage(token, 5000, fetch);
+  const now = Date.now();
+  const resets = usage.windows
+    ?.map((w) => w.resetAt)
+    .filter((t): t is number => typeof t === "number" && t > now);
+  return resets?.length ? Math.min(...resets) : undefined;
 }
