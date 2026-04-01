@@ -314,6 +314,7 @@ export async function runEmbeddedPiAgent(
       const maybeMarkAuthProfileFailure = async (failure: {
         profileId?: string;
         reason?: AuthProfileFailureReason | null;
+        retryAfterMs?: number;
         config?: RunEmbeddedPiAgentParams["config"];
         agentDir?: RunEmbeddedPiAgentParams["agentDir"];
         modelId?: string;
@@ -326,6 +327,7 @@ export async function runEmbeddedPiAgent(
           store: authStore,
           profileId,
           reason,
+          retryAfterMs: failure.retryAfterMs,
           cfg: params.config,
           agentDir,
           runId: params.runId,
@@ -1031,6 +1033,7 @@ export async function runEmbeddedPiAgent(
             await maybeMarkAuthProfileFailure({
               profileId: lastProfileId,
               reason: promptProfileFailureReason,
+              retryAfterMs: normalizedPromptFailover?.retryAfterMs,
               modelId,
             });
             const promptFailoverFailure =
