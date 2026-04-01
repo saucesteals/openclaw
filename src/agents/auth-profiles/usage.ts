@@ -603,7 +603,7 @@ export async function markAuthProfileFailure(params: {
     store.usageStats = updated.usageStats;
     if (nextStats) {
       // For Anthropic OAuth rate limits, fetch the actual reset time from the usage API
-      if (reason === "rate_limit" && profile.token) {
+      if (reason === "rate_limit" && "token" in profile && typeof profile.token === "string") {
         const resetMs = await fetchAnthropicResetTime(profile.token);
         if (resetMs && resetMs > (nextStats.cooldownUntil ?? 0)) {
           nextStats.cooldownUntil = resetMs;
