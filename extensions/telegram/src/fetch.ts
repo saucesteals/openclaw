@@ -132,8 +132,13 @@ function buildTelegramConnectOptions(params: {
     autoSelectFamily?: boolean;
     autoSelectFamilyAttemptTimeout?: number;
     family?: number;
+    keepAlive?: boolean;
+    keepAliveInitialDelay?: number;
     lookup?: LookupFunction;
-  } = {};
+  } = {
+    keepAlive: true,
+    keepAliveInitialDelay: 30_000,
+  };
 
   if (params.forceIpv4) {
     connect.family = 4;
