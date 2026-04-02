@@ -19,7 +19,9 @@ async function fetchProviderUsageSnapshotFallback(params: {
   auth: ProviderAuth;
   timeoutMs: number;
   fetchFn: typeof fetch;
+  config?: OpenClawConfig;
 }): Promise<ProviderUsageSnapshot> {
+<<<<<<< current
   void params.timeoutMs;
   void params.fetchFn;
   return {
@@ -28,6 +30,47 @@ async function fetchProviderUsageSnapshotFallback(params: {
     windows: [],
     error: "Unsupported provider",
   };
+=======
+  switch (params.auth.provider) {
+    case "anthropic": {
+      const baseUrl = params.config?.models?.providers?.anthropic?.baseUrl;
+      return await fetchClaudeUsage(params.auth.token, params.timeoutMs, params.fetchFn, baseUrl);
+    }
+    case "github-copilot":
+      return await fetchCopilotUsageFallback(params.auth.token, params.timeoutMs, params.fetchFn);
+    case "google-gemini-cli":
+      return await fetchGeminiUsage(
+        params.auth.token,
+        params.timeoutMs,
+        params.fetchFn,
+        "google-gemini-cli",
+      );
+    case "openai-codex":
+      return await fetchCodexUsage(
+        params.auth.token,
+        params.auth.accountId,
+        params.timeoutMs,
+        params.fetchFn,
+      );
+    case "zai":
+      return await fetchZaiUsage(params.auth.token, params.timeoutMs, params.fetchFn);
+    case "minimax":
+      return await fetchMinimaxUsage(params.auth.token, params.timeoutMs, params.fetchFn);
+    case "xiaomi":
+      return {
+        provider: "xiaomi",
+        displayName: PROVIDER_LABELS.xiaomi,
+        windows: [],
+      };
+    default:
+      return {
+        provider: params.auth.provider,
+        displayName: PROVIDER_LABELS[params.auth.provider],
+        windows: [],
+        error: "Unsupported provider",
+      };
+  }
+>>>>>>> patched
 }
 
 type UsageSummaryOptions = {
@@ -75,6 +118,7 @@ async function fetchProviderUsageSnapshot(params: {
     auth: params.auth,
     timeoutMs: params.timeoutMs,
     fetchFn: params.fetchFn,
+    config: params.config,
   });
 }
 
