@@ -1,16 +1,16 @@
 {
   "version": 5,
-  "prev": "4d2843abed443525d6c5a29a4c88735bbaa2cce2",
-  "head": "b6312f870aa6f4405a42d36eeb11754da06a8303",
+  "prev": "93f4fe410e169f9052c411820f41729a4df33e33",
+  "head": "d24657d75b8f205e7576630e6bd8314f3cc7285c",
   "applied": [
     "0003-feat-exec-inject",
     "0004-fix-sessions-refresh",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
-    "0007-fix-outbound-bootstrap",
-    "version-bump"
+    "0007-fix-outbound-bootstrap"
   ],
   "unapplied": [
+    "version-bump",
     "0008-fix-auth-anthropic-usage"
   ],
   "hidden": [],
