@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "7ce6e3e171fc4587c8499ed17ce89eb42cf1c742",
+  "prev": "f2b9d12fe25e9cfebf0819127b3f331cb7e570cb",
   "head": "0eb55a29d9f254e2d6ef551c10b8399e135d7080",
   "applied": [
     "0003-feat-exec-inject",
@@ -11,7 +11,6 @@
     "fix-telegram-keepalive"
   ],
   "unapplied": [
-    "version-bump",
     "0008-fix-auth-anthropic-usage"
   ],
   "hidden": [],
@@ -36,9 +35,6 @@
     },
     "fix-telegram-keepalive": {
       "oid": "0eb55a29d9f254e2d6ef551c10b8399e135d7080"
-    },
-    "version-bump": {
-      "oid": "86c6ab1345a432e9c09233030bd673fb7cf512b4"
     }
   }
 }
