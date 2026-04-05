@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "0c0b9b5f52a88197ec22b4f463a586457cb44c64",
-  "head": "c6dc4118d7f857fb986da6411868ee2cd1987fa4",
+  "prev": "5f4faf05da97105b327780447b9ff4abcdb8982c",
+  "head": "a5a7cacf9fe26b3670ba6d83d49ab1a05162ad8c",
   "applied": [
     "0003-feat-exec-inject",
     "0004-fix-sessions-refresh",
@@ -9,10 +9,10 @@
     "0006-feat-skills-default-allow",
     "0007-fix-outbound-bootstrap",
     "fix-telegram-keepalive",
-    "fix-usage-baseurl",
-    "version-bump"
+    "fix-usage-baseurl"
   ],
   "unapplied": [
+    "version-bump",
     "0008-fix-auth-anthropic-usage"
   ],
   "hidden": [],
