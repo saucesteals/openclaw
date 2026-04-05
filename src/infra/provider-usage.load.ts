@@ -75,10 +75,13 @@ async function fetchProviderUsageSnapshotFallback(params: {
   auth: ProviderAuth;
   timeoutMs: number;
   fetchFn: typeof fetch;
+  config?: OpenClawConfig;
 }): Promise<ProviderUsageSnapshot> {
   switch (params.auth.provider) {
-    case "anthropic":
-      return await fetchClaudeUsage(params.auth.token, params.timeoutMs, params.fetchFn);
+    case "anthropic": {
+      const baseUrl = params.config?.models?.providers?.anthropic?.baseUrl;
+      return await fetchClaudeUsage(params.auth.token, params.timeoutMs, params.fetchFn, baseUrl);
+    }
     case "github-copilot":
       return await fetchCopilotUsageFallback(params.auth.token, params.timeoutMs, params.fetchFn);
     case "google-gemini-cli":
@@ -160,6 +163,7 @@ async function fetchProviderUsageSnapshot(params: {
     auth: params.auth,
     timeoutMs: params.timeoutMs,
     fetchFn: params.fetchFn,
+    config: params.config,
   });
 }
 

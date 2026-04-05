@@ -116,9 +116,13 @@ export async function fetchClaudeUsage(
   token: string,
   timeoutMs: number,
   fetchFn: typeof fetch,
+  baseUrl?: string,
 ): Promise<ProviderUsageSnapshot> {
+  const usageUrl = baseUrl
+    ? `${baseUrl.replace(/\/+$/, "")}/api/oauth/usage`
+    : "https://api.anthropic.com/api/oauth/usage";
   const res = await fetchJson(
-    "https://api.anthropic.com/api/oauth/usage",
+    usageUrl,
     {
       headers: {
         Authorization: `Bearer ${token}`,
