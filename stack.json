@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "5f4faf05da97105b327780447b9ff4abcdb8982c",
+  "prev": "b1cd8628f0d10fe0982d3f7e83da134dd14fffce",
   "head": "a5a7cacf9fe26b3670ba6d83d49ab1a05162ad8c",
   "applied": [
     "0003-feat-exec-inject",
@@ -12,7 +12,6 @@
     "fix-usage-baseurl"
   ],
   "unapplied": [
-    "version-bump",
     "0008-fix-auth-anthropic-usage"
   ],
   "hidden": [],
@@ -40,9 +39,6 @@
     },
     "fix-usage-baseurl": {
       "oid": "a5a7cacf9fe26b3670ba6d83d49ab1a05162ad8c"
-    },
-    "version-bump": {
-      "oid": "c6dc4118d7f857fb986da6411868ee2cd1987fa4"
     }
   }
 }
