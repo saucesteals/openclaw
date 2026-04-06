@@ -1,10 +1,9 @@
 {
   "version": 5,
-  "prev": "1280d7382bda549b7379656a80e70a1603a9f35a",
-  "head": "874fbd1a4755d5162beb1b202d787246ad9801cd",
+  "prev": "2054f81392fd91022b1ae8ea66e5ebc159c83d14",
+  "head": "1dab4bce1304d6ffa58e48278dd1936d015a9a74",
   "applied": [
-    "0003-feat-exec-inject",
-    "refresh-temp"
+    "0003-feat-exec-inject"
   ],
   "unapplied": [
     "0005-chore-tsconfig-bump-lib",
@@ -37,9 +36,6 @@
     },
     "fix-usage-baseurl": {
       "oid": "546af753d5c287b9cae63fffaa989c1fb1f90907"
-    },
-    "refresh-temp": {
-      "oid": "874fbd1a4755d5162beb1b202d787246ad9801cd"
     },
     "version-bump": {
       "oid": "8f89f796295a039edbe33a5a803e1c5ec7b12e3c"
