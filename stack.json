@@ -1,14 +1,13 @@
 {
   "version": 5,
-  "prev": "ac5c5dd1167677410dbe23959be1ae9f7571bc6a",
-  "head": "36e08881c2a13e8a916fa79c9553d856193755b4",
+  "prev": "57febb5b71f8e63f102609b2f383498e669094d9",
+  "head": "c09b4d4067e9c0cf7a75cf8c39efc6d4e75e8404",
   "applied": [
     "0003-feat-exec-inject",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
     "0007-fix-outbound-bootstrap",
-    "fix-telegram-keepalive",
-    "refresh-temp"
+    "fix-telegram-keepalive"
   ],
   "unapplied": [
     "version-bump",
@@ -32,10 +31,7 @@
       "oid": "c43bf8d75065c88acfb9dc443298a79b0b33ca4d"
     },
     "fix-telegram-keepalive": {
-      "oid": "fa6f47feb80ae313df3e683d2a5aafc168d2cdcb"
-    },
-    "refresh-temp": {
-      "oid": "36e08881c2a13e8a916fa79c9553d856193755b4"
+      "oid": "c09b4d4067e9c0cf7a75cf8c39efc6d4e75e8404"
     },
     "version-bump": {
       "oid": "8f89f796295a039edbe33a5a803e1c5ec7b12e3c"
