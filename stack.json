@@ -1,10 +1,9 @@
 {
   "version": 5,
-  "prev": "3aa8fce3f63d2a9dd279b2c232d3de88fbfc249e",
-  "head": "2ca272704f034e5d5cc5f565e226af98eb30a215",
+  "prev": "c893ccea15ff0a5bce657a04806653fefe941431",
+  "head": "1dab4bce1304d6ffa58e48278dd1936d015a9a74",
   "applied": [
-    "0003-feat-exec-inject",
-    "0004-fix-sessions-refresh"
+    "0003-feat-exec-inject"
   ],
   "unapplied": [
     "0005-chore-tsconfig-bump-lib",
@@ -19,9 +18,6 @@
   "patches": {
     "0003-feat-exec-inject": {
       "oid": "1dab4bce1304d6ffa58e48278dd1936d015a9a74"
-    },
-    "0004-fix-sessions-refresh": {
-      "oid": "2ca272704f034e5d5cc5f565e226af98eb30a215"
     },
     "0005-chore-tsconfig-bump-lib": {
       "oid": "4ed6e1ac412fcc8a7151f13cc115ddac4df42fd9"
