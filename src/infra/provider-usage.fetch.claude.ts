@@ -116,26 +116,18 @@ export async function fetchClaudeUsage(
   token: string,
   timeoutMs: number,
   fetchFn: typeof fetch,
-  baseUrl?: string,
 ): Promise<ProviderUsageSnapshot> {
-  const usageUrl = baseUrl
-    ? `${baseUrl.replace(/\/+$/, "")}/api/oauth/usage`
-    : "https://api.anthropic.com/api/oauth/usage";
-  const headers: Record<string, string> = baseUrl
-    ? {
-        "x-api-key": token,
-        Accept: "application/json",
-      }
-    : {
+  const res = await fetchJson(
+    "https://api.anthropic.com/api/oauth/usage",
+    {
+      headers: {
         Authorization: `Bearer ${token}`,
         "User-Agent": "openclaw",
         Accept: "application/json",
         "anthropic-version": "2023-06-01",
         "anthropic-beta": "oauth-2025-04-20",
-      };
-  const res = await fetchJson(
-    usageUrl,
-    { headers },
+      },
+    },
     timeoutMs,
     fetchFn,
   );
