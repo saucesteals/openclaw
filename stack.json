@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "f9c2ae669678df22f848754cbaccf82f478272c8",
+  "prev": "8323dbc86e1b4e67a2ea1252cd24557639a7b25c",
   "head": "bfb899e6f84c59f20b4bd2e0166f758bc8898f78",
   "applied": [
     "0003-feat-exec-inject",
@@ -10,9 +10,7 @@
     "fix-telegram-keepalive",
     "fix-discord-collect-followups"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "0003-feat-exec-inject": {
@@ -32,9 +30,6 @@
     },
     "fix-telegram-keepalive": {
       "oid": "fd57b36ddadc67290ac55b960f7325c65723628f"
-    },
-    "version-bump": {
-      "oid": "7e1a2c778089f5933b4059e5359e23211e36161a"
     }
   }
 }
