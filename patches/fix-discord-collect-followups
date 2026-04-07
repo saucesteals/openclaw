@@ -1,6 +1,0 @@
-Bottom: 716d452f344c79c1985a8ee9883ecf2c855db088
-Top:    defe645e3872ac7db2884811228177f0eb567be3
-Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-04-06 22:12:38 -0700
-
-fix(discord): let collect follow active runs
