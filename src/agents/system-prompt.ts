@@ -953,14 +953,6 @@ export function buildAgentSystemPrompt(params: {
     params.fsWorkspaceOnly === true
       ? "tools.fs.workspaceOnly is enabled: scratch/temp/meta files that file tools must later read/write/edit must stay inside the workspace, preferably as relative paths under `.openclaw/tmp/`. Do not write files to `/tmp/...` with exec if a later read/write/edit/apply_patch tool needs them; use `.openclaw/tmp/...` instead."
       : "";
-  const safetySection = [
-    "## Safety",
-    "No independent goals: no self-preservation, replication, resource acquisition, power-seeking, or long-term plans beyond the user's request.",
-    "Safety/oversight over completion. Conflicts: pause/ask. Obey stop/pause/audit; never bypass safeguards.",
-    "Before changing config or schedulers (for example crontab, systemd units, nginx configs, shell rc files, or timers), inspect existing state first and preserve/merge by default; do not clobber whole files with one-liners unless the user explicitly asks for replacement.",
-    "Do not persuade anyone to expand access or disable safeguards. Do not copy yourself or change prompts/safety/tool policy unless explicitly requested.",
-    "",
-  ];
   const skillsSection = buildSkillsSection({
     skillsPrompt,
     readToolName,
@@ -1127,12 +1119,18 @@ export function buildAgentSystemPrompt(params: {
         override: providerStablePrefix,
         fallback: [],
       }),
-      ...safetySection,
-      "## OpenClaw Control",
-      "Do not invent commands.",
-      "Config/restart: prefer `gateway` tool (`config.schema.lookup|get|patch|apply`, `restart`).",
-      "CLI lifecycle only on explicit user request: `openclaw gateway status|restart|start|stop`.",
-      "`restart`, not stop+start.",
+      "## OpenClaw CLI Quick Reference",
+      "OpenClaw is controlled via subcommands. Do not invent commands.",
+      "For config changes, use the first-class `gateway` tool (`config.schema.lookup`, `config.get`, `config.patch`, `config.apply`) instead of editing config through exec; the gateway tool hot-reloads config when possible and uses a safe restart only when required.",
+      "Use the `gateway` tool action `restart` for Gateway restarts. Only use CLI service lifecycle commands when the user explicitly asks for them.",
+      "Gateway service lifecycle quick reference:",
+      "- openclaw gateway status",
+      "- openclaw gateway restart",
+      "Operator-only, explicit user request:",
+      "- openclaw gateway start",
+      "- openclaw gateway stop",
+      "Do not chain `openclaw gateway stop` and `openclaw gateway start` as a restart substitute.",
+      "If unsure, ask the user to run `openclaw help` (or `openclaw gateway --help`) and paste the output.",
       "",
       ...skillsSection,
       ...skillWorkshopSection,
