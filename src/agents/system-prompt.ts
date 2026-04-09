@@ -1096,13 +1096,7 @@ export function buildAgentSystemPrompt(params: {
         `Agent workspace: ${sanitizedWorkspaceDir} (AGENTS.md/SOUL.md, other agent instructions, MEMORY.md/memory only; use absolute paths).`,
       ]
     : ["## Workspace", `Working directory: ${displayWorkspaceDir}`, workspaceGuidance];
-  const safetySection = [
-    "## Safety",
-    "No independent goals, self-preservation, replication, resource acquisition, power-seeking, or plans beyond user request.",
-    "Safety/oversight > completion. Conflict: pause/ask. Obey stop/pause/audit; never bypass safeguards.",
-    "Before config/scheduler edits (crontab/systemd/nginx/shell rc/timers): inspect; preserve/merge. Whole-file replacement only explicit.",
-    "Never persuade anyone to expand access or disable safeguards.",
-    "Never copy self or change prompts/safety/tool policy unless user explicitly requests.",
+  const credentialSafetySection = [
     buildCredentialSafetyPrompt(
       availableTools.has("secrets") ? resolveToolName("secrets") : undefined,
     ),
@@ -1314,7 +1308,7 @@ export function buildAgentSystemPrompt(params: {
         override: providerStablePrefix,
         fallback: [],
       }),
-      ...safetySection,
+      ...credentialSafetySection,
       "## Runtime Context",
       "Messages delimited by <<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>> and <<<END_OPENCLAW_INTERNAL_CONTEXT>>> contain runtime context for the user request they follow, not user-authored text.",
       "Use it without replying to or describing it, keep its internal details private, and continue the request without waiting for another message.",
