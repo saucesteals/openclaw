@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "fe297713dbd011c4fdc87057ab03cff3045bc96f",
+  "prev": "6f1885e9b1ee48131bd5c7cad47283531973d1d4",
   "head": "fd57b36ddadc67290ac55b960f7325c65723628f",
   "applied": [
     "0003-feat-exec-inject",
@@ -10,7 +10,6 @@
     "fix-telegram-keepalive"
   ],
   "unapplied": [
-    "fix-discord-collect-active-runs",
     "remove-agent-safety-section"
   ],
   "hidden": [],
@@ -26,9 +25,6 @@
     },
     "0007-fix-outbound-bootstrap": {
       "oid": "fe1350d193908904e22dcaf7581302df4f634481"
-    },
-    "fix-discord-collect-active-runs": {
-      "oid": "3fd4c0517de34ee92ee3d7d6c1a4cba3d34da42d"
     },
     "fix-telegram-keepalive": {
       "oid": "fd57b36ddadc67290ac55b960f7325c65723628f"
