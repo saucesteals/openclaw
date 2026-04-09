@@ -1,16 +1,16 @@
 {
   "version": 5,
-  "prev": "8caa7c6d76d7075436acd79e47873404411bfb6c",
-  "head": "3fd4c0517de34ee92ee3d7d6c1a4cba3d34da42d",
+  "prev": "fe297713dbd011c4fdc87057ab03cff3045bc96f",
+  "head": "fd57b36ddadc67290ac55b960f7325c65723628f",
   "applied": [
     "0003-feat-exec-inject",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
     "0007-fix-outbound-bootstrap",
-    "fix-telegram-keepalive",
-    "fix-discord-collect-active-runs"
+    "fix-telegram-keepalive"
   ],
   "unapplied": [
+    "fix-discord-collect-active-runs",
     "remove-agent-safety-section"
   ],
   "hidden": [],
