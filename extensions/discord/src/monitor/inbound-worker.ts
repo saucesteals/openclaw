@@ -1,3 +1,4 @@
+import { resolveActiveEmbeddedRunSessionId } from "openclaw/plugin-sdk/agent-runtime";
 import { createRunStateMachine } from "openclaw/plugin-sdk/channel-lifecycle";
 import { KeyedAsyncQueue } from "openclaw/plugin-sdk/core";
 import { danger, formatDurationSeconds } from "openclaw/plugin-sdk/runtime-env";
@@ -165,6 +166,31 @@ export function createDiscordInboundWorker(
 
   return {
     enqueue(job) {
+      if (resolveActiveEmbeddedRunSessionId(job.queueKey)) {
+        void (async () => {
+          if (!runState.isActive()) {
+            return;
+          }
+          runState.onRunStart();
+          try {
+            if (!runState.isActive()) {
+              return;
+            }
+            await processDiscordInboundJob({
+              job,
+              runtime: params.runtime,
+              lifecycleSignal: params.abortSignal,
+              runTimeoutMs: params.runTimeoutMs,
+              testing: params.__testing,
+            });
+          } finally {
+            runState.onRunEnd();
+          }
+        })().catch((error) => {
+          params.runtime.error?.(danger(`discord inbound worker failed: ${String(error)}`));
+        });
+        return;
+      }
       void runQueue
         .enqueue(job.queueKey, async () => {
           if (!runState.isActive()) {
