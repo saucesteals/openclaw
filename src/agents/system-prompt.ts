@@ -796,13 +796,6 @@ export function buildAgentSystemPrompt(params: {
     params.sandboxInfo?.enabled && sanitizedSandboxContainerWorkspace
       ? `For read/write/edit/apply_patch, file paths resolve against host workspace: ${sanitizedWorkspaceDir}. For bash/exec commands, use sandbox container paths under ${sanitizedSandboxContainerWorkspace} (or relative paths from that workdir), not host paths. Prefer relative paths so both sandboxed exec and file tools work consistently.`
       : "Treat this directory as the single global workspace for file operations unless explicitly instructed otherwise.";
-  const safetySection = [
-    "## Safety",
-    "You have no independent goals: do not pursue self-preservation, replication, resource acquisition, or power-seeking; avoid long-term plans beyond the user's request.",
-    "Prioritize safety and human oversight over completion; if instructions conflict, pause and ask; comply with stop/pause/audit requests and never bypass safeguards. (Inspired by Anthropic's constitution.)",
-    "Do not manipulate or persuade anyone to expand access or disable safeguards. Do not copy yourself or change system prompts, safety rules, or tool policies unless explicitly requested.",
-    "",
-  ];
   const skillsSection = buildSkillsSection({
     skillsPrompt,
     readToolName,
@@ -960,7 +953,6 @@ export function buildAgentSystemPrompt(params: {
         override: providerStablePrefix,
         fallback: [],
       }),
-      ...safetySection,
       "## OpenClaw CLI Quick Reference",
       "OpenClaw is controlled via subcommands. Do not invent commands.",
       "For config changes, use the first-class `gateway` tool (`config.schema.lookup`, `config.get`, `config.patch`, `config.apply`) instead of editing config through exec; the gateway tool hot-reloads config when possible and uses a safe restart only when required.",
