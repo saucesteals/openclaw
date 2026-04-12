@@ -1,7 +1,7 @@
-Bottom: 1c4f060d6c59846e9970e0295db6c8af56da0edf
-Top:    9be39df07092c9f190ff13f62bee858539ae413c
+Bottom: f44b52422685a6d67e577092c1c5d771e73dc809
+Top:    c02953bdd6122f950812960f1b6ea61262445ea5
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-04-11 16:37:31 -0700
+Date:   2026-04-12 01:07:49 -0700
 
 [PATCH 6/8] feat(skills): default allow symlink escapes; add disable
 

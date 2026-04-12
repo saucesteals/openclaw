@@ -1,7 +1,7 @@
-Bottom: e2f104bd1b42131f98e618a8ce7179fc0d567d4d
-Top:    a790c27ffb557e929205a527a80968d55a788126
+Bottom: 1d19a8400687527e1083ca73aeb6c6aed3b4e5a1
+Top:    1c802bb99cbf9987e0af71d06ecdc0f6414d478c
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-04-11 16:37:31 -0700
+Date:   2026-04-12 01:07:49 -0700
 
 [PATCH 3/8] feat(exec): inject OPENCLAW_SESSION_KEY into every
 
