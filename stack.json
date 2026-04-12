@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "3f8ce2e83b1538b8149b142509104b560791432f",
+  "prev": "f3c5bf5cd98ec3f291268eaf3c4be3961a17bccc",
   "head": "f0d99d5a79d49abeb2266c7e360c78f2cb821f0f",
   "applied": [
     "0003-feat-exec-inject",
@@ -9,7 +9,6 @@
     "0007-fix-outbound-bootstrap"
   ],
   "unapplied": [
-    "version-bump",
     "fix-telegram-keepalive",
     "remove-agent-safety-section"
   ],
@@ -32,9 +31,6 @@
     },
     "remove-agent-safety-section": {
       "oid": "a25e3d36374080aa5374bee48dfe885871d0e07c"
-    },
-    "version-bump": {
-      "oid": "a23ad58e2fcc05ac0b7bd566859c82ee10449f0c"
     }
   }
 }
