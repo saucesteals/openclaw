@@ -1,14 +1,13 @@
 {
   "version": 5,
-  "prev": "077ec74e740861695a592c4ea21fe44f670d1c2f",
-  "head": "b9e4b6f343760f65613f2f2294abdee3f33276cd",
-  "applied": [
+  "prev": "be2e35efa9185b0b48cb742b1df66c5692241d0e",
+  "head": "323493fa1b6adc1e10b9954a68d5eaa5a6ef1170",
+  "applied": [],
+  "unapplied": [
     "0003-feat-exec-inject",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
-    "0007-fix-outbound-bootstrap"
-  ],
-  "unapplied": [
+    "0007-fix-outbound-bootstrap",
     "version-bump",
     "fix-telegram-keepalive",
     "remove-agent-safety-section"
