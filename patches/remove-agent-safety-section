@@ -1,6 +1,6 @@
-Bottom: 716d452f344c79c1985a8ee9883ecf2c855db088
-Top:    de7498e364c42447c51a34c83f5a13d28047422d
+Bottom: dded04758c7e0532fc091c4b8e4d63169e1859b1
+Top:    3e7e3fed9be10d49c89072d96bd16191ac814348
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-04-08 18:10:28 -0700
+Date:   2026-04-26 07:05:56 -0700
 
 chore(agents): remove base safety section from system prompt
