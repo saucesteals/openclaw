@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "9195acd21387b2322730a80f26b09b54a1f3d00d",
+  "prev": "4c6598a3e0ae09b292d10c1b941f6a96f9051809",
   "head": "799cf37c441d7fa43e8256d047619bdf64aaaff3",
   "applied": [
     "0003-feat-exec-inject",
@@ -10,9 +10,7 @@
     "fix-telegram-keepalive",
     "remove-agent-safety-section"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "0003-feat-exec-inject": {
@@ -32,9 +30,6 @@
     },
     "remove-agent-safety-section": {
       "oid": "799cf37c441d7fa43e8256d047619bdf64aaaff3"
-    },
-    "version-bump": {
-      "oid": "39bb34f667e84fd3a0b2a87ac7c3a58908ff857c"
     }
   }
 }
