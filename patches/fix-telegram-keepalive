@@ -1,6 +1,6 @@
-Bottom: 03c1f735b95e38d04d0ac76901f06e96199db919
-Top:    dded04758c7e0532fc091c4b8e4d63169e1859b1
+Bottom: 4000f5d07e64de7ec249ca03955a275cf2d35f91
+Top:    30e33784f26682970efdf06aa369d9e64a0c1bfc
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-04-26 07:05:55 -0700
+Date:   2026-05-05 19:04:51 -0700
 
 fix(telegram): enable TCP keepalive on getUpdates to prevent NAT timeout stalls (openclaw#49460)

@@ -1,36 +1,37 @@
 {
   "version": 5,
-  "prev": "56ebea8bbd0782d4014bc0cad3fc06289d0b67c1",
-  "head": "325df3efefe9c0887d9357732e68fc8556e78d79",
-  "applied": [],
-  "unapplied": [
+  "prev": "6d1c947905fd0508b5fd74cac0fa3a7ccadd4b62",
+  "head": "9788f1851c8b1adc325a989c0ef4cb2ebda46e48",
+  "applied": [
     "0003-feat-exec-inject",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
     "0007-fix-outbound-bootstrap",
     "fix-telegram-keepalive",
-    "remove-agent-safety-section",
+    "remove-agent-safety-section"
+  ],
+  "unapplied": [
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "0003-feat-exec-inject": {
-      "oid": "702ad5bd38398a1b59208d1824e01eb7620eccce"
+      "oid": "390f45217699dbfb32a806fdc6b574dce3ef0527"
     },
     "0005-chore-tsconfig-bump-lib": {
-      "oid": "56f8500af5e439c562fc9a74259e2dc97fca9cab"
+      "oid": "a3bdacb29108469d4153c9e0aefb6472e0db914d"
     },
     "0006-feat-skills-default-allow": {
-      "oid": "c036e08232347703bf2aceed23efe7d57be161e8"
+      "oid": "b6bfb253d564314979b87fed3c37799f9b83597c"
     },
     "0007-fix-outbound-bootstrap": {
-      "oid": "d3c28e7ddb27bea02e4c06d55772639825891feb"
+      "oid": "880e1a3cc49db1ad813754c8c85f8aae103d9439"
     },
     "fix-telegram-keepalive": {
-      "oid": "72c819b1e612950f1c89c8d2a942783f2b703544"
+      "oid": "a291183b5647be7db899b345ff33d519892e3021"
     },
     "remove-agent-safety-section": {
-      "oid": "0bdd7d39b82b13b9ee0c977dc703ff09dff3a1af"
+      "oid": "9788f1851c8b1adc325a989c0ef4cb2ebda46e48"
     },
     "version-bump": {
       "oid": "39bb34f667e84fd3a0b2a87ac7c3a58908ff857c"
