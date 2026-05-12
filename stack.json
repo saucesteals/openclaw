@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "1414f1612da3c41f92cfa2a3a393d28d88f4092b",
-  "head": "c0afe27b9167c6ec40385856645458a5110de671",
+  "prev": "977e9ec1da8d9a32cb39406cbea69f12e65cec05",
+  "head": "3f7a58e19f51ef4d2c4e05c03021cd57c8085f1c",
   "applied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
@@ -15,25 +15,25 @@
   "hidden": [],
   "patches": {
     "0006-feat-skills-default-allow": {
-      "oid": "dd679ac8c91b43e495c5f061c3d18c397ce257e2"
+      "oid": "bc360d83d87a15b7da3fee13e4dd96bf6921b02b"
     },
     "0007-fix-outbound-bootstrap": {
-      "oid": "0f53ec0d71640826296de701ba7f11250c71b315"
+      "oid": "69dae874e8387a81015df9543db95bdbbb3743c8"
     },
     "chore-tsconfig-es2025": {
-      "oid": "05c391ad89ba389048e48d9b9f63a21b8c066503"
+      "oid": "8b485f1266dd902cfcea8758d15055bd93afc2de"
     },
     "feat-exec-session-key": {
       "oid": "faff5a8be4056e68415ee66b8990b65cfa7f898d"
     },
     "fix-telegram-keepalive": {
-      "oid": "be551758c00e71b7d8888e1d28ec00ddf9a22db5"
+      "oid": "08629bfa2fce2161f9151763b5625ca7060b1bde"
     },
     "remove-agent-safety-section": {
-      "oid": "d5dfae295d1aa285aa7bce1c8d1ae492976ae890"
+      "oid": "6ee926e0f5d75b41cb8ac39e9202a0b63497ebfc"
     },
     "version-bump": {
-      "oid": "c0afe27b9167c6ec40385856645458a5110de671"
+      "oid": "3f7a58e19f51ef4d2c4e05c03021cd57c8085f1c"
     }
   }
 }
