@@ -1,9 +1,9 @@
 {
   "version": 5,
-  "prev": "18b426e3ad3e6696aebda51d0e7247a98c26c30d",
+  "prev": "8d64c3779aca2a91c03ac38781d569b421e338bc",
   "head": "dfd9b9ae4eb430f89095ed37c8ba2591e781dccb",
   "applied": [
-    "0003-feat-exec-inject",
+    "feat-exec-session-key",
     "0005-chore-tsconfig-bump-lib",
     "0006-feat-skills-default-allow",
     "0007-fix-outbound-bootstrap",
@@ -14,9 +14,6 @@
   "unapplied": [],
   "hidden": [],
   "patches": {
-    "0003-feat-exec-inject": {
-      "oid": "390f45217699dbfb32a806fdc6b574dce3ef0527"
-    },
     "0005-chore-tsconfig-bump-lib": {
       "oid": "a3bdacb29108469d4153c9e0aefb6472e0db914d"
     },
@@ -25,6 +22,9 @@
     },
     "0007-fix-outbound-bootstrap": {
       "oid": "f4a881a2a5846497a7987a88c45fb5065b29a547"
+    },
+    "feat-exec-session-key": {
+      "oid": "390f45217699dbfb32a806fdc6b574dce3ef0527"
     },
     "fix-telegram-keepalive": {
       "oid": "f34a02e311cea3c31e78460c8ed301c6972ca21b"
