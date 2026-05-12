@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "1da3c82cd26a1c5fced8cac97b5e51b867c8b0d3",
-  "head": "8d78bac3027f1d9625ef58fbea221ea7adc1d878",
+  "prev": "c0bfcb4c9772cbfec7cea0061ff7a1070f83701a",
+  "head": "3972950f7cbcd6b4273792cf261c84e34e171a4f",
   "applied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
@@ -15,7 +15,7 @@
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "b5939aaa6e596fa8d4e428b81741af7c89c289b7"
+      "oid": "a363ffcf695dd4cfc7a494dd6cc776c048f48da8"
     },
     "chore-tsconfig-es2025": {
       "oid": "8b485f1266dd902cfcea8758d15055bd93afc2de"
@@ -33,7 +33,7 @@
       "oid": "1f8815f50bd7161a116200dc2f34d88c40f752f5"
     },
     "version-bump": {
-      "oid": "8d78bac3027f1d9625ef58fbea221ea7adc1d878"
+      "oid": "3972950f7cbcd6b4273792cf261c84e34e171a4f"
     }
   }
 }
