@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "20cb86ddc18cf5d9686f9158fea5c376eeac1de8",
-  "head": "2080f33e9884c9b3893c84e648a2d9f445e9b462",
+  "prev": "7780bb1744dc3d737aa05f6a687be8cfa0029671",
+  "head": "1fa1d68ca3d7363abdd5e82db6036425ee5ec56d",
   "applied": [
     "0003-feat-exec-inject",
     "0005-chore-tsconfig-bump-lib",
@@ -9,8 +9,7 @@
     "0007-fix-outbound-bootstrap",
     "fix-telegram-keepalive",
     "remove-agent-safety-section",
-    "version-bump",
-    "refresh-temp"
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -22,22 +21,19 @@
       "oid": "a3bdacb29108469d4153c9e0aefb6472e0db914d"
     },
     "0006-feat-skills-default-allow": {
-      "oid": "b6bfb253d564314979b87fed3c37799f9b83597c"
+      "oid": "66a0e003235d21598188230b92435513cfc14383"
     },
     "0007-fix-outbound-bootstrap": {
-      "oid": "880e1a3cc49db1ad813754c8c85f8aae103d9439"
+      "oid": "f4a881a2a5846497a7987a88c45fb5065b29a547"
     },
     "fix-telegram-keepalive": {
-      "oid": "a291183b5647be7db899b345ff33d519892e3021"
-    },
-    "refresh-temp": {
-      "oid": "2080f33e9884c9b3893c84e648a2d9f445e9b462"
+      "oid": "f34a02e311cea3c31e78460c8ed301c6972ca21b"
     },
     "remove-agent-safety-section": {
-      "oid": "799cf37c441d7fa43e8256d047619bdf64aaaff3"
+      "oid": "a2cc934bc2d13bd6f6d4abb7647d8a404bdb3dfd"
     },
     "version-bump": {
-      "oid": "2cce3b84835f9eb6c3ceec51be5e607d5c496a8f"
+      "oid": "1fa1d68ca3d7363abdd5e82db6036425ee5ec56d"
     }
   }
 }
