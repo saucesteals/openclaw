@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "d920e0b82c06ff7160b25e47566e4dc5d4d471b9",
-  "head": "b2b2596e611e806155a633e15d04eb6c01952f0b",
+  "prev": "18278711f66d99d0d26a380235b2c887ab1fc45c",
+  "head": "774522ad86735a7bcad0fc4430648c3adc601210",
   "applied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
@@ -24,16 +24,16 @@
       "oid": "b0246e4cbe7d8babb6ddfbc9bf48384175343167"
     },
     "fix-outbound-requested-channel": {
-      "oid": "2d89b655e086838c7b18bc1aa824bba3fea4383c"
+      "oid": "0e17e9a270eadac95ed5eec7b458c27e6591209d"
     },
     "fix-telegram-keepalive": {
-      "oid": "c9d6e2388e951c387c8132f0931964e3d7dc0f22"
+      "oid": "d2b060dcfaf7feb4dd2e0b061ed652494f040542"
     },
     "remove-agent-safety-section": {
-      "oid": "7fdb37d01456e5e9f94394355c84ec6c6d992074"
+      "oid": "a816273f0f253a6656bcb27f2224772d91a71a4d"
     },
     "version-bump": {
-      "oid": "b2b2596e611e806155a633e15d04eb6c01952f0b"
+      "oid": "774522ad86735a7bcad0fc4430648c3adc601210"
     }
   }
 }
