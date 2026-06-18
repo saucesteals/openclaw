@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "e18d87cacb1643b9111eb238686d963ac1d2333f",
-  "head": "f8f1eaf4c20e05fb4db92d25ac000c5caeb475b3",
+  "prev": "f63e3106964fce79f1b7bd9e1828cd7efb9064c4",
+  "head": "7cc02421d7d1222a2694b0764b08bd636bdccb5f",
   "applied": [
     "feat-exec-session-key",
-    "chore-tsconfig-es2025"
+    "chore-tsconfig-es2025",
+    "refresh-temp"
   ],
   "unapplied": [
     "feat-skills-symlink-escapes",
@@ -32,6 +33,9 @@
     },
     "fix-telegram-keepalive": {
       "oid": "1f8815f50bd7161a116200dc2f34d88c40f752f5"
+    },
+    "refresh-temp": {
+      "oid": "7cc02421d7d1222a2694b0764b08bd636bdccb5f"
     },
     "version-bump": {
       "oid": "3972950f7cbcd6b4273792cf261c84e34e171a4f"
