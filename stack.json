@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "65b713decb7e5cc305748c52801c7c8eaac82a1f",
-  "head": "844f405ac1be805d5c598922a37254f12ab6d765",
-  "applied": [],
+  "prev": "c3e3919e28d54e5533ab2053fa034d0786ba1eb6",
+  "head": "ea3ab2e4f879bc3ca2487e5106cfab2964bfcd07",
+  "applied": [
+    "feat-exec-session-key"
+  ],
   "unapplied": [
-    "feat-exec-session-key",
     "chore-tsconfig-es2025",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
@@ -21,7 +22,7 @@
       "oid": "8b485f1266dd902cfcea8758d15055bd93afc2de"
     },
     "feat-exec-session-key": {
-      "oid": "faff5a8be4056e68415ee66b8990b65cfa7f898d"
+      "oid": "ea3ab2e4f879bc3ca2487e5106cfab2964bfcd07"
     },
     "feat-skills-symlink-escapes": {
       "oid": "b0246e4cbe7d8babb6ddfbc9bf48384175343167"
