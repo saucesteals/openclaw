@@ -1,15 +1,14 @@
 {
   "version": 5,
-  "prev": "ec96063431ef4b4a5ef4a6a84b1ec304fa6d4add",
-  "head": "9327df866afb1463d882d7a2b52e9e2ec6af50a7",
+  "prev": "45cdb280651e836eb379162c7d7304aee4cd1105",
+  "head": "2dcd30490cac70c5e00e6959f39a27c7f0713c93",
   "applied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "fix-telegram-keepalive",
-    "chore-agents-remove-safety-section",
-    "refresh-temp"
+    "chore-agents-remove-safety-section"
   ],
   "unapplied": [
     "version-bump"
@@ -17,7 +16,7 @@
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "a3cd3f5152e0583a164af91cfd54e898bcceba6f"
+      "oid": "2dcd30490cac70c5e00e6959f39a27c7f0713c93"
     },
     "chore-tsconfig-es2025": {
       "oid": "5c42995121969c2a0fb77b3453ea4d7f7e99e505"
@@ -33,9 +32,6 @@
     },
     "fix-telegram-keepalive": {
       "oid": "1738c242eabd6860395481a5969e2c28616556c1"
-    },
-    "refresh-temp": {
-      "oid": "9327df866afb1463d882d7a2b52e9e2ec6af50a7"
     },
     "version-bump": {
       "oid": "3972950f7cbcd6b4273792cf261c84e34e171a4f"
