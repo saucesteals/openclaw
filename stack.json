@@ -1,22 +1,22 @@
 {
   "version": 5,
-  "prev": "8bac6bac28709ddc9d98b5fbee2023e9ef2da296",
-  "head": "1738c242eabd6860395481a5969e2c28616556c1",
+  "prev": "482c7c1c98167555193f69b52ffbfbe3292acfbf",
+  "head": "a3cd3f5152e0583a164af91cfd54e898bcceba6f",
   "applied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
-    "fix-telegram-keepalive"
+    "fix-telegram-keepalive",
+    "chore-agents-remove-safety-section"
   ],
   "unapplied": [
-    "chore-agents-remove-safety-section",
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "a363ffcf695dd4cfc7a494dd6cc776c048f48da8"
+      "oid": "a3cd3f5152e0583a164af91cfd54e898bcceba6f"
     },
     "chore-tsconfig-es2025": {
       "oid": "5c42995121969c2a0fb77b3453ea4d7f7e99e505"
