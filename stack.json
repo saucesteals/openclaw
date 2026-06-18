@@ -1,19 +1,18 @@
 {
   "version": 5,
-  "prev": "8d40af7fae7a5a3468605c2d27082ae1ba0fafea",
-  "head": "886b85bf5b4ecb542fdd09bc57d6a4ded80126fa",
+  "prev": "63ae54332bdafe1d8ebf23919115a9f86923ac3d",
+  "head": "14034d683ec56923875468f2cbf210c97cd95892",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
-    "fix-telegram-keepalive",
     "chore-agents-remove-safety-section"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "886b85bf5b4ecb542fdd09bc57d6a4ded80126fa"
+      "oid": "14034d683ec56923875468f2cbf210c97cd95892"
     },
     "feat-exec-session-key": {
       "oid": "194340e25bc7dc1516719f7caf45e352a84ec4bf"
@@ -23,9 +22,6 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "7f9a06a1ebc55ab543e0fddf06ae1f8ab8f0ed65"
-    },
-    "fix-telegram-keepalive": {
-      "oid": "20693ea48bf9242bcf1381f9e5d4e77b5f5a928a"
     }
   }
 }
