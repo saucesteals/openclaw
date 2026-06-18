@@ -1,12 +1,13 @@
 {
   "version": 5,
-  "prev": "63ae54332bdafe1d8ebf23919115a9f86923ac3d",
-  "head": "14034d683ec56923875468f2cbf210c97cd95892",
+  "prev": "62604f03fe5cf46ee094cfdc60aed1b8a9f92c7f",
+  "head": "2ccef5f6d5f34458e753a5cfe4989d5c8b441fdb",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
-    "chore-agents-remove-safety-section"
+    "chore-agents-remove-safety-section",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -22,6 +23,9 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "7f9a06a1ebc55ab543e0fddf06ae1f8ab8f0ed65"
+    },
+    "version-bump": {
+      "oid": "2ccef5f6d5f34458e753a5cfe4989d5c8b441fdb"
     }
   }
 }
