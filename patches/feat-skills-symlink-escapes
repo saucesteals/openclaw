@@ -1,6 +1,6 @@
-Bottom: 09b77d45af7db60ff39947ca5b02c7b0cce00205
-Top:    494f14e138fe3a1d455c38a939b4ec5f0eae669c
+Bottom: ea55cc291144bf02dbfac40534155b66ce13fba1
+Top:    b460437c5917be2c81d311fb68203b99937c865e
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-06-18 01:30:34 -0700
+Date:   2026-06-18 01:34:57 -0700
 
 feat(skills): allow symlinked skills by default

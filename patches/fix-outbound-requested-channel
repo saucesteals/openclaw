@@ -1,6 +1,6 @@
-Bottom: 494f14e138fe3a1d455c38a939b4ec5f0eae669c
-Top:    19c379d9840af8624fa8187edf965eab3e783f17
+Bottom: b460437c5917be2c81d311fb68203b99937c865e
+Top:    f60a72130bc15e65b5cfe481dff9afc859706e42
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-06-18 01:31:04 -0700
+Date:   2026-06-18 01:34:57 -0700
 
 fix(outbound): bootstrap requested channels
