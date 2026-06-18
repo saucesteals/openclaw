@@ -12,19 +12,71 @@ type LoadedLocalSkill = {
   frontmatter: ParsedSkillFrontmatter;
 };
 
-// Read SKILL.md through the root boundary helper so symlinks cannot escape the skill root.
+function sameFileIdentity(left: fs.Stats, right: fs.Stats): boolean {
+  return left.dev === right.dev && left.ino === right.ino;
+}
+
+function openSkillFileAllowingSymlinkEscapeSync(params: {
+  filePath: string;
+  maxBytes?: number;
+}): { ok: true; fd: number } | { ok: false } {
+  const openReadFlags =
+    fs.constants.O_RDONLY |
+    (typeof fs.constants.O_NOFOLLOW === "number" ? fs.constants.O_NOFOLLOW : 0);
+  let fd: number | null = null;
+  try {
+    const realPath = fs.realpathSync(params.filePath);
+    const preOpenStat = fs.lstatSync(realPath);
+    if (!preOpenStat.isFile()) {
+      return { ok: false };
+    }
+    if (params.maxBytes !== undefined && preOpenStat.size > params.maxBytes) {
+      return { ok: false };
+    }
+    fd = fs.openSync(realPath, openReadFlags);
+    const openedStat = fs.fstatSync(fd);
+    if (!openedStat.isFile()) {
+      return { ok: false };
+    }
+    if (params.maxBytes !== undefined && openedStat.size > params.maxBytes) {
+      return { ok: false };
+    }
+    if (!sameFileIdentity(preOpenStat, openedStat)) {
+      return { ok: false };
+    }
+    const opened = { ok: true as const, fd };
+    fd = null;
+    return opened;
+  } catch {
+    return { ok: false };
+  } finally {
+    if (fd !== null) {
+      fs.closeSync(fd);
+    }
+  }
+}
+
+// Read SKILL.md. By default sauce installs allow symlinked skills to target paths
+// outside the configured root; set OPENCLAW_DISABLE_SKILL_SYMLINK_ESCAPES=1 to
+// restore upstream's strict root boundary behavior.
 function readSkillFileSync(params: {
   rootRealPath: string;
   filePath: string;
   maxBytes?: number;
 }): string | null {
-  const opened = openRootFileSync({
-    absolutePath: params.filePath,
-    rootPath: params.rootRealPath,
-    rootRealPath: params.rootRealPath,
-    boundaryLabel: "skill root",
-    maxBytes: params.maxBytes,
-  });
+  const opened =
+    process.env.OPENCLAW_DISABLE_SKILL_SYMLINK_ESCAPES === "1"
+      ? openRootFileSync({
+          absolutePath: params.filePath,
+          rootPath: params.rootRealPath,
+          rootRealPath: params.rootRealPath,
+          boundaryLabel: "skill root",
+          maxBytes: params.maxBytes,
+        })
+      : openSkillFileAllowingSymlinkEscapeSync({
+          filePath: params.filePath,
+          maxBytes: params.maxBytes,
+        });
   if (!opened.ok) {
     return null;
   }
