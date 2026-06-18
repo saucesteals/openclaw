@@ -1,16 +1,15 @@
 {
   "version": 5,
-  "prev": "e83c8a0e96c237045877cdc2295a8a7af682da1f",
-  "head": "a363ffcf695dd4cfc7a494dd6cc776c048f48da8",
-  "applied": [
+  "prev": "4e2422038d2aea38b39db6d640c4a7958457ffa0",
+  "head": "325df3efefe9c0887d9357732e68fc8556e78d79",
+  "applied": [],
+  "unapplied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "fix-telegram-keepalive",
-    "chore-agents-remove-safety-section"
-  ],
-  "unapplied": [
+    "chore-agents-remove-safety-section",
     "version-bump"
   ],
   "hidden": [],
