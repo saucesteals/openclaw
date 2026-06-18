@@ -1,11 +1,12 @@
 {
   "version": 5,
-  "prev": "0f259c9a8689f34fea53c9c15aa36a61204f9c7c",
-  "head": "a6522523f501cffabdded7db018451e15f4f52d4",
+  "prev": "bf238194c9e68138b22a4e98e171320d01a54228",
+  "head": "efa146945de47646abcf7529e920d90030ebb7a6",
   "applied": [
     "feat-exec-session-key",
     "chore-tsconfig-es2025",
-    "feat-skills-symlink-escapes"
+    "feat-skills-symlink-escapes",
+    "refresh-temp"
   ],
   "unapplied": [
     "fix-outbound-requested-channel",
@@ -32,6 +33,9 @@
     },
     "fix-telegram-keepalive": {
       "oid": "1f8815f50bd7161a116200dc2f34d88c40f752f5"
+    },
+    "refresh-temp": {
+      "oid": "efa146945de47646abcf7529e920d90030ebb7a6"
     },
     "version-bump": {
       "oid": "3972950f7cbcd6b4273792cf261c84e34e171a4f"
