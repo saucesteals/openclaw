@@ -1,15 +1,16 @@
 {
   "version": 5,
-  "prev": "eb10920c176aedbbb79e8d4b4ba615081765da99",
-  "head": "76c676c90bc6581d752b71feb3afebe67c075970",
+  "prev": "14debb9952cf65d3f268c44f6a8712ab6a5a0f0a",
+  "head": "7f60cf5ecfe7d2e6d6a2170d3130a5dd25841b02",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
-    "chore-agents-remove-safety-section",
+    "chore-agents-remove-safety-section"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
