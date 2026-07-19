@@ -1,16 +1,17 @@
 {
   "version": 5,
-  "prev": "937e476539a9b662dd0edaa9b060f54700aec24d",
-  "head": "6295ee9078d0898a15fe67f78beeffb908394577",
+  "prev": "541b5b7e9d972fa9c9cad579feaf995fac2fcd0b",
+  "head": "51ede4b65e40894b924429848bad8327cbe03bb8",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
-    "fix-codex-subagent-relay-lifetime",
+    "fix-codex-subagent-relay-lifetime"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
