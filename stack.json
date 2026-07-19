@@ -1,20 +1,19 @@
 {
   "version": 5,
-  "prev": "7d2a2840249f9b4d84a4ef3d9dd0bbc6db6fbe68",
-  "head": "6b03e377d15072c305183568784c1279cb61e16c",
+  "prev": "1d2c80c8be79cc3edaf8cb615d27065e537f4c3a",
+  "head": "76c676c90bc6581d752b71feb3afebe67c075970",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
-    "fix-outbound-requested-channel"
-  ],
-  "unapplied": [
+    "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "14034d683ec56923875468f2cbf210c97cd95892"
+      "oid": "7f60cf5ecfe7d2e6d6a2170d3130a5dd25841b02"
     },
     "feat-exec-session-key": {
       "oid": "37b97a5318d75f5b1f9c08602958235e6f85d236"
@@ -26,7 +25,7 @@
       "oid": "6b03e377d15072c305183568784c1279cb61e16c"
     },
     "version-bump": {
-      "oid": "2ccef5f6d5f34458e753a5cfe4989d5c8b441fdb"
+      "oid": "76c676c90bc6581d752b71feb3afebe67c075970"
     }
   }
 }
