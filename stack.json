@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "541b5b7e9d972fa9c9cad579feaf995fac2fcd0b",
+  "prev": "056784b05df3dcf45240f9fde1710c220017a551",
   "head": "51ede4b65e40894b924429848bad8327cbe03bb8",
   "applied": [
     "feat-exec-session-key",
@@ -9,9 +9,7 @@
     "chore-agents-remove-safety-section",
     "fix-codex-subagent-relay-lifetime"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -28,9 +26,6 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "6b03e377d15072c305183568784c1279cb61e16c"
-    },
-    "version-bump": {
-      "oid": "6295ee9078d0898a15fe67f78beeffb908394577"
     }
   }
 }
