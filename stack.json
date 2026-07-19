@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "14debb9952cf65d3f268c44f6a8712ab6a5a0f0a",
+  "prev": "c500b5e5fd332e01c015d9b7f940dba1b5be6ecf",
   "head": "7f60cf5ecfe7d2e6d6a2170d3130a5dd25841b02",
   "applied": [
     "feat-exec-session-key",
@@ -8,9 +8,7 @@
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -24,9 +22,6 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "6b03e377d15072c305183568784c1279cb61e16c"
-    },
-    "version-bump": {
-      "oid": "76c676c90bc6581d752b71feb3afebe67c075970"
     }
   }
 }
