@@ -1,17 +1,16 @@
 {
   "version": 5,
-  "prev": "32575ab06fca3c835f3fd5e1532c97646ea49f4b",
-  "head": "51ede4b65e40894b924429848bad8327cbe03bb8",
+  "prev": "937e476539a9b662dd0edaa9b060f54700aec24d",
+  "head": "6295ee9078d0898a15fe67f78beeffb908394577",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
-    "fix-codex-subagent-relay-lifetime"
-  ],
-  "unapplied": [
+    "fix-codex-subagent-relay-lifetime",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -30,7 +29,7 @@
       "oid": "6b03e377d15072c305183568784c1279cb61e16c"
     },
     "version-bump": {
-      "oid": "87f655d2c06ea961037599f9008178e5345caba4"
+      "oid": "6295ee9078d0898a15fe67f78beeffb908394577"
     }
   }
 }
