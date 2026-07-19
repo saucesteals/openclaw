@@ -14,8 +14,10 @@ import { describe, expect, it, vi } from "vitest";
 import * as approvalBridge from "./approval-bridge.js";
 import { CodexAppServerRpcError } from "./client.js";
 import {
+  createCodexRuntimePlanFixture,
   createParams,
   createResumeHarness,
+  createRuntimeDynamicTool,
   createStartedThreadHarness,
   extractGenerationFromThreadRequest,
   extractRelayIdFromThreadRequest,
@@ -467,6 +469,92 @@ describe("runCodexAppServerAttempt native hook relay", () => {
     expect(
       nativeHookRelayTesting.getNativeHookRelayRegistrationForTests(firstRelayId),
     ).toBeUndefined();
+  });
+
+  it("keeps the native hook relay registered while yielded native subagents are unsettled", async () => {
+    testing.setOpenClawCodingToolsFactoryForTests((options) => [
+      {
+        ...createRuntimeDynamicTool("sessions_yield"),
+        execute: vi.fn(async () => {
+          options?.onYield?.("waiting for child");
+          return {
+            content: [{ type: "text" as const, text: "yielded" }],
+            details: {},
+          };
+        }),
+      },
+    ]);
+    const sessionFile = path.join(tempDir, "session.jsonl");
+    const workspaceDir = path.join(tempDir, "workspace");
+    const harness = createStartedThreadHarness();
+    const params = createParams(sessionFile, workspaceDir);
+    params.disableTools = false;
+    params.runtimePlan = createCodexRuntimePlanFixture();
+    params.cleanupBundleMcpOnRunEnd = true;
+
+    const run = runCodexAppServerAttempt(params, {
+      nativeHookRelay: {
+        enabled: true,
+        events: ["pre_tool_use"],
+      },
+    });
+    await harness.waitForMethod("turn/start");
+
+    const startRequest = harness.requests.find((request) => request.method === "thread/start");
+    const relayId = extractRelayIdFromThreadRequest(startRequest?.params);
+    expect(nativeHookRelayTesting.getNativeHookRelayRegistrationForTests(relayId)).toBeDefined();
+
+    await harness.notify({
+      method: "thread/started",
+      params: {
+        thread: {
+          id: "child-thread",
+          source: {
+            subAgent: {
+              thread_spawn: {
+                parent_thread_id: "thread-1",
+                depth: 1,
+                agent_path: "child-thread",
+              },
+            },
+          },
+        },
+      },
+    });
+    await expect(
+      harness.handleServerRequest({
+        id: "request-yield",
+        method: "item/tool/call",
+        params: {
+          threadId: "thread-1",
+          turnId: "turn-1",
+          callId: "call-yield",
+          namespace: null,
+          tool: "sessions_yield",
+          arguments: { message: "waiting for child" },
+        },
+      }),
+    ).resolves.toMatchObject({ success: true });
+
+    await harness.completeTurn({ threadId: "thread-1", turnId: "turn-1" });
+    const result = await run;
+    expect(result.yieldDetected).toBe(true);
+    testing.flushPendingCodexNativeHookRelayUnregistersForTests();
+    expect(nativeHookRelayTesting.getNativeHookRelayRegistrationForTests(relayId)).toBeDefined();
+
+    await harness.notify({
+      method: "turn/completed",
+      params: {
+        threadId: "child-thread",
+        turn: {
+          id: "child-turn",
+          status: "interrupted",
+        },
+      },
+    });
+    expect(nativeHookRelayTesting.getNativeHookRelayRegistrationForTests(relayId)).toBeDefined();
+    testing.flushPendingCodexNativeHookRelayUnregistersForTests();
+    expect(nativeHookRelayTesting.getNativeHookRelayRegistrationForTests(relayId)).toBeUndefined();
   });
 
   it("persists and reuses Codex native hook relay generations for resumed threads", async () => {
