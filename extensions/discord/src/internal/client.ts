@@ -98,7 +98,8 @@ export class ComponentRegistry<
       if (options?.componentType !== undefined && entry.type !== options.componentType) {
         return false;
       }
-      return true;
+      const parser = entry.customIdParser ?? parseCustomId;
+      return parseRegistryKey(entry.customId, parser) === parseRegistryKey(customId, parser);
     });
   }
 
