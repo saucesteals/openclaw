@@ -1,18 +1,17 @@
 {
   "version": 5,
-  "prev": "11eb100d1ed92f9a4d3f30efe32af3d65e3228d5",
-  "head": "68ed7b8b618abdb59aea8ee787aee5cb1fb87679",
+  "prev": "4df47a2fa23f2ffa6ce7bbebb5f7329326b7ce8a",
+  "head": "a0364f8a72bca9666ebd9c0868e5021e5a653849",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
     "fix-codex-subagent-relay-lifetime",
-    "fix-discord-component-wildcard-scope"
-  ],
-  "unapplied": [
+    "fix-discord-component-wildcard-scope",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -34,7 +33,7 @@
       "oid": "6b03e377d15072c305183568784c1279cb61e16c"
     },
     "version-bump": {
-      "oid": "f1046272ebd2b090a7713ed001fb92b1d6afd3fc"
+      "oid": "a0364f8a72bca9666ebd9c0868e5021e5a653849"
     }
   }
 }
