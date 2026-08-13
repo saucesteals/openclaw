@@ -1,36 +1,37 @@
 {
   "version": 5,
-  "prev": "6624fa575de75122d186d1dbf8ff8ac8bebca70e",
-  "head": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
-  "applied": [],
-  "unapplied": [
+  "prev": "d4fe71e32f4d9c82477a794a7a3ad6f7a629761b",
+  "head": "eea77ffe6f8e8cb4952bfddf3cbc73c4d134fcb3",
+  "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
     "fix-codex-subagent-relay-lifetime",
-    "fix-discord-component-wildcard-scope",
+    "fix-discord-component-wildcard-scope"
+  ],
+  "unapplied": [
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "7f60cf5ecfe7d2e6d6a2170d3130a5dd25841b02"
+      "oid": "d1e529127d98d53e49b6868a16b12cb2a119c7b9"
     },
     "feat-exec-session-key": {
-      "oid": "37b97a5318d75f5b1f9c08602958235e6f85d236"
+      "oid": "b8dd7842779bce0e6c08a9c0f0981129408e604d"
     },
     "feat-skills-symlink-escapes": {
-      "oid": "512fb58adb0d92c0745808b2cff0bd276a03fbe2"
+      "oid": "b0dc375037f27c6e51aca92ee64b87fdf3a84436"
     },
     "fix-codex-subagent-relay-lifetime": {
-      "oid": "51ede4b65e40894b924429848bad8327cbe03bb8"
+      "oid": "24d58d08d27cd0e4f9e7e9ae32950b7d7a53d04c"
     },
     "fix-discord-component-wildcard-scope": {
-      "oid": "68ed7b8b618abdb59aea8ee787aee5cb1fb87679"
+      "oid": "eea77ffe6f8e8cb4952bfddf3cbc73c4d134fcb3"
     },
     "fix-outbound-requested-channel": {
-      "oid": "6b03e377d15072c305183568784c1279cb61e16c"
+      "oid": "74373d13cc3a1d1f04ce8a30c6a12937528bd544"
     },
     "version-bump": {
       "oid": "f60b1a33a7fcd9dac146696a8153faca35f0a3d0"
