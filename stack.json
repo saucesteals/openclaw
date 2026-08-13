@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "d4fe71e32f4d9c82477a794a7a3ad6f7a629761b",
+  "prev": "41bf1cc97545fa5f749889e4064ee2989b15d4e9",
   "head": "eea77ffe6f8e8cb4952bfddf3cbc73c4d134fcb3",
   "applied": [
     "feat-exec-session-key",
@@ -10,9 +10,7 @@
     "fix-codex-subagent-relay-lifetime",
     "fix-discord-component-wildcard-scope"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -32,9 +30,6 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "74373d13cc3a1d1f04ce8a30c6a12937528bd544"
-    },
-    "version-bump": {
-      "oid": "f60b1a33a7fcd9dac146696a8153faca35f0a3d0"
     }
   }
 }
