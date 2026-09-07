@@ -1,17 +1,18 @@
 {
   "version": 5,
-  "prev": "4a0754b9f6f9991ddd380167f76233aa14c540ef",
-  "head": "4f8cb76911074a48e99afd933b0e86b7790fc058",
+  "prev": "e4d2e4be68cda3e7220b5199a230181a0096ecd4",
+  "head": "eea77ffe6f8e8cb4952bfddf3cbc73c4d134fcb3",
   "applied": [
     "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
     "fix-codex-subagent-relay-lifetime",
-    "fix-discord-component-wildcard-scope",
+    "fix-discord-component-wildcard-scope"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
