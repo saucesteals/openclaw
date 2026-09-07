@@ -1,18 +1,18 @@
 {
   "version": 5,
-  "prev": "b64b13e79ca2b3fb37739371d4051253d67adec2",
-  "head": "1bff0f65ec470201a88d195bed257f9be75d4879",
+  "prev": "2cf65656e10b4470591c773ef12e99b0a6efa1f3",
+  "head": "8f6d356837bb49f2607ca3a82101a4e6ecfa0fbc",
   "applied": [
-    "feat-exec-session-key"
+    "feat-exec-session-key",
+    "chore-agents-remove-safety-section"
   ],
   "unapplied": [
-    "chore-agents-remove-safety-section",
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "61bdb64eefe65a0771c484ca1dc830c41beac2b3"
+      "oid": "8f6d356837bb49f2607ca3a82101a4e6ecfa0fbc"
     },
     "feat-exec-session-key": {
       "oid": "1bff0f65ec470201a88d195bed257f9be75d4879"
