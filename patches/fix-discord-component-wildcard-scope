@@ -1,6 +1,0 @@
-Bottom: 4702430f11b8fe2b8556add7e683a6e7c0230800
-Top:    ae0e90d8d95afb6d3725a5db9ae939ee8a8413c2
-Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-08-12 22:46:26 -0700
-
-fix(discord): scope wildcard component handlers
