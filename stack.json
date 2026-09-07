@@ -1,11 +1,12 @@
 {
   "version": 5,
-  "prev": "24ef729f6ea1b8dc2dbad8071bc7b15a362f414b",
-  "head": "022b73707191601fe5edc268e0c833062c49baa6",
+  "prev": "c96bbeeabde2734a14caec2edad8f476e5483467",
+  "head": "00b64a165bb9839ce9634bfef6a6bf29c7a98454",
   "applied": [
     "feat-exec-session-key",
     "fix-outbound-requested-channel",
-    "chore-agents-remove-safety-section"
+    "chore-agents-remove-safety-section",
+    "refresh-temp"
   ],
   "unapplied": [
     "fix-codex-subagent-relay-lifetime",
@@ -28,6 +29,9 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "8149aeba04ccfd3068bb2965a4fab51ad41dee87"
+    },
+    "refresh-temp": {
+      "oid": "00b64a165bb9839ce9634bfef6a6bf29c7a98454"
     },
     "version-bump": {
       "oid": "4f8cb76911074a48e99afd933b0e86b7790fc058"
