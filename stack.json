@@ -1,13 +1,13 @@
 {
   "version": 5,
-  "prev": "106402d99001933849917a5f2fdc8f5cc6b09404",
-  "head": "61bdb64eefe65a0771c484ca1dc830c41beac2b3",
+  "prev": "b2164755930abc83805834a7e50418198d3d7a50",
+  "head": "8149aeba04ccfd3068bb2965a4fab51ad41dee87",
   "applied": [
     "feat-exec-session-key",
-    "fix-outbound-requested-channel",
-    "chore-agents-remove-safety-section"
+    "fix-outbound-requested-channel"
   ],
   "unapplied": [
+    "chore-agents-remove-safety-section",
     "version-bump"
   ],
   "hidden": [],
