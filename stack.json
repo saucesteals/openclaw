@@ -1,12 +1,11 @@
 {
   "version": 5,
-  "prev": "c96bbeeabde2734a14caec2edad8f476e5483467",
-  "head": "00b64a165bb9839ce9634bfef6a6bf29c7a98454",
+  "prev": "4f8c7c1fa6612acf7256c91b5c609dfa0b11f959",
+  "head": "bd2e345afb8f360679c619ef7a09a0a121eebce5",
   "applied": [
     "feat-exec-session-key",
     "fix-outbound-requested-channel",
-    "chore-agents-remove-safety-section",
-    "refresh-temp"
+    "chore-agents-remove-safety-section"
   ],
   "unapplied": [
     "fix-codex-subagent-relay-lifetime",
@@ -16,7 +15,7 @@
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "022b73707191601fe5edc268e0c833062c49baa6"
+      "oid": "bd2e345afb8f360679c619ef7a09a0a121eebce5"
     },
     "feat-exec-session-key": {
       "oid": "1bff0f65ec470201a88d195bed257f9be75d4879"
@@ -29,9 +28,6 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "8149aeba04ccfd3068bb2965a4fab51ad41dee87"
-    },
-    "refresh-temp": {
-      "oid": "00b64a165bb9839ce9634bfef6a6bf29c7a98454"
     },
     "version-bump": {
       "oid": "4f8cb76911074a48e99afd933b0e86b7790fc058"
