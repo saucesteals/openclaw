@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "320a4fe9c81137a1fdbc841439159b1fd5b397db",
-  "head": "3928bad9badfcb6c7d140530435e806fb8092190",
-  "applied": [],
+  "prev": "f402b3f4b7c36e97e4ceba803961f68fc8ec06d4",
+  "head": "783b8d1a696b15963b2c62c9732f71a520fea4f6",
+  "applied": [
+    "feat-exec-session-key"
+  ],
   "unapplied": [
-    "feat-exec-session-key",
     "feat-skills-symlink-escapes",
     "fix-outbound-requested-channel",
     "chore-agents-remove-safety-section",
@@ -18,7 +19,7 @@
       "oid": "d1e529127d98d53e49b6868a16b12cb2a119c7b9"
     },
     "feat-exec-session-key": {
-      "oid": "b8dd7842779bce0e6c08a9c0f0981129408e604d"
+      "oid": "783b8d1a696b15963b2c62c9732f71a520fea4f6"
     },
     "feat-skills-symlink-escapes": {
       "oid": "b0dc375037f27c6e51aca92ee64b87fdf3a84436"
