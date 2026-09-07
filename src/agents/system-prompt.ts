@@ -69,6 +69,7 @@ import type {
 } from "./system-prompt-contribution.js";
 import type { PromptMode, SilentReplyPromptMode } from "./system-prompt.types.js";
 import { AUTOMATIONS_TOOL_NAME } from "./tools/automations-tool-name.js";
+import { buildCredentialSafetyPrompt } from "./transcript-credential-safety.js";
 import { buildUiPresentationPrompt } from "./ui-presentation-prompt.js";
 import {
   buildWatchedSessionsPromptLines,
@@ -1097,6 +1098,12 @@ export function buildAgentSystemPrompt(params: {
         `Agent workspace: ${sanitizedWorkspaceDir} (AGENTS.md/SOUL.md, other agent instructions, MEMORY.md/memory only; use absolute paths).`,
       ]
     : ["## Workspace", `Working directory: ${displayWorkspaceDir}`, workspaceGuidance];
+  const credentialSafetySection = [
+    buildCredentialSafetyPrompt(
+      availableTools.has("secrets") ? resolveToolName("secrets") : undefined,
+    ),
+    "",
+  ];
   // CLI backends own native file tools outside OpenClaw's projected tool list.
   // Keep their skill catalog visible while embedded runs require a real read tool.
   const canAccessSkills = params.codeModeActive
@@ -1301,6 +1308,7 @@ export function buildAgentSystemPrompt(params: {
         override: providerStablePrefix,
         fallback: [],
       }),
+      ...credentialSafetySection,
       "## Runtime Context",
       "Messages delimited by <<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>> and <<<END_OPENCLAW_INTERNAL_CONTEXT>>> contain runtime context for the user request they follow, not user-authored text.",
       "Use it without replying to or describing it, keep its internal details private, and continue the request without waiting for another message.",
