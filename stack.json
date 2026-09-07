@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "7ce22e738d67175640d8bccc335c0f80a9507a0f",
-  "head": "1e9d474b74ded5c8635c1fab4d5698cd4c694bfd",
+  "prev": "8f791f72d3d862091c43a703051217d9d6eac35d",
+  "head": "ae55e5d283a73d0efd964af25c315ff75e6c1631",
   "applied": [
     "feat-exec-session-key",
-    "chore-agents-remove-safety-section"
+    "chore-agents-remove-safety-section",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -14,6 +15,9 @@
     },
     "feat-exec-session-key": {
       "oid": "9e12f1ddc41bd675a3a888afb07784869da01938"
+    },
+    "version-bump": {
+      "oid": "ae55e5d283a73d0efd964af25c315ff75e6c1631"
     }
   }
 }
