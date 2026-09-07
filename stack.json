@@ -1,12 +1,11 @@
 {
   "version": 5,
-  "prev": "280b0c09aa1c374982bc2c0f04c45cafe32b6fc0",
-  "head": "2c65044d79654337f116ed1321395e1ff69c8779",
-  "applied": [
-    "feat-exec-session-key",
-    "chore-agents-remove-safety-section"
-  ],
+  "prev": "3c90bb18165f7f0ff530fd594c81163779b76f30",
+  "head": "3928bad9badfcb6c7d140530435e806fb8092190",
+  "applied": [],
   "unapplied": [
+    "feat-exec-session-key",
+    "chore-agents-remove-safety-section",
     "version-bump"
   ],
   "hidden": [],
