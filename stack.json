@@ -1,11 +1,10 @@
 {
   "version": 5,
-  "prev": "e812a3f7b7444c747c9c9c0f5fa16f1b0c9a8cf6",
-  "head": "cf6fb4a66c3833a8a4a84fd0889b23042657ba20",
+  "prev": "53998de4954d912677a9752a09d28caf6fceb9a8",
+  "head": "2c65044d79654337f116ed1321395e1ff69c8779",
   "applied": [
     "feat-exec-session-key",
-    "chore-agents-remove-safety-section",
-    "refresh-temp"
+    "chore-agents-remove-safety-section"
   ],
   "unapplied": [
     "version-bump"
@@ -13,13 +12,10 @@
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
-      "oid": "8f6d356837bb49f2607ca3a82101a4e6ecfa0fbc"
+      "oid": "2c65044d79654337f116ed1321395e1ff69c8779"
     },
     "feat-exec-session-key": {
       "oid": "1bff0f65ec470201a88d195bed257f9be75d4879"
-    },
-    "refresh-temp": {
-      "oid": "cf6fb4a66c3833a8a4a84fd0889b23042657ba20"
     },
     "version-bump": {
       "oid": "4f8cb76911074a48e99afd933b0e86b7790fc058"
