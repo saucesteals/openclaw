@@ -740,7 +740,7 @@ export function appendModelIdentitySystemPrompt(params: {
   const source = params.systemPrompt;
   const parts: string[] = [];
   let cursor = 0;
-  for (let index = source.indexOf(MODEL_IDENTITY_PREFIX); index !== -1; ) {
+  for (let index = source.indexOf(MODEL_IDENTITY_PREFIX); index !== -1;) {
     const nextLine = source.indexOf("\n", index);
     const lineStart = source.lastIndexOf("\n", index) + 1;
     if (!source.slice(lineStart, index).trimStart()) {
