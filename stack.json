@@ -1,14 +1,14 @@
 {
   "version": 5,
-  "prev": "3a973b309524a4941a8393a85dec05233ebcbad3",
-  "head": "bd2e345afb8f360679c619ef7a09a0a121eebce5",
+  "prev": "c46cc3a8cd24e8852b586690310aee501513c076",
+  "head": "c49f4d864c0e2f477252363e013b43d946b19ff1",
   "applied": [
     "feat-exec-session-key",
     "fix-outbound-requested-channel",
-    "chore-agents-remove-safety-section"
+    "chore-agents-remove-safety-section",
+    "fix-discord-component-wildcard-scope"
   ],
   "unapplied": [
-    "fix-discord-component-wildcard-scope",
     "version-bump"
   ],
   "hidden": [],
@@ -20,7 +20,7 @@
       "oid": "1bff0f65ec470201a88d195bed257f9be75d4879"
     },
     "fix-discord-component-wildcard-scope": {
-      "oid": "eea77ffe6f8e8cb4952bfddf3cbc73c4d134fcb3"
+      "oid": "c49f4d864c0e2f477252363e013b43d946b19ff1"
     },
     "fix-outbound-requested-channel": {
       "oid": "8149aeba04ccfd3068bb2965a4fab51ad41dee87"
