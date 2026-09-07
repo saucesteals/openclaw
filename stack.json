@@ -1,9 +1,10 @@
 {
   "version": 5,
-  "prev": "f402b3f4b7c36e97e4ceba803961f68fc8ec06d4",
-  "head": "783b8d1a696b15963b2c62c9732f71a520fea4f6",
+  "prev": "79429c59947402c0f1d7adf7045fbaa9eb8ae377",
+  "head": "d9b933574ba1e28a62d2815376300caee2446c52",
   "applied": [
-    "feat-exec-session-key"
+    "feat-exec-session-key",
+    "refresh-temp"
   ],
   "unapplied": [
     "feat-skills-symlink-escapes",
@@ -32,6 +33,9 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "74373d13cc3a1d1f04ce8a30c6a12937528bd544"
+    },
+    "refresh-temp": {
+      "oid": "d9b933574ba1e28a62d2815376300caee2446c52"
     },
     "version-bump": {
       "oid": "4f8cb76911074a48e99afd933b0e86b7790fc058"
