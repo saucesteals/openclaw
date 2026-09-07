@@ -1,10 +1,9 @@
 {
   "version": 5,
-  "prev": "79429c59947402c0f1d7adf7045fbaa9eb8ae377",
-  "head": "d9b933574ba1e28a62d2815376300caee2446c52",
+  "prev": "1c9de25c32c0662c3e7fd9f9c1f48924c0d55062",
+  "head": "1bff0f65ec470201a88d195bed257f9be75d4879",
   "applied": [
-    "feat-exec-session-key",
-    "refresh-temp"
+    "feat-exec-session-key"
   ],
   "unapplied": [
     "feat-skills-symlink-escapes",
@@ -20,7 +19,7 @@
       "oid": "d1e529127d98d53e49b6868a16b12cb2a119c7b9"
     },
     "feat-exec-session-key": {
-      "oid": "783b8d1a696b15963b2c62c9732f71a520fea4f6"
+      "oid": "1bff0f65ec470201a88d195bed257f9be75d4879"
     },
     "feat-skills-symlink-escapes": {
       "oid": "b0dc375037f27c6e51aca92ee64b87fdf3a84436"
@@ -33,9 +32,6 @@
     },
     "fix-outbound-requested-channel": {
       "oid": "74373d13cc3a1d1f04ce8a30c6a12937528bd544"
-    },
-    "refresh-temp": {
-      "oid": "d9b933574ba1e28a62d2815376300caee2446c52"
     },
     "version-bump": {
       "oid": "4f8cb76911074a48e99afd933b0e86b7790fc058"
