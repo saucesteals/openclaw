@@ -1,11 +1,12 @@
 {
   "version": 5,
-  "prev": "3ab8249b3171ef11deb19a235ea30322c379d8ba",
-  "head": "866ad6b1196ad156a9addcc4b325b0b41f417e65",
+  "prev": "861e2ea088cf4cb0ba70d362f6a99b81696aefa3",
+  "head": "1ac8c9afa74ee9532f1ab667dc6ce87147686412",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
-    "fix-discord-gateway-delegation"
+    "fix-discord-gateway-delegation",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -18,6 +19,9 @@
     },
     "fix-discord-gateway-delegation": {
       "oid": "866ad6b1196ad156a9addcc4b325b0b41f417e65"
+    },
+    "version-bump": {
+      "oid": "1ac8c9afa74ee9532f1ab667dc6ce87147686412"
     }
   }
 }
