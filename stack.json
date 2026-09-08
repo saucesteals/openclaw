@@ -1,13 +1,14 @@
 {
   "version": 5,
-  "prev": "8f791f72d3d862091c43a703051217d9d6eac35d",
-  "head": "ae55e5d283a73d0efd964af25c315ff75e6c1631",
+  "prev": "ddd9daceb06b84d66d1de578608b15e206aa36ae",
+  "head": "1e9d474b74ded5c8635c1fab4d5698cd4c694bfd",
   "applied": [
     "feat-exec-session-key",
-    "chore-agents-remove-safety-section",
+    "chore-agents-remove-safety-section"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
