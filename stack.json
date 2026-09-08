@@ -1,14 +1,15 @@
 {
   "version": 5,
-  "prev": "c855660d206ca3a78aa8e03eb4407b871b7d365c",
-  "head": "aba4fd6c03e032026094c0f933c6cb145ef9be86",
+  "prev": "2027225e9cb79d4c19eb1ef998ddf01bcb147942",
+  "head": "866ad6b1196ad156a9addcc4b325b0b41f417e65",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
-    "fix-discord-gateway-delegation",
+    "fix-discord-gateway-delegation"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
