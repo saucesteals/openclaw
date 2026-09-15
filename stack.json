@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "f3af1fe27b593dc426ac467c5948dfbd3c9e2b86",
-  "head": "e4d16915c86c3407568230d4153544d4a16d924b",
+  "prev": "9171fd2c1e73c6e988eca299d56c3f026a8c0067",
+  "head": "18f84d20ea853e71e0527a10a2b8724a629026be",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -9,7 +9,8 @@
     "fix-media-completion-tools",
     "fix-media-failure-status",
     "fix-media-selected-delivery",
-    "fix-xai-video15-inputs"
+    "fix-xai-video15-inputs",
+    "refresh-temp"
   ],
   "unapplied": [
     "version-bump"
@@ -36,6 +37,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "e4d16915c86c3407568230d4153544d4a16d924b"
+    },
+    "refresh-temp": {
+      "oid": "18f84d20ea853e71e0527a10a2b8724a629026be"
     },
     "version-bump": {
       "oid": "8e4b8b80f1162bded5ad218c3a4f17f85fc03cce"
