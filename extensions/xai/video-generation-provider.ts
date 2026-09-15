@@ -155,21 +155,8 @@ function isFirstFrameImage(input: VideoGenerationSourceInput): boolean {
   return role === undefined || role === "first_frame";
 }
 
-function validateXaiVideo15Request(req: VideoGenerationRequest): void {
-  if (!isXaiVideo15Model(req.model)) {
-    return;
-  }
-  if ((req.inputVideos?.length ?? 0) > 0) {
-    throw new Error("xAI grok-imagine-video-1.5 does not support video inputs.");
-  }
-  const inputImages = req.inputImages ?? [];
-  const [inputImage, ...additionalImages] = inputImages;
-  if (!inputImage || additionalImages.length > 0) {
-    throw new Error("xAI grok-imagine-video-1.5 requires exactly one first-frame image.");
-  }
-  if (!isFirstFrameImage(inputImage)) {
-    throw new Error("xAI grok-imagine-video-1.5 supports only an ordinary or first_frame image.");
-  }
+function isLastFrameImage(input: VideoGenerationSourceInput): boolean {
+  return normalizeOptionalString(input.role)?.toLowerCase() === "last_frame";
 }
 
 function resolveInputVideoUrl(input: VideoGenerationSourceInput | undefined): string | undefined {
@@ -230,7 +217,10 @@ function resolveXaiVideoMode(
   req: VideoGenerationRequest,
 ): "generate" | "referenceToVideo" | "edit" | "extend" {
   const hasVideoInput = (req.inputVideos?.length ?? 0) > 0;
-  if (!hasVideoInput && (req.inputImages ?? []).some(isReferenceImage)) {
+  if (
+    !hasVideoInput &&
+    (req.inputImages ?? []).some((image) => isReferenceImage(image) || isLastFrameImage(image))
+  ) {
     return "referenceToVideo";
   }
   if (!hasVideoInput) {
@@ -246,18 +236,34 @@ function resolveXaiVideoMode(
 }
 
 function buildCreateBody(req: VideoGenerationRequest): Record<string, unknown> {
-  validateXaiVideo15Request(req);
+  const isVideo15 = isXaiVideo15Model(req.model);
   const inputImages = req.inputImages ?? [];
-  const hasReferenceImages = inputImages.some(isReferenceImage);
-  if (hasReferenceImages && !inputImages.every(isReferenceImage)) {
+  const firstFrames = inputImages.filter(isFirstFrameImage);
+  const lastFrames = inputImages.filter(isLastFrameImage);
+  const referenceImages = inputImages.filter(isReferenceImage);
+  if (isVideo15 && (req.inputVideos?.length ?? 0) > 0) {
+    throw new Error("xAI grok-imagine-video-1.5 does not support video inputs.");
+  }
+  if (firstFrames.length + lastFrames.length + referenceImages.length !== inputImages.length) {
+    throw new Error(
+      "xAI video generation supports only first_frame, last_frame, and reference_image roles.",
+    );
+  }
+  if (!isVideo15 && lastFrames.length > 0) {
+    throw new Error("xAI last_frame inputs require grok-imagine-video-1.5.");
+  }
+  if (!isVideo15 && referenceImages.length > 0 && firstFrames.length > 0) {
     throw new Error(
       "xAI reference-image video generation requires every image role to be reference_image.",
     );
   }
-  if (!hasReferenceImages && inputImages.length > 1) {
+  if (firstFrames.length > 1) {
     throw new Error("xAI image-to-video generation supports at most one first-frame image.");
   }
-  if (hasReferenceImages && inputImages.length > 7) {
+  if (lastFrames.length > 1) {
+    throw new Error("xAI video generation supports at most one last-frame image.");
+  }
+  if (referenceImages.length > 7) {
     throw new Error("xAI reference-image video generation supports at most 7 reference images.");
   }
   if ((req.inputVideos?.length ?? 0) > 1) {
@@ -276,8 +282,7 @@ function buildCreateBody(req: VideoGenerationRequest): Record<string, unknown> {
   };
 
   if (mode === "generate") {
-    const isVideo15 = isXaiVideo15Model(req.model);
-    const imageUrl = resolveImageUrl(req.inputImages?.[0]);
+    const imageUrl = resolveImageUrl(firstFrames[0]);
     if (imageUrl) {
       body.image = { url: imageUrl };
     }
@@ -299,12 +304,22 @@ function buildCreateBody(req: VideoGenerationRequest): Record<string, unknown> {
   }
 
   if (mode === "referenceToVideo") {
-    body.reference_images = inputImages.map((image) => ({ url: resolveRequiredImageUrl(image) }));
+    if (referenceImages.length > 0) {
+      body.reference_images = referenceImages.map((image) => ({
+        url: resolveRequiredImageUrl(image),
+      }));
+    }
+    if (firstFrames[0]) {
+      body.image = { url: resolveRequiredImageUrl(firstFrames[0]) };
+    }
+    if (lastFrames[0]) {
+      body.last_frame = { url: resolveRequiredImageUrl(lastFrames[0]) };
+    }
     body.duration =
       resolveDurationSeconds({
         durationSeconds: req.durationSeconds,
         min: 1,
-        max: 10,
+        max: isVideo15 ? 15 : 10,
       }) ?? XAI_VIDEO_DEFAULT_DURATION_SECONDS;
     body.aspect_ratio = resolveAspectRatio(req.aspectRatio) ?? XAI_VIDEO_DEFAULT_ASPECT_RATIO;
     body.resolution = resolveResolution(req.resolution) ?? XAI_VIDEO_DEFAULT_RESOLUTION;
