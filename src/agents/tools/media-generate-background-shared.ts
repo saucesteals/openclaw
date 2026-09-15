@@ -122,6 +122,7 @@ type CompleteMediaGenerationTaskRunParams = {
 type FailMediaGenerationTaskRunParams = {
   handle: MediaGenerationTaskHandle | null;
   error: unknown;
+  deferCleanup?: boolean;
 };
 
 type WakeMediaGenerationTaskCompletionParams = {
@@ -347,6 +348,7 @@ function failMediaGenerationTaskRun(params: {
   handle: MediaGenerationTaskHandle | null;
   error: unknown;
   progressSummary: string;
+  deferCleanup?: boolean;
 }) {
   if (!params.handle) {
     return;
@@ -365,7 +367,9 @@ function failMediaGenerationTaskRun(params: {
       terminalSummary: errorText,
     });
   } finally {
-    clearMediaGenerationTaskRunContext(params.handle);
+    if (!params.deferCleanup) {
+      clearMediaGenerationTaskRunContext(params.handle);
+    }
   }
 }
 
@@ -468,6 +472,16 @@ export function scheduleMediaGenerationTaskCompletion<
       });
     } catch (error) {
       try {
+        // Publish failure before the wake; keep its context alive until delivery settles.
+        try {
+          params.lifecycle.failTaskRun({ handle: params.handle, error, deferCleanup: true });
+        } catch (stateError) {
+          params.onWakeFailure(`${params.toolName} failure state update failed`, {
+            taskId: params.handle?.taskId,
+            runId: params.handle?.runId,
+            error: stateError,
+          });
+        }
         const wakeOutcome = await wakeMediaGenerationTaskCompletionWithRetry({
           wake: async () =>
             await params.lifecycle.wakeTaskCompletion({
@@ -490,8 +504,11 @@ export function scheduleMediaGenerationTaskCompletion<
           runId: params.handle?.runId,
           error: wakeError,
         });
+      } finally {
+        if (params.handle) {
+          clearMediaGenerationTaskRunContext(params.handle);
+        }
       }
-      params.lifecycle.failTaskRun({ handle: params.handle, error });
       return;
     }
 

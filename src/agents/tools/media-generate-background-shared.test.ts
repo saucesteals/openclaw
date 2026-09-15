@@ -845,9 +845,17 @@ describe("scheduleMediaGenerationTaskCompletion", () => {
 
     const backgroundWork = scheduled[0]?.();
     await vi.waitFor(() => expect(lifecycle.wakeTaskCompletion).toHaveBeenCalled());
-    expect(lifecycle.failTaskRun).not.toHaveBeenCalled();
+    expect(lifecycle.failTaskRun).toHaveBeenCalledWith(
+      expect.objectContaining({ error: generationError, deferCleanup: true }),
+    );
+    expect(
+      cronContinuationCleanupMocks.removeCronRunContinuationSessionIfIdle,
+    ).not.toHaveBeenCalled();
     releaseWake?.();
     await backgroundWork;
+    expect(
+      cronContinuationCleanupMocks.removeCronRunContinuationSessionIfIdle,
+    ).toHaveBeenCalledOnce();
 
     expect(lifecycle.failTaskRun).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -876,6 +884,8 @@ describe("createMediaGenerationTaskLifecycle", () => {
     expect(handle).not.toBeNull();
     expect(hasPendingGeneratedMediaTaskForSessionKey(sessionKey)).toBe(true);
 
+    lifecycle.failTaskRun({ handle, error: new Error("stopped"), deferCleanup: true });
+    expect(hasPendingGeneratedMediaTaskForSessionKey(sessionKey)).toBe(true);
     lifecycle.failTaskRun({ handle, error: new Error("stopped") });
     expect(hasPendingGeneratedMediaTaskForSessionKey(sessionKey)).toBe(false);
   });
