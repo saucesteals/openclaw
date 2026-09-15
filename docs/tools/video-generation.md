@@ -431,11 +431,17 @@ OpenClaw does not append auto-detected providers.
     do not accept aspect-ratio or resolution overrides. Extension accepts 2-10
     seconds.
 
-    `grok-imagine-video-1.5` is image-to-video only: provide exactly one image.
-    It supports 1-15 seconds and `480P`, `720P`, or `1080P`, defaulting to
-    `480P`; omit `aspectRatio` to inherit the source image ratio. The preview
-    and dated 1.5 identifiers receive the same validation and are forwarded
-    unchanged.
+    `grok-imagine-video-1.5` supports text-to-video, image animation, up to 7
+    `reference_image` inputs, and pinned `first_frame`/`last_frame` images.
+    References and pinned frames can be combined, with at most one frame of
+    each kind (9 images total). An unroled image is a first frame. Classic
+    rejects `last_frame` and mixed first-frame/reference inputs.
+
+    Video 1.5 supports 1-15 seconds, defaulting to `480P`. Text-to-video and
+    single-image animation support `1080P`; reference or pinned-last-frame
+    requests cap resolution at `720P`. Single-image animation inherits the
+    source ratio when `aspectRatio` is omitted. The preview and dated 1.5
+    identifiers receive the same validation and are forwarded unchanged.
 
   </Accordion>
 </AccordionGroup>

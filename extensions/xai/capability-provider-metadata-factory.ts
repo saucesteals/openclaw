@@ -92,10 +92,18 @@ const XAI_VIDEO_15_MODEL = "grok-imagine-video-1.5";
 export const XAI_VIDEO_DEFAULT_TIMEOUT_MS = 600_000;
 export const XAI_VIDEO_ASPECT_RATIOS = new Set(["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"]);
 const XAI_VIDEO_15_CAPABILITIES = {
+  generate: {
+    maxVideos: 1,
+    maxDurationSeconds: 15,
+    aspectRatios: [...XAI_VIDEO_ASPECT_RATIOS],
+    resolutions: ["480P", "720P", "1080P"],
+    supportsAspectRatio: true,
+    supportsResolution: true,
+  },
   imageToVideo: {
     enabled: true,
     maxVideos: 1,
-    maxInputImages: 1,
+    maxInputImages: 9,
     maxDurationSeconds: 15,
     aspectRatios: [...XAI_VIDEO_ASPECT_RATIOS],
     resolutions: ["480P", "720P", "1080P"],
@@ -130,7 +138,7 @@ export function createXaiVideoGenerationProviderMetadata(
     catalogByModel: {
       [XAI_VIDEO_15_MODEL]: {
         capabilities: XAI_VIDEO_15_CAPABILITIES,
-        modes: ["imageToVideo"],
+        modes: ["generate", "imageToVideo"],
       },
     },
     isConfigured: (ctx) => context.isProviderApiKeyConfigured({ provider: "xai", ...ctx }),

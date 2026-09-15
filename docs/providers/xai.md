@@ -280,16 +280,19 @@ An explicit tool model remains selected; the Grok 4.3 examples below are overrid
     - Additional model: `xai/grok-imagine-video-1.5`
     - Classic modes: text-to-video, image-to-video, reference-image generation,
       remote video edit, and remote video extension
-    - Video 1.5 mode: image-to-video only, with exactly one first-frame image
+    - Video 1.5 modes: text-to-video, image-to-video, reference-image generation,
+      and pinned first/last frames; up to 7 references plus one frame at each end
     - Aspect ratios: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`;
       classic and Video 1.5 image-to-video inherit the source image ratio when
       omitted
-    - Resolutions: classic `480P`/`720P`; Video 1.5 also supports `1080P`; all
-      generation modes default to `480P`
+    - Resolutions: classic `480P`/`720P`; Video 1.5 text-to-video and single-image
+      animation also support `1080P`. Reference/pinned-last-frame requests cap
+      resolution at `720P`. All generation modes default to `480P`
     - Duration: 1-15 seconds for generation/image-to-video, 1-10 seconds when
       using classic `reference_image` roles, 2-10 seconds for classic extension
-    - Reference-image generation: set `imageRoles` to `reference_image` for
-      every supplied image; xAI accepts up to 7 such images
+    - Reference-image generation: use `reference_image` roles for up to 7 images.
+      Classic requires every image to use this role. Video 1.5 can mix these with
+      one `first_frame` and one `last_frame`; unroled images are first frames
     - Video edit/extend inherit the input video's aspect ratio and resolution;
       those operations do not accept geometry overrides
     - Default operation timeout: 600 seconds unless `video_generate.timeoutMs`
@@ -303,7 +306,7 @@ An explicit tool model remains selected; the Grok 4.3 examples below are overrid
 
     Video 1.5 also recognizes xAI's `grok-imagine-video-1.5-preview` and
     `grok-imagine-video-1.5-2026-05-30` identifiers. OpenClaw forwards the
-    selected identifier unchanged, but applies the same image-only validation.
+    selected identifier unchanged, but applies the same Video 1.5 validation.
 
     To use xAI as the default video provider:
 
