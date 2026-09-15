@@ -1,13 +1,12 @@
 {
   "version": 5,
-  "prev": "a915579df88e278e1e1c7ec284978bc3933177cd",
-  "head": "866ad6b1196ad156a9addcc4b325b0b41f417e65",
-  "applied": [
+  "prev": "418a272779ed02caa60e80107d3ba8830e713a44",
+  "head": "43a9c9758d7e1da3a08cadc17e63f55ca52e71be",
+  "applied": [],
+  "unapplied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
-    "fix-discord-gateway-delegation"
-  ],
-  "unapplied": [
+    "fix-discord-gateway-delegation",
     "version-bump"
   ],
   "hidden": [],
