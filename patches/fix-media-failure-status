@@ -1,0 +1,6 @@
+Bottom: d969a27c075335c6d7cea975f7afc00004458826
+Top:    d969a27c075335c6d7cea975f7afc00004458826
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-09-15 16:27:59 -0700
+
+fix(media): publish failure before completion wake
