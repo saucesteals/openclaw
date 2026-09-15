@@ -1,16 +1,15 @@
 {
   "version": 5,
-  "prev": "3867d3dbd09953bd1e8df7d8bd9f9b3a34474663",
-  "head": "2b87152750464e1395f44e84d356e3d4829c882d",
+  "prev": "2c5157480942b6a9320742b7f19132981dc31249",
+  "head": "bf8f4804547395a743f0795b575501aeb4be44f6",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
     "fix-discord-gateway-delegation",
-    "fix-media-completion-tools"
-  ],
-  "unapplied": [
+    "fix-media-completion-tools",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -26,7 +25,7 @@
       "oid": "2b87152750464e1395f44e84d356e3d4829c882d"
     },
     "version-bump": {
-      "oid": "6ae57c8b2dbc72f2e7e3112c7ddc3a12a12eb84a"
+      "oid": "bf8f4804547395a743f0795b575501aeb4be44f6"
     }
   }
 }
