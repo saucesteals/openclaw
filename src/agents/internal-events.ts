@@ -259,7 +259,7 @@ export function buildGeneratedMediaDeliveryContext(
       kind: "runtime-instruction",
       text: retry
         ? "Deliver only the generated media listed below. Do not resend any other attachment."
-        : "Deliver the generated media listed below to the user.",
+        : "Deliver the generated media listed below. If the user requested conversion or stitching, finish that work and attach the final files instead; standard delivery saves your selected files before sending and retries that same selection.",
     },
     {
       kind: "conversation-data",

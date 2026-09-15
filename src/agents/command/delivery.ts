@@ -146,6 +146,8 @@ type DeliverAgentCommandResultParams = {
   preparedPlugin?: ChannelPlugin;
   assertDeliveryCurrent?: () => void;
   onDeliveryResult?: (result: AgentCommandDeliveryResult) => void;
+  /** Required durable selection boundary after normal path checks, before transport. */
+  onPreparedMedia?: (mediaUrls: string[]) => Promise<void>;
 } & FreshSessionDeliveryRefreshParams;
 
 function normalizeDeliverySessionId(value: string | undefined): string | undefined {
@@ -318,7 +320,7 @@ function noVisiblePayloadStatus(reason?: NormalizeReplySkipReason): AgentCommand
   };
 }
 
-async function normalizeReplyMediaPathsForDelivery(params: {
+export async function normalizeReplyMediaPathsForDelivery(params: {
   cfg: OpenClawConfig;
   payloads: ReplyPayload[];
   sessionKey?: string;
@@ -960,6 +962,10 @@ export async function deliverAgentCommandResult(
   }
   if (deliver && deliveryChannel && !isInternalMessageChannel(deliveryChannel)) {
     if (deliveryTarget && !deliveryStatus) {
+      params.assertDeliveryCurrent?.();
+      await params.onPreparedMedia?.(
+        Array.from(new Set(deliveryPayloads.flatMap((payload) => payload.mediaUrls ?? []))),
+      );
       params.assertDeliveryCurrent?.();
       const restartAbort = createRestartOnlyAbortSignal(opts.abortSignal);
       let send: DurableSendResult;
