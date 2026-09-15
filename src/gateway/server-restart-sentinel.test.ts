@@ -1645,7 +1645,7 @@ describe("scheduleRestartSentinelWake", () => {
         },
         sourceReplyDeliveryMode: "automatic",
         disableMessageTool: true,
-        forceRestartSafeTools: true,
+        forceRestartSafeTools: false,
         idempotencyKey: "image:task-1:agent-loop",
       },
       {
@@ -1992,7 +1992,7 @@ describe("scheduleRestartSentinelWake", () => {
         deliver: true,
         sourceReplyDeliveryMode: "automatic",
         disableMessageTool: true,
-        forceRestartSafeTools: true,
+        forceRestartSafeTools: false,
         idempotencyKey: "image:task-automatic:agent-loop",
       }),
       {

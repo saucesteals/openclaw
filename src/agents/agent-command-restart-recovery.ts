@@ -42,12 +42,10 @@ export function resolveCommandRecoveryOptions(params: {
   if (
     (opts.internalDeliverySuppressText === true && opts.internalDeliveryMediaUrls === undefined) ||
     ((opts.internalDeliveryMediaUrls !== undefined || opts.internalDeliverySuppressText === true) &&
-      (opts.forceRestartSafeTools !== true ||
-        opts.disableMessageTool !== true ||
-        opts.sourceReplyDeliveryMode !== "automatic"))
+      (opts.disableMessageTool !== true || opts.sourceReplyDeliveryMode !== "automatic"))
   ) {
     throw new Error(
-      "internal delivery media constraints require automatic delivery with restart-safe tools and no message tool",
+      "internal delivery media constraints require automatic delivery and no message tool",
     );
   }
   return opts;
