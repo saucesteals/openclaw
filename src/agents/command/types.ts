@@ -176,6 +176,8 @@ export type AgentCommandOpts = {
   codeModeOverride?: boolean | "auto";
   /** Host-owned exact media set for a scoped automatic recovery delivery. */
   internalDeliveryMediaUrls?: string[];
+  /** Internal restored claim: never reselect media during recovery. */
+  internalDeliveryMediaSelected?: boolean;
   internalDeliverySuppressText?: boolean;
   /** Gateway ingress that already persisted visible activity can skip the duplicate pre-run touch. */
   skipInitialSessionTouch?: boolean;

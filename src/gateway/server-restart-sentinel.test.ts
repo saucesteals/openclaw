@@ -641,7 +641,7 @@ describe("scheduleRestartSentinelWake", () => {
   const expectedGeneratedMediaContext: RuntimeContextFragment[] = [
     {
       kind: "runtime-instruction",
-      text: "Deliver the generated media listed below to the user.",
+      text: "Deliver the generated media listed below. If the user requested conversion or stitching, finish that work and attach the final files instead; standard delivery saves your selected files before sending and retries that same selection.",
     },
     { kind: "conversation-data", text: "Generated media:\nMEDIA:/tmp/proof.png" },
   ];
@@ -1826,6 +1826,50 @@ describe("scheduleRestartSentinelWake", () => {
       }),
     ).rejects.toThrow("dead-lettered without durable terminal evidence");
   });
+
+  it.each(["sent", "failed"] as const)(
+    "settles selected final media using %s evidence, never the original clip",
+    async (status) => {
+      mocks.dispatchGatewayMethodInProcess.mockResolvedValueOnce({ status: "ok" });
+      mocks.loadSessionEntry.mockReturnValue({
+        cfg: {},
+        entry: {
+          sessionId: "agent:main:main",
+          updatedAt: 1,
+          restartRecoveryTerminalRunIds: ["image:selected:agent-loop"],
+          restartRecoveryTerminalDeliveryEvidence: [
+            {
+              runId: "image:selected:agent-loop",
+              captured: true,
+              selectedMediaUrls: ["/tmp/final.gif"],
+              payloads: [{ mediaUrls: ["/tmp/final.gif"], visible: true }],
+              deliveryStatus: { status },
+            },
+          ],
+        },
+        store: {},
+        storePath: "/tmp/sessions.json",
+        canonicalKey: "agent:main:main",
+        storeKeys: ["agent:main:main"],
+        legacyKey: undefined,
+      });
+      const run = deliverGeneratedMedia({
+        id: "selected-delivery",
+        messageId: "image:selected:agent-loop",
+        expectedMediaUrls: ["/tmp/original.mp4"],
+      });
+      if (status === "sent") {
+        await expect(run).resolves.not.toThrow();
+        expect(mocks.advanceSessionDeliveryAgentRun).not.toHaveBeenCalled();
+      } else {
+        await expect(run).rejects.toThrow("/tmp/final.gif");
+        expect(mocks.advanceSessionDeliveryAgentRun).toHaveBeenCalledWith(
+          "selected-delivery",
+          expect.objectContaining({ expectedMediaUrls: ["/tmp/final.gif"] }),
+        );
+      }
+    },
+  );
 
   it("retries a captured empty terminal result instead of dead-lettering it", async () => {
     mocks.dispatchGatewayMethodInProcess.mockResolvedValueOnce({ status: "ok" });

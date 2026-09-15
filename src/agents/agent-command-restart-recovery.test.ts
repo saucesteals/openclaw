@@ -3,6 +3,7 @@ import {
   buildCurrentRunRestartRecoveryClaim,
   buildRestartRecoveryTerminalDeliveryEvidence,
   constrainRestartRecoveryDeliveryPayloads,
+  resolveCommandRecoveryOptions,
 } from "./agent-command-restart-recovery.js";
 
 describe("buildCurrentRunRestartRecoveryClaim", () => {
@@ -103,6 +104,42 @@ describe("buildCurrentRunRestartRecoveryClaim", () => {
         sourceRunId: "media-run",
       }),
     ).toThrow("restart recovery source ownership is required for a new claim");
+  });
+});
+
+describe("selected delivery recovery", () => {
+  it("restores frozen media without promoting its local-file authority", () => {
+    const opts = resolveCommandRecoveryOptions({
+      opts: { message: "retry", internalDeliveryMediaUrls: ["/tmp/original.mp4"] },
+      runId: "recovery",
+      sessionEntry: {
+        sessionId: "session",
+        updatedAt: 1,
+        restartRecoveryDeliveryRunId: "recovery",
+        restartRecoveryDeliveryMediaUrls: ["/tmp/final.gif"],
+        restartRecoveryDeliveryMediaSelected: true,
+        restartRecoveryDisableMessageTool: true,
+        restartRecoverySourceReplyDeliveryMode: "automatic",
+      },
+    });
+    expect(opts.internalDeliveryMediaSelected).toBe(true);
+    expect(opts.internalDeliveryMediaUrls).toEqual(["/tmp/final.gif"]);
+    expect(
+      constrainRestartRecoveryDeliveryPayloads(
+        [{ text: "ready", mediaUrl: "/tmp/other.png" }],
+        opts.internalDeliveryMediaUrls!,
+        false,
+        false,
+      ),
+    ).toEqual([
+      {
+        text: "ready",
+        mediaUrl: "/tmp/final.gif",
+        mediaUrls: ["/tmp/final.gif"],
+        audioAsVoice: undefined,
+        trustedLocalMedia: undefined,
+      },
+    ]);
   });
 });
 

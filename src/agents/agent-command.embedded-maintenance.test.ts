@@ -37,6 +37,49 @@ const {
 registerAgentCommandCompactionTestHooks();
 
 describe("agentCommand embedded maintenance", () => {
+  it("freezes final media before replayable custody exists and before transport starts", async () => {
+    const sessionId = "selected-media-custody";
+    const sessionKey = `agent:main:explicit:${sessionId}`;
+    const selected = "https://example.com/final.gif";
+    state.runAgentAttemptMock.mockImplementationOnce(async () => ({
+      ...makeResult({ sessionId, text: "final", runner: "embedded", agentHarnessId: "openclaw" }),
+      payloads: [
+        { text: "final", mediaUrl: selected },
+        { text: "hidden", isReasoning: true, mediaUrl: "https://example.com/reasoning.mp4" },
+        { text: "diagnostic", isError: true, mediaUrl: "https://example.com/error.mp4" },
+      ],
+    }));
+    let custodyChecked = false;
+    state.deliverAgentCommandResultMock.mockImplementationOnce(async () => {
+      const stored = findStoredSessionEntry(sessionKey);
+      expect(stored?.pendingFinalDelivery).toBeDefined();
+      expect(stored?.restartRecoveryDeliveryMediaSelected).toBe(true);
+      expect(stored?.restartRecoveryDeliveryMediaUrls).toEqual([selected]);
+      custodyChecked = true;
+      // Simulate loss before the sender's preparation callback/transport executes.
+      throw new Error("transport not started");
+    });
+    await expect(
+      agentCommandFromGatewayIngress(
+        {
+          message: "deliver generated result",
+          sessionId,
+          sessionKey,
+          runId: "selected-media-run",
+          allowModelOverride: false,
+          deliver: true,
+          channel: "discord",
+          to: "channel:test",
+          disableMessageTool: true,
+          sourceReplyDeliveryMode: "automatic",
+          internalDeliveryMediaUrls: ["https://example.com/original.mp4"],
+        },
+        ...GATEWAY_INGRESS_ARGS,
+      ),
+    ).rejects.toThrow("transport not started");
+    expect(custodyChecked).toBe(true);
+  });
+
   it("keeps the completed foreground budget when maintenance invokes a retired callback", async () => {
     const sessionId = "foreground-compaction-budget";
     const sessionKey = `agent:main:explicit:${sessionId}`;

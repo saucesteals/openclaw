@@ -209,6 +209,9 @@ function normalizeTerminalDeliveryEvidenceResult(
   }
   return {
     ...(captured ? { captured } : {}),
+    ...(Array.isArray(record.selectedMediaUrls)
+      ? { selectedMediaUrls: normalizePresentStringArray(record.selectedMediaUrls) }
+      : {}),
     ...(payloads?.length ? { payloads } : {}),
     ...(payloadsTruncated ? { payloadsTruncated } : {}),
     ...(deliveryStatus ? { deliveryStatus } : {}),
@@ -273,6 +276,7 @@ type RestartRecoveryNormalizedField =
   | "restartRecoveryDeliveryReceiptState"
   | "restartRecoveryDeliveryToolCallId"
   | "restartRecoveryDeliveryMediaUrls"
+  | "restartRecoveryDeliveryMediaSelected"
   | "restartRecoveryDisableMessageTool"
   | "restartRecoverySuppressTextDelivery"
   | "restartRecoveryDeliveryRequestFingerprint"
@@ -312,6 +316,12 @@ export function normalizeRestartRecoveryEntryFields(
     sameOptionalStringArray(entry.restartRecoveryDeliveryMediaUrls, deliveryMediaUrls)
       ? entry.restartRecoveryDeliveryMediaUrls
       : deliveryMediaUrls,
+  );
+  assign(
+    "restartRecoveryDeliveryMediaSelected",
+    entry.restartRecoveryDeliveryMediaSelected === true && deliveryMediaUrls !== undefined
+      ? true
+      : undefined,
   );
   assign(
     "restartRecoveryDisableMessageTool",
@@ -484,7 +494,15 @@ export function buildRestartRecoveryClaimCleanupPatch(params: {
     params.recordTerminalSource && sourceRunId && params.terminalDeliveryEvidence
       ? mergeRestartRecoveryTerminalDeliveryEvidence(
           params.entry.restartRecoveryTerminalDeliveryEvidence,
-          [{ runId: sourceRunId, ...params.terminalDeliveryEvidence }],
+          [
+            {
+              runId: sourceRunId,
+              ...params.terminalDeliveryEvidence,
+              ...(params.entry.restartRecoveryDeliveryMediaSelected === true
+                ? { selectedMediaUrls: params.entry.restartRecoveryDeliveryMediaUrls }
+                : {}),
+            },
+          ],
         )
       : undefined;
   return {
@@ -493,6 +511,7 @@ export function buildRestartRecoveryClaimCleanupPatch(params: {
     restartRecoveryDeliveryToolCallId: undefined,
     restartRecoveryDeliveryContext: undefined,
     restartRecoveryDeliveryMediaUrls: undefined,
+    restartRecoveryDeliveryMediaSelected: undefined,
     restartRecoveryDisableMessageTool: undefined,
     restartRecoverySuppressTextDelivery: undefined,
     restartRecoveryDeliveryRequestFingerprint: undefined,

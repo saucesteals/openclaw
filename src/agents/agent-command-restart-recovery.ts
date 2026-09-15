@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import type { ReplyPayload } from "../auto-reply/reply-payload.js";
 import type { RestartRecoveryTerminalDeliveryEvidenceResult } from "../config/sessions/restart-recovery-types.js";
@@ -33,6 +34,7 @@ export function resolveCommandRecoveryOptions(params: {
       ? {
           ...params.opts,
           internalDeliveryMediaUrls: [...media],
+          internalDeliveryMediaSelected: entry?.restartRecoveryDeliveryMediaSelected === true,
           internalDeliverySuppressText: entry?.restartRecoverySuppressTextDelivery,
           sourceReplyDeliveryMode: entry?.restartRecoverySourceReplyDeliveryMode,
           disableMessageTool: entry?.restartRecoveryDisableMessageTool,
@@ -58,12 +60,32 @@ function normalizeOptionalThreadId(value: unknown): string | undefined {
   );
 }
 
-/** Replace model-selected media with the exact host-owned delivery set. */
+/** Preserve eligible fresh selection; recovery uses the exact host-owned delivery set. */
 export function constrainRestartRecoveryDeliveryPayloads(
   payloads: ReplyPayload[] | undefined,
   mediaUrls: string[],
   suppressText = false,
+  trustedLocalMedia = true,
+  allowSelection = false,
 ): ReplyPayload[] {
+  if (
+    allowSelection &&
+    collectDeliveredMediaUrls({
+      payloads: payloads?.filter(
+        (payload) => payload.isError !== true && hasExplicitlyVisibleAgentPayload(payload),
+      ),
+    }).length > 0
+  ) {
+    return (payloads ?? []).map((payload) =>
+      payload.isError === true || !hasExplicitlyVisibleAgentPayload(payload)
+        ? Object.assign({}, payload, {
+            mediaUrl: undefined,
+            mediaUrls: undefined,
+            attachments: undefined,
+          })
+        : payload,
+    );
+  }
   const constrained: ReplyPayload[] = [];
   for (const payload of payloads ?? []) {
     const constrainedPayload: ReplyPayload = {};
@@ -123,7 +145,7 @@ export function constrainRestartRecoveryDeliveryPayloads(
             payloads: [visibleReply],
             toolMediaUrls: exactMediaUrls,
             hostOwnedToolMediaUrls: exactMediaUrls,
-            toolTrustedLocalMedia: true,
+            toolTrustedLocalMedia: trustedLocalMedia,
             sourceReplyDeliveryMode: "automatic",
           }) ?? [];
         if (mergedReply) {
@@ -134,7 +156,7 @@ export function constrainRestartRecoveryDeliveryPayloads(
     }
   }
 
-  constrained.push({ mediaUrls: exactMediaUrls, trustedLocalMedia: true });
+  constrained.push({ mediaUrls: exactMediaUrls, trustedLocalMedia });
   return constrained;
 }
 
@@ -331,6 +353,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   SessionEntry,
   | "restartRecoveryDeliveryContext"
   | "restartRecoveryDeliveryMediaUrls"
+  | "restartRecoveryDeliveryMediaSelected"
   | "restartRecoveryDisableMessageTool"
   | "restartRecoveryDeliveryRunId"
   | "restartRecoveryDeliverySourceRunId"
@@ -357,6 +380,9 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
       : createsScopedDeliveryClaim && params.deliveryMediaUrls !== undefined
         ? [...params.deliveryMediaUrls]
         : undefined,
+    restartRecoveryDeliveryMediaSelected: adoptsExistingClaim
+      ? params.entry.restartRecoveryDeliveryMediaSelected
+      : undefined,
     restartRecoveryDisableMessageTool: adoptsExistingClaim
       ? params.entry.restartRecoveryDisableMessageTool
       : createsScopedDeliveryClaim && params.disableMessageTool === true
@@ -390,4 +416,68 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
         ? true
         : undefined,
   };
+}
+
+/** Freeze normalized media under the active recovery claim before transport starts. */
+export async function freezeCurrentRunDeliveryMedia(params: {
+  sessionStore?: Record<string, SessionEntry>;
+  sessionKey?: string;
+  storePath: string;
+  sessionId: string;
+  runId: string;
+  mediaUrls: string[];
+  assertCurrent: () => void;
+}): Promise<SessionEntry> {
+  const { sessionStore, sessionKey, mediaUrls, runId } = params;
+  const current = sessionKey ? sessionStore?.[sessionKey] : undefined;
+  if (
+    !sessionStore ||
+    !sessionKey ||
+    !current ||
+    (!mediaUrls.length && current.restartRecoveryDeliveryMediaSelected !== true) ||
+    mediaUrls.length > 64
+  ) {
+    throw new Error("generated-media selection requires its active recovery owner and media");
+  }
+  // Recovery may remove already-receipted payloads from this send. Never narrow
+  // the canonical selection to that per-send subset.
+  const selection =
+    current.restartRecoveryDeliveryMediaSelected === true
+      ? (current.restartRecoveryDeliveryMediaUrls ?? [])
+      : mediaUrls;
+  if (mediaUrls.some((url) => !selection.includes(url))) {
+    throw new Error("generated-media retry changed its frozen selection");
+  }
+  const { persistAgentSession } = await import("./command/attempt-execution.shared.js");
+  let authorized = false;
+  const persisted = await persistAgentSession({
+    sessionStore,
+    sessionKey,
+    storePath: params.storePath,
+    initialEntry: current,
+    entry: {
+      ...current,
+      restartRecoveryDeliveryMediaUrls: [...selection],
+      restartRecoveryDeliveryMediaSelected: true,
+    },
+    shouldPersist: (fresh) => {
+      params.assertCurrent();
+      authorized =
+        fresh?.sessionId === params.sessionId &&
+        fresh.restartRecoveryDeliveryRunId === runId &&
+        fresh.lifecycleRevision === current.lifecycleRevision &&
+        (fresh.restartRecoveryDeliveryMediaSelected !== true ||
+          isDeepStrictEqual(fresh.restartRecoveryDeliveryMediaUrls, selection));
+      return authorized;
+    },
+  });
+  if (
+    !authorized ||
+    persisted?.restartRecoveryDeliveryRunId !== runId ||
+    persisted.restartRecoveryDeliveryMediaSelected !== true ||
+    !isDeepStrictEqual(persisted.restartRecoveryDeliveryMediaUrls, selection)
+  ) {
+    throw new Error("generated-media selection lost its recovery owner");
+  }
+  return persisted;
 }
