@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "48fd6a4fa16d099157ebfdc58c73a2444879d438",
-  "head": "78d57e3e2c2e03aba268d74b895780eee5234e23",
+  "prev": "a15bbf697a7d540e1b1d3d68aa24ae1fc80a397e",
+  "head": "a2dc29a4a8c9d28f4f6d07b8ebbce390eead2133",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -11,7 +11,8 @@
     "fix-media-selected-delivery",
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
-    "fix-request-origin-lifecycle"
+    "fix-request-origin-lifecycle",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -42,6 +43,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
+    },
+    "version-bump": {
+      "oid": "a2dc29a4a8c9d28f4f6d07b8ebbce390eead2133"
     }
   }
 }
