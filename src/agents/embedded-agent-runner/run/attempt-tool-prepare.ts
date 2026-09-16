@@ -284,6 +284,7 @@ export async function prepareEmbeddedAttemptToolBase(params: {
             channelContext: attempt.channelContext,
             allowGatewaySubagentBinding: attempt.allowGatewaySubagentBinding,
             operationalRunInstance: attempt.admittedRunContext.operationalRunInstance,
+            taskOrigin: attempt.admittedRunContext.taskOrigin,
             computerTransport,
             pairedNodeComputerUse,
             conversationRecall: attempt.conversationRecall,

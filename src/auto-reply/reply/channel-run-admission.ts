@@ -4,6 +4,7 @@ import {
   type AdmittedRunContext,
   type PreparedAgentRunAdmission,
 } from "../../agents/admitted-run-context.js";
+import { captureTaskOrigin } from "../../agents/task-origin.js";
 import type { ExecutionIdentityAdmissionFacts } from "../../audit/execution-identity-admission.js";
 import {
   consumeChannelAdmissionEvidence,
@@ -11,6 +12,7 @@ import {
   type ChannelAdmissionEvidence,
 } from "../../channels/message-access/admission-evidence.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { FollowupRun } from "./queue/types.js";
 
 /** Adapt one opaque channel carrier to the canonical admitted-run facts and decision FIFO. */
 export function consumeChannelRunAdmission(evidence: ChannelAdmissionEvidence | undefined): {
@@ -61,6 +63,7 @@ export function prepareChannelRunAdmission(params: {
   ingressKind: ExecutionIdentityAdmissionFacts["ingress"]["kind"];
   boundary: string;
   evidence?: ChannelAdmissionEvidence;
+  taskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
   onAdmitted?: (context: AdmittedRunContext) => void;
 }): PreparedAgentRunAdmission {
   const operationalRunInstance = createOperationalRunInstanceRef(params.runId);
@@ -77,6 +80,7 @@ export function prepareChannelRunAdmission(params: {
         const channelAdmission = consumeChannelRunAdmission(params.evidence);
         prepared = prepareAgentRunAdmission({
           cfg: params.cfg,
+          taskOrigin: params.taskOrigin,
           operationalRunInstance,
           facts: {
             runId: params.runId,
@@ -100,5 +104,30 @@ export function prepareChannelRunAdmission(params: {
       closed = true;
       prepared?.close();
     },
+  });
+}
+
+/** The same exact source facts bind live admission and its durable recovery claim. */
+export function captureChannelTaskOrigin(
+  followupRun: FollowupRun,
+  sourceRunId: string,
+  sessionKey?: string,
+  lifecycleGeneration?: string,
+  sourceSessionId = followupRun.run.sessionId,
+) {
+  return captureTaskOrigin({
+    inherited: followupRun.taskOrigin,
+    external:
+      !followupRun.run.inputProvenance || followupRun.run.inputProvenance.kind === "external_user",
+    channel: followupRun.run.messageProvider,
+    accountId: followupRun.run.agentAccountId,
+    senderId: followupRun.run.senderId,
+    sourceSessionKey: sessionKey,
+    sourceSessionId,
+    sourceRunId,
+    sourceSessionLifecycleRevision: lifecycleGeneration,
+    audience: followupRun.originatingTo,
+    groupSpace: followupRun.run.groupSpace,
+    threadId: followupRun.originatingThreadId,
   });
 }

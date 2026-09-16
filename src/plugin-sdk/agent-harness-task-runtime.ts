@@ -20,6 +20,7 @@ import {
   resolveAnnounceOrigin,
   resolveSubagentCompletionOrigin,
 } from "../agents/subagents/announce/subagent-announce-origin.js";
+import { normalizeTaskOriginSnapshot } from "../agents/task-origin.js";
 import {
   getGatewayContextResolver,
   withPluginRuntimeGatewayContextResolver,
@@ -66,7 +67,7 @@ export type AgentHarnessTaskRuntimeScopeParams = {
 /** Create-task params with runtime and requester scope supplied by the scoped task runtime. */
 export type AgentHarnessScopedCreateRunningTaskRunParams = Omit<
   CreateRunningTaskRunParams,
-  "runtime" | "taskKind" | "requesterSessionKey" | "ownerKey" | "scopeKind"
+  "runtime" | "taskKind" | "requesterSessionKey" | "ownerKey" | "scopeKind" | "taskOrigin"
 > & {
   runId: string;
 };
@@ -125,8 +126,15 @@ export function createAgentHarnessTaskRuntime(
     taskParams: AgentHarnessScopedCreateRunningTaskRunParams,
   ): TaskRecord | null => {
     assertRunId(taskParams.runId);
+    const existing = listTaskRecords().find(
+      (task) =>
+        task.runId === taskParams.runId &&
+        task.runtime === runtime &&
+        task.ownerKey === requesterSessionKey,
+    );
     return createRunningTaskRun({
       ...taskParams,
+      taskOrigin: normalizeTaskOriginSnapshot(existing ? existing.taskOrigin : scope.taskOrigin),
       runtime,
       ...(taskKind ? { taskKind } : {}),
       requesterSessionKey,
@@ -219,10 +227,16 @@ export async function deliverAgentHarnessTaskCompletion(params: {
           spawnMode: "run",
           expectsCompletionMessage: true,
         });
+  const taskOrigin = normalizeTaskOriginSnapshot(
+    listTaskRecords().find(
+      (task) => task.runId === childSessionKey && task.ownerKey === requesterSessionKey,
+    )?.taskOrigin,
+  );
   const internalEvents: AgentInternalEvent[] = [
     {
       type: AGENT_INTERNAL_EVENT_TYPE_TASK_COMPLETION,
       source: "subagent",
+      taskOrigin,
       childSessionKey,
       childSessionId,
       announceType,

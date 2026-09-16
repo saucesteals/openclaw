@@ -334,6 +334,7 @@ export function createVideoGenerateTool(options?: {
   agentSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   workspaceDir?: string;
   preparedModelRuntime?: PreparedModelRuntimeSnapshot;
   sandbox?: VideoGenerateSandboxConfig;
@@ -624,6 +625,7 @@ export function createVideoGenerateTool(options?: {
             sessionKey: options?.agentSessionKey,
             requesterAgentId: options?.requesterAgentId,
             requesterOrigin: options?.requesterOrigin,
+            taskOrigin: options?.taskOrigin,
             prompt,
             requestKey,
             providerId: selectedProvider?.id,

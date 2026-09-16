@@ -2,6 +2,7 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Insertable, Selectable } from "kysely";
 import type { AdmittedRunContext } from "../agents/admitted-run-context.js";
+import { normalizeTaskOriginSnapshot } from "../agents/task-origin.js";
 import {
   executionOwnerBindingFromAdmission,
   type ExecutionOwnerBindingResult,
@@ -81,6 +82,7 @@ const TASK_RUN_SELECT_COLUMNS = [
   "parent_task_id",
   "agent_id",
   "requester_agent_id",
+  "task_origin_json",
   "run_id",
   "label",
   "task",
@@ -132,6 +134,9 @@ function rowToTaskRecord(row: TaskRegistryRow): TaskRecord {
     scopeKind === "system" ? "" : row.requester_session_key?.trim() || row.owner_key;
   return normalizeTaskTimestamps({
     taskId: row.task_id,
+    ...(row.task_origin_json === null
+      ? {}
+      : { taskOrigin: normalizeTaskOriginSnapshot(parseSqliteJsonValue(row.task_origin_json)) }),
     runtime: parseTaskRuntime(row.runtime),
     ...(row.task_kind ? { taskKind: row.task_kind } : {}),
     ...(row.source_id ? { sourceId: row.source_id } : {}),
@@ -181,6 +186,10 @@ export function bindTaskRecord(record: TaskRecord): BoundTaskRecord {
   const normalized = normalizeTaskTimestamps(record);
   return {
     task_id: normalized.taskId,
+    task_origin_json:
+      normalized.taskOrigin === undefined
+        ? null
+        : serializeJson(normalizeTaskOriginSnapshot(normalized.taskOrigin)),
     runtime: normalized.runtime,
     task_kind: normalized.taskKind ?? null,
     source_id: normalized.sourceId ?? null,

@@ -144,7 +144,15 @@ describe("runHeartbeatOnce identity", () => {
       };
       const hooksStorePath = resolveSessionStorePathCore(storeTemplate, { agentId: "hooks" });
       await seedSessionStore(hooksStorePath, "global", {});
-      enqueueSystemEvent("Mapped hook wake", { sessionKey: "global" });
+      const taskOrigin = {
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "friend",
+        sourceSessionKey: "original-room",
+        sourceRunId: "original-run",
+      } as const;
+      enqueueSystemEvent("Mapped hook wake", { sessionKey: "global", taskOrigin });
       expect(peekSystemEventEntries("global").map((event) => event.text)).toEqual([
         "Mapped hook wake",
       ]);
@@ -168,6 +176,7 @@ describe("runHeartbeatOnce identity", () => {
         AgentId: "hooks",
         SessionKey: "global",
       });
+      expect(replySpy.mock.calls[0]?.[1]).toMatchObject({ inheritedTaskOrigin: taskOrigin });
       expect(systemEventBlocks).toHaveLength(1);
       expect(systemEventBlocks[0]).toContain("Mapped hook wake");
       expect(peekSystemEventEntries("global")).toEqual([]);

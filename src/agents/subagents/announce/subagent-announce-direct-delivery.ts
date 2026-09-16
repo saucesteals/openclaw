@@ -34,6 +34,7 @@ import {
 import type { EmbeddedAgentQueueMessageOptions } from "../../embedded-agent-runner/run-state.js";
 import { AGENT_INTERNAL_EVENT_TYPE_TASK_COMPLETION } from "../../internal-event-contract.js";
 import type { AgentInternalEvent } from "../../internal-events.js";
+import type { TaskOriginSnapshot } from "../../task-origin.js";
 import {
   formatActiveWakeFailure,
   isSourceOwnerChangedWake,
@@ -77,6 +78,7 @@ const REQUESTER_FINAL_VISIBLE_TEXT_MAX_CHARS = 12_000;
 
 async function runAnnounceAgentCall(params: {
   agentParams: Record<string, unknown>;
+  taskOrigin?: TaskOriginSnapshot;
   delegatedToolPolicyHandoff?: SubagentCompletionToolHandoffRegistration;
   expectFinal?: boolean;
   signal?: AbortSignal;
@@ -99,6 +101,7 @@ async function runAnnounceAgentCall(params: {
   try {
     return await dispatchSubagentAnnounceAgent(params.agentParams, {
       cancelOnDeadline: true,
+      taskOrigin: params.taskOrigin,
       expectFinal: params.expectFinal,
       forceSyntheticClient: shouldPreserveUserFacingSessionStateForInputProvenance(
         params.agentParams.inputProvenance,
@@ -423,6 +426,7 @@ export async function sendSubagentAnnounceDirectly(params: {
           }
           return await runAnnounceAgentCall({
             agentParams: directAgentParams,
+            taskOrigin: trustedCompletionEvent?.taskOrigin,
             delegatedToolPolicyHandoff:
               isSubagentCompletion &&
               trustedCompletionEvent &&

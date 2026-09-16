@@ -1,3 +1,4 @@
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../agents/task-origin.js";
 // Resolves task runtime scope for agent harness launches.
 import type { GatewayContextResolver } from "../gateway/server-methods/types.js";
 import { bindGatewayContextResolver } from "../plugins/runtime/gateway-request-scope.js";
@@ -25,11 +26,13 @@ function getScopeRegistry(): ScopeRegistry {
 
 export type AgentHarnessTaskRuntimeScope = {
   readonly requesterSessionKey: string;
+  readonly taskOrigin?: TaskOriginSnapshot;
   readonly requesterOrigin?: DeliveryContext;
 };
 
 /** Creates a host-issued task runtime scope for agent harness task execution. */
 export function createAgentHarnessTaskRuntimeScope(params: {
+  taskOrigin?: TaskOriginSnapshot;
   requesterSessionKey: string;
   requesterOrigin?: DeliveryContext;
   gatewayContextResolver?: GatewayContextResolver;
@@ -41,6 +44,7 @@ export function createAgentHarnessTaskRuntimeScope(params: {
   const requesterOrigin = normalizeDeliveryContext(params.requesterOrigin);
   const scope: AgentHarnessTaskRuntimeScope = {
     requesterSessionKey,
+    taskOrigin: normalizeTaskOriginSnapshot(params.taskOrigin),
     ...(requesterOrigin ? { requesterOrigin } : {}),
   };
   getScopeRegistry().hostIssuedScopes.add(scope);

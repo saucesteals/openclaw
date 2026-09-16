@@ -1426,6 +1426,7 @@ export interface TaskRuns {
   task: string;
   task_id: string;
   task_kind: string | null;
+  task_origin_json: string | null;
   terminal_outcome: string | null;
   terminal_summary: string | null;
   tool_use_count: number | null;

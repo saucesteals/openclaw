@@ -192,6 +192,7 @@ async function settleRestartRecoveryDispatch(params: {
           entry.runtimeMs = Math.max(0, now - startedAt);
         }
         entry.restartRecoveryForceSafeTools = undefined;
+        entry.restartRecoveryTaskOrigin = undefined;
         Object.assign(
           entry,
           buildRestartRecoveryClaimCleanupPatch({

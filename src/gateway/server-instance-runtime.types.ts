@@ -19,6 +19,7 @@ export type GatewayInstanceAgentDispatchOptions = {
   forceSyntheticClient?: boolean;
   internalDeliveryMediaUrls?: string[];
   runtimeContextFragments?: RuntimeContextFragment[];
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   internalDeliverySuppressText?: boolean;
   onAccepted?: (payload: unknown) => void;
   onStartOwner?: (owner: AgentTurnStartOwner) => void;

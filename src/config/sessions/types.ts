@@ -415,6 +415,7 @@ type SessionEntryCore = SessionRestartRecoveryState &
     restartRecoveryRuns?: RestartRecoveryRun[];
     /** Keeps automatic restart recovery limited to replay-safe tools until the run terminates. */
     restartRecoveryForceSafeTools?: true;
+    restartRecoveryTaskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
     /** Durable guard state for automatic subagent orphan recovery. */
     subagentRecovery?: SubagentRecoveryState;
     /** Quota cascade protection and state-aware failover status. */

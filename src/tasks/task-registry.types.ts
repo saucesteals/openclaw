@@ -134,6 +134,7 @@ export type TaskDeliveryState = {
 };
 
 export type TaskRecord = {
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   taskId: string;
   runtime: TaskRuntime;
   taskKind?: string;

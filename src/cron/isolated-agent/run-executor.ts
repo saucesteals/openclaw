@@ -428,6 +428,7 @@ function createCronPromptExecutor(
     pendingUserTurn = { promptText, recorder: userTurnTranscriptRecorder };
     const runId = params.cronSession.sessionEntry.sessionId;
     const basePreparedRunAdmission = prepareAgentRunAdmission({
+      taskOrigin: params.job.taskOrigin,
       operationalRunInstance: createOperationalRunInstanceRef(runId),
       cfg: params.cfgWithAgentDefaults,
       facts: {

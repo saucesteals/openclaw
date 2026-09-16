@@ -34,6 +34,7 @@ export function clearMainSessionRecoveryAfterAgentRun(
   const aborted = entry.abortedLastRun === true;
   if (clearForceSafeTools && !aborted) {
     entry.restartRecoveryForceSafeTools = undefined;
+    entry.restartRecoveryTaskOrigin = undefined;
   }
   if (!aborted) {
     Object.assign(entry, buildMainSessionRecoveryClearPatch(entry));

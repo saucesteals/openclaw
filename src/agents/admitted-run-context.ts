@@ -16,6 +16,7 @@ import {
   validateAgentRunDelegatedAuthority,
   type AgentRunDelegatedAuthority,
 } from "../infra/agent-run-registry.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "./task-origin.js";
 
 /** Operational lifecycle correlation. This is never identity or authorization evidence. */
 export type OperationalRunInstanceRef = Readonly<{
@@ -27,6 +28,7 @@ export type OperationalRunInstanceRef = Readonly<{
 export type AdmittedRunContext = Readonly<{
   operationalRunInstance: OperationalRunInstanceRef;
   executionIdentityToken?: ExecutionIdentityAdmissionToken;
+  taskOrigin?: TaskOriginSnapshot;
 }>;
 
 export type PreparedAgentRunAdmission = Readonly<{
@@ -215,12 +217,15 @@ export function prepareSystemAgentRunAdmission(
 export function prepareAgentRunAdmission(params: {
   cfg: OpenClawConfig;
   facts: Omit<ExecutionIdentityAdmissionFacts, "runtime">;
+  taskOrigin?: TaskOriginSnapshot;
   operationalRunInstance: OperationalRunInstanceRef;
   recovery?: ExecutionIdentityRecoveryAdmission;
   onAdmitted?: (context: AdmittedRunContext) => void | Promise<void>;
   assertSourceCurrent?: () => void;
 }): PreparedAgentRunAdmission {
   const operationalRunInstance = params.operationalRunInstance;
+  const taskOrigin =
+    params.taskOrigin === undefined ? undefined : normalizeTaskOriginSnapshot(params.taskOrigin);
   const sourceAssertion = params.assertSourceCurrent;
   let sourceClosed = false;
   const assertSourceCurrent =
@@ -272,6 +277,7 @@ export function prepareAgentRunAdmission(params: {
         });
         const context = admitPreparedAgentRun({
           cfg: params.cfg,
+          taskOrigin,
           facts,
           operationalRunInstance,
           runtimeInstanceId: admittedRuntimeInstanceId,
@@ -347,6 +353,7 @@ function consumeRecoveryAdmission(params: {
 function admitPreparedAgentRun(params: {
   cfg: OpenClawConfig;
   facts: ExecutionIdentityAdmissionFacts;
+  taskOrigin?: TaskOriginSnapshot;
   operationalRunInstance: OperationalRunInstanceRef;
   runtimeInstanceId?: string;
   recovery?: ExecutionIdentityRecoveryAdmission;
@@ -362,7 +369,10 @@ function admitPreparedAgentRun(params: {
     runId: params.facts.runId,
   });
   if (!isExecutionIdentityCollectionEnabled(params.cfg)) {
-    return Object.freeze({ operationalRunInstance });
+    return Object.freeze({
+      operationalRunInstance,
+      ...(params.taskOrigin ? { taskOrigin: params.taskOrigin } : {}),
+    });
   }
   const executionIdentityToken =
     recovery.token ??
@@ -370,7 +380,10 @@ function admitPreparedAgentRun(params: {
       ? createExecutionIdentityAdmissionToken(params.facts.runId)
       : undefined);
   if (!executionIdentityToken) {
-    return Object.freeze({ operationalRunInstance });
+    return Object.freeze({
+      operationalRunInstance,
+      ...(params.taskOrigin ? { taskOrigin: params.taskOrigin } : {}),
+    });
   }
 
   enqueueExecutionIdentityContextAtAdmission(params.facts, {
@@ -379,5 +392,9 @@ function admitPreparedAgentRun(params: {
     runtimeInstanceId: params.runtimeInstanceId,
     retryOnly: params.recovery?.retryOnly === true,
   });
-  return Object.freeze({ operationalRunInstance, executionIdentityToken });
+  return Object.freeze({
+    operationalRunInstance,
+    executionIdentityToken,
+    ...(params.taskOrigin ? { taskOrigin: params.taskOrigin } : {}),
+  });
 }

@@ -1669,39 +1669,78 @@ describe("runAgentHarnessAttempt", () => {
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
-  it("annotates non-ok harness result classifications for outer model fallback", async () => {
-    const classify = vi.fn<NonNullable<AgentHarness["classify"]>>(() => "empty" as const);
-    const runAttempt = vi.fn<AgentHarness["runAttempt"]>(async () => createAttemptResult("codex"));
-    registerAgentHarness(
-      {
-        id: "codex",
-        label: "Classifying Codex",
-        supports: (ctx) =>
-          ctx.provider === "codex" ? { supported: true, priority: 100 } : { supported: false },
-        runAttempt,
-        classify,
-      },
-      { ownerPluginId: "codex" },
-    );
+  it.each(["owner", "friend", undefined])(
+    "annotates harness fallback and derives original requester relationship for %s",
+    async (senderId) => {
+      const classify = vi.fn<NonNullable<AgentHarness["classify"]>>(() => "empty" as const);
+      const runAttempt = vi.fn<AgentHarness["runAttempt"]>(async () =>
+        createAttemptResult("codex"),
+      );
+      registerAgentHarness(
+        {
+          id: "codex",
+          label: "Classifying Codex",
+          supports: (ctx) =>
+            ctx.provider === "codex" ? { supported: true, priority: 100 } : { supported: false },
+          runAttempt,
+          classify,
+        },
+        { ownerPluginId: "codex" },
+      );
 
-    const params = createAttemptParams();
-    const result = await runAgentHarnessAttempt(params);
+      selectionAdmission.close();
+      selectionAdmission = prepareAgentRunAdmission({
+        cfg: {},
+        facts: {
+          runId: "run-1",
+          agentId: "main",
+          ingress: { kind: "system", boundary: "origin-test", state: "present" },
+        },
+        operationalRunInstance: createOperationalRunInstanceRef("run-1"),
+        taskOrigin: senderId
+          ? {
+              version: 1,
+              status: "known",
+              channel: "discord",
+              senderId,
+              sourceSessionKey: "source-room",
+              sourceRunId: "source-run",
+            }
+          : undefined,
+      });
+      selectionAdmittedRunContext = await selectionAdmission.admit(
+        "plugin-harness",
+        "harness-selection-test",
+      );
+      const params = createAttemptParams({ commands: { ownerAllowFrom: ["owner"] } });
+      // Caller projections and synthetic execution authority must not override admitted attribution.
+      params.taskOriginOwnerStatus = "configured_owner";
+      params.senderIsOwner = true;
+      const result = await runAgentHarnessAttempt(params);
 
-    const classifyCall = classify.mock.calls.at(0);
-    expect(classifyCall?.[0].sessionIdUsed).toBe("codex");
-    expect(classifyCall?.[1]).toEqual(
-      expect.objectContaining({
-        hostCapabilities: expect.objectContaining({ kind: "agent-harness-host-capability" }),
-        pluginHarnessToolPolicyRestricted: false,
-        runId: params.runId,
-        sessionId: params.sessionId,
-      }),
-    );
-    expect(classifyCall?.[1]).not.toHaveProperty("admittedRunContext");
-    expect(classifyCall?.[1]).not.toHaveProperty("operationalRunInstance");
-    expect(result.agentHarnessId).toBe("codex");
-    expect(result.agentHarnessResultClassification).toBe("empty");
-  });
+      const classifyCall = classify.mock.calls.at(0);
+      expect(classifyCall?.[0].sessionIdUsed).toBe("codex");
+      expect(classifyCall?.[1]).toEqual(
+        expect.objectContaining({
+          hostCapabilities: expect.objectContaining({ kind: "agent-harness-host-capability" }),
+          pluginHarnessToolPolicyRestricted: false,
+          runId: params.runId,
+          sessionId: params.sessionId,
+        }),
+      );
+      expect(classifyCall?.[1]).not.toHaveProperty("admittedRunContext");
+      expect(classifyCall?.[1]?.taskOriginOwnerStatus).toBe(
+        senderId === "owner"
+          ? "configured_owner"
+          : senderId === "friend"
+            ? "not_configured_owner"
+            : "unknown",
+      );
+      expect(classifyCall?.[1]).not.toHaveProperty("operationalRunInstance");
+      expect(result.agentHarnessId).toBe("codex");
+      expect(result.agentHarnessResultClassification).toBe("empty");
+    },
+  );
 
   it("collapses channel group sender deny-all to empty toolsAllow for plugin harnesses", async () => {
     const delivered = vi.fn(async () => {});

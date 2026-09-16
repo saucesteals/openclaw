@@ -38,6 +38,7 @@ type CodexNativeSubagentTaskMirrorParams = {
   historyOwner?: CodexNativeSubagentHistoryOwner;
   agentId?: string;
   now?: () => number;
+  resolveTaskRuntime?: (threadId: string) => TaskLifecycleRuntime | undefined;
 };
 
 /** Projects Codex thread and collab-agent notifications into task lifecycle updates. */
@@ -49,12 +50,23 @@ export class CodexNativeSubagentTaskMirror {
   private readonly authoritativeRunIds = new Set<string>();
   private readonly expectedAuthoritativeRunIds = new Set<string>();
   private readonly now: () => number;
+  private readonly pendingCreations = new Map<
+    string,
+    Parameters<CodexNativeSubagentTaskMirror["createRunningTask"]>[0]
+  >();
 
   constructor(
     private readonly params: CodexNativeSubagentTaskMirrorParams,
     private readonly runtime: TaskLifecycleRuntime,
   ) {
     this.now = params.now ?? Date.now;
+  }
+
+  retryPendingCreation(childThreadId: string): void {
+    const pending = this.pendingCreations.get(childThreadId);
+    if (pending) {
+      this.createRunningTask(pending);
+    }
   }
 
   markAuthoritativeCompletion(childThreadId: string): void {
@@ -324,6 +336,14 @@ export class CodexNativeSubagentTaskMirror {
     if (!threadId || this.mirrorStateByThreadId.get(threadId) === "mirrored") {
       return false;
     }
+    const runtime = this.params.resolveTaskRuntime
+      ? this.params.resolveTaskRuntime(threadId)
+      : this.runtime;
+    if (!runtime) {
+      this.pendingCreations.set(threadId, params);
+      return false;
+    }
+    this.pendingCreations.delete(threadId);
     this.mirrorStateByThreadId.set(threadId, "mirrored");
     const runId = codexNativeSubagentRunId(threadId);
     // Creation also refreshes existing metadata. Recovery must preserve the original locator,
@@ -331,7 +351,7 @@ export class CodexNativeSubagentTaskMirror {
     const historyOwner = this.params.historyOwner;
     const stampHistoryOwner =
       historyOwner && !this.runtime.listTaskRecords().some((task) => task.runId === runId);
-    const taskRecord = this.runtime.tryCreateRunningTaskRun({
+    const taskRecord = runtime.tryCreateRunningTaskRun({
       sourceId: runId,
       agentId: this.params.agentId,
       runId,

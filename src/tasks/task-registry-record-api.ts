@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot } from "../agents/task-origin.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import { hasAuthoritativeTaskBacking } from "./task-backing-authority.js";
 import { isTerminalTaskStatus } from "./task-executor-policy.js";
@@ -154,6 +155,7 @@ function updateTasksByRunId(params: {
 }
 
 export function createTaskRecord(params: {
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   runtime: TaskRuntime;
   taskKind?: string;
   sourceId?: string;
@@ -241,6 +243,7 @@ export function createTaskRecord(params: {
   });
   const lastEventAt = params.lastEventAt ?? params.startedAt ?? now;
   const record: TaskRecord = normalizeTaskTimestamps({
+    ...(params.taskOrigin ? { taskOrigin: normalizeTaskOriginSnapshot(params.taskOrigin) } : {}),
     taskId,
     runtime: params.runtime,
     taskKind: normalizeOptionalString(params.taskKind),

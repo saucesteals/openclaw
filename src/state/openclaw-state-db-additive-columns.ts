@@ -159,6 +159,7 @@ export const ORDERED_STARTUP_ADDITIVE_STATE_COLUMNS = {
     ["task_runs", "tool_use_count INTEGER"],
     ["task_runs", "last_tool_name TEXT"],
     ["task_runs", "detail_json TEXT"],
+    ["task_runs", "task_origin_json TEXT"],
   ],
   workerEnvironments: [
     ["worker_environments", "bootstrap_bundle_hash TEXT"],

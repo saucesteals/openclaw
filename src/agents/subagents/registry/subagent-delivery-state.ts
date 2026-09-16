@@ -1,4 +1,5 @@
 import { normalizeAgentRunTerminalReplySnapshot } from "../../agent-run-terminal-reply.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import type {
   SubagentCompletionDeliveryState,
   SubagentCompletionState,
@@ -6,6 +7,9 @@ import type {
 } from "./subagent-registry.types.js";
 
 export function normalizeSubagentRunState(entry: SubagentRunRecord): SubagentRunRecord {
+  if (entry.taskOrigin !== undefined) {
+    entry.taskOrigin = normalizeTaskOriginSnapshot(entry.taskOrigin);
+  }
   const taskRunId = typeof entry.taskRunId === "string" ? entry.taskRunId.trim() : "";
   entry.taskRunId = taskRunId || undefined;
   const requesterTurnRunId =

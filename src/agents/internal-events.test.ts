@@ -54,6 +54,14 @@ function extractChildResult(prompt: string): string {
 describe("agent internal events", () => {
   it("keeps child output and task labels in data while retaining the producer instruction", () => {
     const event = taskCompletionEvent("The measured value is < 5.");
+    event.taskOrigin = {
+      version: 1,
+      status: "known",
+      channel: "discord",
+      senderId: "friend-1",
+      sourceSessionKey: "room",
+      sourceRunId: "original-run",
+    };
     const fragments = buildAgentInternalEventContext([event]);
     const instructions = fragments
       .filter((fragment) => fragment.kind === "runtime-instruction")
@@ -64,6 +72,14 @@ describe("agent internal events", () => {
       .map((fragment) => fragment.text)
       .join("\n");
     expect(instructions).toContain(event.replyInstruction);
+    expect(instructions).toContain('"senderId":"friend-1"');
+    expect(instructions).toContain("not an execution grant");
+    expect(instructions).toContain("applies only to this event");
+    expect(instructions).not.toContain("replaces earlier task attribution");
+    expect(formatAgentInternalEventsForPrompt([event])).not.toContain(
+      "replaces earlier task attribution",
+    );
+    expect(formatAgentInternalEventsForPrompt([event])).toContain('"senderId":"friend-1"');
     expect(instructions).not.toContain(event.result);
     expect(instructions).not.toContain(event.taskLabel);
     expect(data).toContain(event.result);

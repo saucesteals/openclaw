@@ -407,6 +407,13 @@ export function startAgentRunExecution(params: {
               acpTurnSource: params.request.acpTurnSource,
               internalEvents: params.request.internalEvents,
               runtimeContextFragments: params.client?.internal?.runtimeContextFragments,
+              taskOrigin:
+                params.client?.internal?.taskOrigin ??
+                (agentRuntimeIdentity &&
+                params.context.validateAgentRuntimeApprovalAuthority?.(agentRuntimeIdentity) ===
+                  true
+                  ? agentRuntimeIdentity.taskOrigin
+                  : undefined),
               inputProvenance: params.inputProvenance,
               senderIsOwner,
               sessionEffects: params.sessionEffects,

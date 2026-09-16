@@ -33,6 +33,8 @@ export type ReplyRunVerbosity = {
 };
 
 type InternalReplySessionOptions = {
+  /** Host-selected system-event attribution; never read from message text. */
+  inheritedTaskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
   /** Invocation-owned conversation facts; never execution or sender authority. */
   replyConversation?: PreparedReplyConversation;
   prepareAssistantTranscriptMessage?: PrepareAssistantTranscriptMessage;
