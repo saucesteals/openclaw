@@ -96,6 +96,40 @@ describe("agent-harness-task-runtime", () => {
     );
   });
 
+  it("records unknown attribution with genuine authority and preserves existing origin", () => {
+    const scope = createScope();
+    const runtime = createAgentHarnessTaskRuntime({
+      runtime: "subagent",
+      taskKind: "example-harness",
+      scope,
+      taskOriginMode: "unknown",
+    });
+    const task = runtime.createRunningTaskRun({ runId: "child-1", task: "discovered child" });
+    expect(task.taskOrigin).toEqual({ version: 1, status: "unknown" });
+    expect(task.ownerKey).toBe(scope.requesterSessionKey);
+    vi.mocked(listTaskRecords).mockReturnValue([{ ...task, taskOrigin: scope.taskOrigin }]);
+    runtime.createRunningTaskRun({ runId: "child-1", task: "discovered child" });
+    expect(vi.mocked(createRunningTaskRun).mock.lastCall?.[0].taskOrigin).toEqual(scope.taskOrigin);
+    vi.mocked(listTaskRecords).mockReturnValue([task]);
+    createAgentHarnessTaskRuntime({
+      runtime: "subagent",
+      taskKind: "example-harness",
+      scope,
+    }).createRunningTaskRun({ runId: "child-1", task: "discovered child" });
+    expect(vi.mocked(createRunningTaskRun).mock.lastCall?.[0].taskOrigin).toEqual(task.taskOrigin);
+  });
+
+  it("rejects copied host scopes even when recording unknown attribution", () => {
+    expect(() =>
+      createAgentHarnessTaskRuntime({
+        runtime: "subagent",
+        taskKind: "example-harness",
+        scope: { ...createScope() },
+        taskOriginMode: "unknown",
+      }),
+    ).toThrow(/host-issued scope/);
+  });
+
   it("rejects task run ids outside the configured harness scope", () => {
     const runtime = createAgentHarnessTaskRuntime({
       runtime: "subagent",
@@ -122,6 +156,7 @@ describe("agent-harness-task-runtime", () => {
         runtime: "subagent",
         taskKind: "example-harness",
         scope: forgedScope,
+        taskOriginMode: "unknown",
       }),
     ).toThrow(/host-issued scope/);
     await expect(

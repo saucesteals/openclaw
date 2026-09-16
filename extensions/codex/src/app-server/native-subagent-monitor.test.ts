@@ -159,7 +159,13 @@ function createRuntime() {
   };
   return {
     ...taskRuntime,
-    createAgentHarnessTaskRuntime: vi.fn(() => taskRuntime),
+    createAgentHarnessTaskRuntime: vi.fn(
+      (
+        _params: Parameters<
+          typeof import("openclaw/plugin-sdk/agent-harness-task-runtime").createAgentHarnessTaskRuntime
+        >[0],
+      ) => taskRuntime,
+    ),
     deliverAgentHarnessTaskCompletion: vi.fn(async (): Promise<DeliveryResult> => ({
       delivered: true,
       path: "direct",
@@ -997,8 +1003,8 @@ describe("CodexNativeSubagentMonitor", () => {
     },
   );
 
-  it.each(["known", "unknown"] as const)(
-    "binds native child attribution to its exact parent turn with %s cached origin",
+  it.each(["known", "unknown", "completed", "closed", "reset"] as const)(
+    "preserves native child lifecycle and attribution with %s initial state",
     async (initialStatus) => {
       const client = createClient();
       const runtime = createRuntime();
@@ -1041,6 +1047,41 @@ describe("CodexNativeSubagentMonitor", () => {
         },
       });
       expect(runtime.createRunningTaskRun).not.toHaveBeenCalled();
+      const terminalBeforeBind =
+        initialStatus === "completed" || initialStatus === "closed" || initialStatus === "reset";
+      if (initialStatus === "completed") {
+        await client.notify(
+          nativeCompletionNotification({ agentPath: "friend-child", result: "done before bind" }),
+        );
+      } else if (initialStatus === "closed") {
+        await client.notify(
+          closeAgentNotification({
+            method: "item/completed",
+            childThreadId: "friend-child",
+            previousStatus: "running",
+          }),
+        );
+      } else if (initialStatus === "reset") {
+        monitor.retireParent("parent-thread");
+      }
+      if (terminalBeforeBind) {
+        expect(runtime.createRunningTaskRun).toHaveBeenCalledOnce();
+        expect(runtime.createAgentHarnessTaskRuntime).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            taskOriginMode: "unknown",
+          }),
+        );
+        expect(runtime.finalizeTaskRunByRunId).toHaveBeenCalledWith(
+          expect.objectContaining({
+            runId: "codex-thread:friend-child",
+            status: initialStatus === "completed" ? "succeeded" : "cancelled",
+          }),
+        );
+        friend.bindTurn("friend-turn");
+        expect(runtime.createRunningTaskRun).toHaveBeenCalledOnce();
+        monitor.dispose();
+        return;
+      }
       friend.bindTurn("friend-turn");
       expect(runtime.createRunningTaskRun).toHaveBeenCalledOnce();
       expect(runtime.createAgentHarnessTaskRuntime).toHaveBeenLastCalledWith(
@@ -1177,34 +1218,74 @@ describe("CodexNativeSubagentMonitor", () => {
     monitor.dispose();
   });
 
-  it("does not retain authority for a failed V1 spawn", async () => {
-    const client = createClient();
-    const claimDirectChild = vi.fn(() => () => undefined);
-    const monitor = new CodexNativeSubagentMonitor(client as never, createRuntime());
-    const owner = monitor.registerParent({
-      parentThreadId: "parent-thread",
-      claimDirectChild,
-    });
-    owner.bindTurn("turn-1");
-
-    await client.notify({
-      method: "item/completed",
-      params: {
-        threadId: "parent-thread",
-        turnId: "turn-1",
-        item: {
-          type: "collabAgentToolCall",
-          tool: "spawnAgent",
-          status: "failed",
-          senderThreadId: "parent-thread",
-          receiverThreadIds: ["failed-child"],
+  it.each([
+    ["failed", true],
+    ["blocked", true],
+    ["failed", false],
+    ["blocked", false],
+  ] as const)(
+    "records a %s V1 spawn only with a child ID (%s) without retaining authority",
+    async (status, hasChildId) => {
+      const client = createClient();
+      const claimDirectChild = vi.fn(() => () => undefined);
+      const runtime = createRuntime();
+      const monitor = new CodexNativeSubagentMonitor(client as never, runtime);
+      const scope = {
+        ...createTaskScope(),
+        taskOrigin: {
+          version: 1,
+          status: "known",
+          channel: "discord",
+          senderId: "owner",
+          sourceSessionKey: "agent:main:discord:channel:C123",
+          sourceRunId: "owner-run",
         },
-      },
-    });
+      } as AgentHarnessTaskRuntimeScope;
+      const owner = monitor.registerParent({
+        parentThreadId: "parent-thread",
+        requesterSessionKey: scope.requesterSessionKey,
+        taskRuntimeScope: scope,
+        claimDirectChild,
+      });
+      owner.bindTurn("turn-1");
 
-    expect(claimDirectChild).not.toHaveBeenCalled();
-    monitor.dispose();
-  });
+      await client.notify({
+        method: "item/completed",
+        params: {
+          threadId: "parent-thread",
+          turnId: "turn-1",
+          item: {
+            type: "collabAgentToolCall",
+            tool: "spawnAgent",
+            status,
+            senderThreadId: "parent-thread",
+            receiverThreadIds: hasChildId ? ["failed-child"] : [],
+          },
+        },
+      });
+
+      expect(claimDirectChild).not.toHaveBeenCalled();
+      if (!hasChildId) {
+        expect(runtime.createRunningTaskRun).not.toHaveBeenCalled();
+        expect(runtime.finalizeTaskRunByRunId).not.toHaveBeenCalled();
+        monitor.dispose();
+        return;
+      }
+      const creation = runtime.createAgentHarnessTaskRuntime.mock.lastCall?.[0];
+      expect(creation?.scope).toBe(scope);
+      expect(creation?.taskOriginMode).toBe("unknown");
+      expect(runtime.createRunningTaskRun).toHaveBeenCalledWith(
+        expect.objectContaining({ runId: "codex-thread:failed-child" }),
+      );
+      expect(runtime.finalizeTaskRunByRunId).toHaveBeenCalledWith(
+        expect.objectContaining({
+          runId: "codex-thread:failed-child",
+          status: status === "blocked" ? "succeeded" : "failed",
+        }),
+      );
+      monitor.dispose();
+    },
+  );
 
   it.each(["v1", "v2"] as const)(
     "does not reclaim a terminal child from late %s spawn evidence",

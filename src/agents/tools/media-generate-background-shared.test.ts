@@ -10,6 +10,8 @@ import { resetGeneratedMediaTaskActivityForTests } from "../../tasks/task-runtim
 import { hasPendingGeneratedMediaTaskForSessionKey } from "../../tasks/task-status-access.js";
 import { normalizeSessionDeliveryState } from "../../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../../utils/delivery-context.types.js";
+import type { TaskOriginSnapshot } from "../task-origin.js";
+import { withGatewayToolCallerIdentity } from "./gateway-caller-context.js";
 
 const subagentAnnounceDeliveryMocks = vi.hoisted(() => ({
   deliverSubagentAnnouncement: vi.fn(),
@@ -873,6 +875,60 @@ describe("scheduleMediaGenerationTaskCompletion", () => {
 });
 
 describe("createMediaGenerationTaskLifecycle", () => {
+  it("captures admitted origin at task creation, not tool construction or completion", async () => {
+    const sessionKey = "agent:main:discord:shared";
+    const lifecycle = createImageMediaLifecycle();
+    for (const senderId of ["friend", "owner"]) {
+      const taskOrigin: TaskOriginSnapshot = {
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId,
+        sourceSessionKey: sessionKey,
+        sourceRunId: `run-${senderId}`,
+      };
+      await withGatewayToolCallerIdentity({ agentId: "main", sessionKey, taskOrigin }, async () => {
+        await Promise.resolve();
+        lifecycle.createTaskRun({ sessionKey, requesterAgentId: "main", prompt: "proof image" });
+      });
+      expect(detachedTaskRuntimeMocks.createRunningTaskRun).toHaveBeenLastCalledWith(
+        expect.objectContaining({ taskOrigin }),
+      );
+    }
+    lifecycle.createTaskRun({ sessionKey, prompt: "unbound" });
+    expect(detachedTaskRuntimeMocks.createRunningTaskRun).toHaveBeenLastCalledWith(
+      expect.objectContaining({ taskOrigin: { version: 1, status: "unknown" } }),
+    );
+  });
+
+  it("preserves execution origin across sandbox route aliases and leaves sessionless work untracked", async () => {
+    const taskOrigin: TaskOriginSnapshot = {
+      version: 1,
+      status: "known",
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "agent:main:discord:shared",
+      sourceRunId: "run-friend",
+    };
+    await withGatewayToolCallerIdentity(
+      { agentId: "main", sessionKey: taskOrigin.sourceSessionKey, taskOrigin },
+      () => {
+        const lifecycle = createImageMediaLifecycle();
+        for (const params of [
+          { sessionKey: "agent:main:other", requesterAgentId: "main" },
+          { sessionKey: taskOrigin.sourceSessionKey, requesterAgentId: "other" },
+        ]) {
+          lifecycle.createTaskRun({ ...params, prompt: "proof image" });
+          expect(detachedTaskRuntimeMocks.createRunningTaskRun).toHaveBeenLastCalledWith(
+            expect.objectContaining({ taskOrigin }),
+          );
+        }
+        expect(lifecycle.createTaskRun({ prompt: "sessionless" })).toBeNull();
+        expect(detachedTaskRuntimeMocks.createRunningTaskRun).toHaveBeenCalledTimes(2);
+      },
+    );
+  });
+
   it("tracks pending media when the detached runtime does not mirror core tasks", () => {
     const sessionKey = "agent:main:cron:daily-media:run:run-123";
     const lifecycle = createImageMediaLifecycle();

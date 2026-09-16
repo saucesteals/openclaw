@@ -38,7 +38,10 @@ type CodexNativeSubagentTaskMirrorParams = {
   historyOwner?: CodexNativeSubagentHistoryOwner;
   agentId?: string;
   now?: () => number;
-  resolveTaskRuntime?: (threadId: string) => TaskLifecycleRuntime | undefined;
+  resolveTaskRuntime?: (
+    threadId: string,
+    allowUnknownOrigin: boolean,
+  ) => TaskLifecycleRuntime | undefined;
 };
 
 /** Projects Codex thread and collab-agent notifications into task lifecycle updates. */
@@ -70,6 +73,7 @@ export class CodexNativeSubagentTaskMirror {
   }
 
   markAuthoritativeCompletion(childThreadId: string): void {
+    this.ensureTerminalTask(childThreadId, true);
     const runId = codexNativeSubagentRunId(childThreadId);
     // Run identity is per child thread, not per resumed turn. Once the monitor
     // finalizes and delivers this task, later mirror events must not rewrite it.
@@ -131,17 +135,13 @@ export class CodexNativeSubagentTaskMirror {
       normalizeOptionalString(thread.preview) ??
       `Subagent${label === "Subagent" ? "" : ` ${label}`}`;
     const createdAt = secondsToMillis(thread.createdAt) ?? this.now();
-    if (
-      !this.createRunningTask({
-        threadId,
-        label,
-        task,
-        startedAt: createdAt,
-        progressSummary: "Subagent started.",
-      })
-    ) {
-      return;
-    }
+    this.createRunningTask({
+      threadId,
+      label,
+      task,
+      startedAt: createdAt,
+      progressSummary: "Subagent started.",
+    });
     this.applyStatus(threadId, thread.status);
   }
 
@@ -195,6 +195,7 @@ export class CodexNativeSubagentTaskMirror {
         });
         return;
       }
+      this.ensureTerminalTask(threadId);
       this.terminalRunIds.add(runId);
       this.runtime.finalizeTaskRunByRunId({
         runId,
@@ -325,19 +326,41 @@ export class CodexNativeSubagentTaskMirror {
     });
   }
 
-  private createRunningTask(params: {
-    threadId: string;
-    label: string;
-    task: string;
-    startedAt: number;
-    progressSummary: string;
-  }): boolean {
+  private ensureTerminalTask(threadId: string, discoveredChild = false): void {
+    const pending = this.pendingCreations.get(threadId);
+    if (!pending && !discoveredChild) {
+      return;
+    }
+    // Attribution can arrive after lifecycle events. Do not lose a terminal row
+    // waiting for it, or substitute the current parent's identity for the child.
+    this.createRunningTask(
+      pending ?? {
+        threadId,
+        label: "Subagent",
+        task: "Subagent",
+        startedAt: this.now(),
+        progressSummary: "Subagent finished.",
+      },
+      true,
+    );
+  }
+
+  private createRunningTask(
+    params: {
+      threadId: string;
+      label: string;
+      task: string;
+      startedAt: number;
+      progressSummary: string;
+    },
+    allowUnknownOrigin = false,
+  ): boolean {
     const threadId = params.threadId.trim();
-    if (!threadId || this.mirrorStateByThreadId.get(threadId) === "mirrored") {
+    if (!threadId || this.mirrorStateByThreadId.has(threadId)) {
       return false;
     }
     const runtime = this.params.resolveTaskRuntime
-      ? this.params.resolveTaskRuntime(threadId)
+      ? this.params.resolveTaskRuntime(threadId, allowUnknownOrigin)
       : this.runtime;
     if (!runtime) {
       this.pendingCreations.set(threadId, params);
@@ -420,6 +443,8 @@ export class CodexNativeSubagentTaskMirror {
           progressSummary: summary,
         });
       } else {
+        this.ensureTerminalTask(threadId);
+        this.terminalRunIds.add(runId);
         // Remote V1 has no trusted completion envelope or local transcript.
         // Its collab-completed state is therefore the terminal fallback.
         this.runtime.finalizeTaskRunByRunId({
@@ -433,6 +458,7 @@ export class CodexNativeSubagentTaskMirror {
       }
       return;
     }
+    this.ensureTerminalTask(threadId);
     if (normalizedStatus === "blocked") {
       this.terminalRunIds.add(runId);
       this.runtime.finalizeTaskRunByRunId({
