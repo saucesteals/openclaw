@@ -1,5 +1,6 @@
 import {
   buildTemporalContextText,
+  buildTaskOriginContext,
   buildHarnessVisibleReplyGuidance,
   type EmbeddedRunAttemptParamsV2 as EmbeddedRunAttemptParams,
 } from "openclaw/plugin-sdk/agent-harness-runtime";
@@ -103,7 +104,10 @@ export function buildTurnStartParams(
   }
   const useThreadPermissionProfile = options.appServer.networkProxy && !options.sandboxPolicy;
   const currentSenderContext =
-    params.trigger === "user" ? buildCodexCurrentSenderContextValue(params) : undefined;
+    params.trigger === "user" &&
+    (!params.inputProvenance || params.inputProvenance.kind === "external_user")
+      ? buildCodexCurrentSenderContextValue(params)
+      : undefined;
   // Codex emits only changed values and cannot retract omitted fragments from model history.
   // Always send configured-or-host context so warm threads see rollover and removed overrides.
   let additionalContext = buildCodexTemporalAdditionalContext(params, {
@@ -113,6 +117,15 @@ export function buildTurnStartParams(
   // including automatic/disabled defaults, without replacing other context entries.
   additionalContext = {
     ...additionalContext,
+    openclaw_task_origin: {
+      kind: "application",
+      value: buildTaskOriginContext({
+        taskOrigin: params.taskOrigin,
+        ownerStatus: params.taskOriginOwnerStatus ?? "unknown",
+        inputProvenance: params.inputProvenance,
+        trigger: params.trigger,
+      }),
+    },
     openclaw_source_delivery: {
       kind: "application",
       value: [
@@ -125,13 +138,14 @@ export function buildTurnStartParams(
       ].join("\n"),
     },
   };
-  // Untrusted context exposes authenticated attribution without promoting human-controlled labels.
-  if (currentSenderContext) {
-    additionalContext = {
-      ...additionalContext,
-      openclaw_current_sender: { kind: "untrusted", value: currentSenderContext },
-    };
-  }
+  // Explicitly clear earlier attribution on internal turns; omission cannot retract history.
+  additionalContext = {
+    ...additionalContext,
+    openclaw_current_sender: {
+      kind: "untrusted",
+      value: currentSenderContext ?? JSON.stringify({ sender: null }),
+    },
+  };
   if (params.permissionChange?.notice) {
     // Application context is a developer message in Codex 0.151.0 and also
     // reaches native-preserved threads without overriding their turn settings.

@@ -4,6 +4,7 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { AdmittedRunContext } from "../agents/admitted-run-context.js";
+import { normalizeTaskOriginSnapshot } from "../agents/task-origin.js";
 import { createExecutionIdentityAdmissionToken } from "../audit/execution-identity-admission.js";
 import { bindExecutionOwnerLifecycleMetadata } from "../audit/execution-owner-lifecycle-binding-store.js";
 import { emitAgentEvent } from "../infra/agent-events.js";
@@ -40,6 +41,7 @@ import {
 } from "./task-flow-registry.js";
 import type { TaskFlowRecord } from "./task-flow-registry.types.js";
 import { getTaskRegistryMaintenanceSnapshot } from "./task-registry-maintenance-snapshot.js";
+import { updateTask } from "./task-registry-mutation.js";
 import {
   createTaskRecord as createTaskRecordOrNull,
   deleteTaskRecordById,
@@ -177,6 +179,37 @@ function createUnsafeTaskOwnerIndex(database: DatabaseSync): void {
 }
 
 describe("task-registry store runtime", () => {
+  it("persists immutable task origin through reload without backfilling legacy records", () => {
+    const origin = {
+      version: 1 as const,
+      status: "known" as const,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "agent:main:source",
+      sourceRunId: "source-run",
+    };
+    const task = createTaskRecord({
+      runtime: "cli",
+      requesterSessionKey: "agent:main:source",
+      task: "public monitor",
+      taskOrigin: origin,
+    });
+    reloadTaskRegistryFromStore();
+    expect(getTaskById(task.taskId)?.taskOrigin).toEqual(origin);
+    const untrustedPatch = { label: "updated" };
+    Reflect.set(untrustedPatch, "taskOrigin", { ...origin, senderId: "different" });
+    updateTask(task.taskId, untrustedPatch);
+    expect(getTaskById(task.taskId)?.taskOrigin).toEqual(origin);
+    const legacy = createTaskRecord({
+      runtime: "cli",
+      requesterSessionKey: "agent:main:source",
+      task: "legacy",
+    });
+    expect(normalizeTaskOriginSnapshot(getTaskById(legacy.taskId)?.taskOrigin)).toEqual({
+      version: 1,
+      status: "unknown",
+    });
+  });
   it("does not create shared state for a read-only task snapshot", async () => {
     await withOpenClawTestState(
       { layout: "state-only", prefix: "openclaw-task-store-readonly-" },
@@ -197,7 +230,7 @@ describe("task-registry store runtime", () => {
       { layout: "state-only", prefix: "openclaw-task-store-old-schema-" },
       async () => {
         const database = openOpenClawStateDatabase();
-        database.db.exec("ALTER TABLE task_runs DROP COLUMN tool_use_count");
+        database.db.exec("ALTER TABLE task_runs DROP COLUMN task_origin_json");
         closeOpenClawStateDatabase();
 
         expect(loadTaskRegistryStateFromSqliteReadOnlyResult()).toEqual({
@@ -207,6 +240,10 @@ describe("task-registry store runtime", () => {
             deliveryStates: new Map(),
           },
         });
+        const upgraded = openOpenClawStateDatabase();
+        expect(upgraded.db.prepare("SELECT task_origin_json FROM task_runs").all()).toEqual([]);
+        closeOpenClawStateDatabase();
+        expect(loadTaskRegistryStateFromSqliteReadOnlyResult().state).toBe("ready");
       },
     );
   });

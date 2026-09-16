@@ -94,6 +94,9 @@ export type CurrentInboundPromptContext = {
 export type RunEmbeddedAgentParams = {
   /** Already-admitted internal execution; mutually exclusive with preparedRunAdmission. */
   admittedRunContext?: AdmittedRunContext;
+  taskOrigin?: import("../../task-origin.js").TaskOriginSnapshot;
+  /** Host-derived display fact from current config; not persisted or an authority grant. */
+  taskOriginOwnerStatus?: import("../../task-origin.js").TaskOriginOwnerStatus;
   /** Host-only post-prepare continuation, removed before plugin invocation. */
   preparedRunAdmission?: PreparedAgentRunAdmission;
   /** Caller-owned in-memory transcript for ephemeral helper runs. */

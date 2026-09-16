@@ -997,6 +997,59 @@ describe("CodexNativeSubagentMonitor", () => {
     },
   );
 
+  it.each(["known", "unknown"] as const)(
+    "binds native child attribution to its exact parent turn with %s cached origin",
+    async (initialStatus) => {
+      const client = createClient();
+      const runtime = createRuntime();
+      const monitor = new CodexNativeSubagentMonitor(client as never, runtime);
+      const scopeFor = (senderId: string): AgentHarnessTaskRuntimeScope => ({
+        ...createTaskScope(),
+        taskOrigin: {
+          version: 1,
+          status: "known",
+          channel: "discord",
+          senderId,
+          sourceSessionKey: "agent:main:discord:channel:C123",
+          sourceRunId: senderId,
+        },
+      });
+      const firstScope: AgentHarnessTaskRuntimeScope =
+        initialStatus === "unknown"
+          ? { ...scopeFor("owner"), taskOrigin: { version: 1, status: "unknown" } }
+          : scopeFor("owner");
+      const friendScope = scopeFor("friend");
+      monitor
+        .registerParent({
+          parentThreadId: "parent-thread",
+          requesterSessionKey: firstScope.requesterSessionKey,
+          taskRuntimeScope: firstScope,
+        })
+        .bindTurn("old-turn");
+      const friend = monitor.registerParent({
+        parentThreadId: "parent-thread",
+        requesterSessionKey: friendScope.requesterSessionKey,
+        taskRuntimeScope: friendScope,
+        claimDirectChild: () => () => undefined,
+      });
+      await client.notify({
+        method: "item/completed",
+        params: {
+          threadId: "parent-thread",
+          turnId: "friend-turn",
+          item: directSpawnItem("v2", "parent-thread", "friend-child"),
+        },
+      });
+      expect(runtime.createRunningTaskRun).not.toHaveBeenCalled();
+      friend.bindTurn("friend-turn");
+      expect(runtime.createRunningTaskRun).toHaveBeenCalledOnce();
+      expect(runtime.createAgentHarnessTaskRuntime).toHaveBeenLastCalledWith(
+        expect.objectContaining({ scope: friendScope }),
+      );
+      monitor.dispose();
+    },
+  );
+
   it("does not consume pre-bind direct spawn evidence for another turn", async () => {
     const client = createClient();
     const claimDirectChild = vi.fn(() => () => undefined);

@@ -182,6 +182,14 @@ describe("agent runtime identity token", () => {
   });
 
   it("round-trips the authenticated plugin owner and turn-source route", async () => {
+    const taskOrigin = {
+      version: 1 as const,
+      status: "known" as const,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "session-1",
+      sourceRunId: "original-run",
+    };
     useTempHome();
     const runtimeToken = await importRuntimeTokenModule();
     const token = await runtimeToken.mintAgentRuntimeIdentityToken({
@@ -189,6 +197,7 @@ describe("agent runtime identity token", () => {
       sessionKey: "session-1",
       ...operationalRun(),
       approvalOwnerPluginId: " codex ",
+      taskOrigin,
       turnSourceChannel: " telegram ",
       turnSourceTo: " chat-1 ",
       turnSourceAccountId: " Work ",
@@ -201,6 +210,7 @@ describe("agent runtime identity token", () => {
       sessionKey: "session-1",
       operationalRunInstance: operationalRun().operationalRunInstance,
       approvalOwnerPluginId: "codex",
+      taskOrigin,
       turnSourceChannel: "telegram",
       turnSourceTo: "chat-1",
       turnSourceAccountId: "work",

@@ -10,8 +10,10 @@ export function cloneTaskRecord(record: TaskRecord): TaskRecord {
 }
 
 /** Observer notifications need detached metadata, never runtime-owned detail. */
-export function cloneTaskRecordForObserver(record: TaskRecord): Omit<TaskRecord, "detail"> {
-  const { detail: _detail, ...snapshot } = record;
+export function cloneTaskRecordForObserver(
+  record: TaskRecord,
+): Omit<TaskRecord, "detail" | "taskOrigin"> {
+  const { detail: _detail, taskOrigin: _taskOrigin, ...snapshot } = record;
   return snapshot;
 }
 

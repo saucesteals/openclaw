@@ -18,6 +18,7 @@ import {
   type PreparedAgentRunAdmission,
 } from "./admitted-run-context.js";
 import { wrapRunWithTestPreparedAdmission } from "./admitted-run-context.test-support.js";
+import { captureTaskOrigin, normalizeTaskOriginSnapshot } from "./task-origin.js";
 
 const enabledConfig = { logging: { audit: { enabled: true, executionIdentity: true } } };
 const facts = {
@@ -414,5 +415,50 @@ describe("prepared run admission", () => {
     expect(validateAgentRunDelegatedAuthority(authority!)).toBe(false);
     releaseHook?.();
     await expect(admission).rejects.toThrow("closed during admission");
+  });
+});
+
+describe("admitted task origin", () => {
+  it("captures immutable attribution independently of audit and reuses it for nested work", async () => {
+    const origin = captureTaskOrigin({
+      external: true,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "agent:main:discord:channel:room",
+      sourceRunId: "source-run",
+      audience: "room",
+    });
+    const { runtime, ...admissionFacts } = facts;
+    const admission = prepareAgentRunAdmission({
+      cfg: {},
+      facts: admissionFacts,
+      taskOrigin: origin,
+      operationalRunInstance: createOperationalRunInstanceRef(facts.runId),
+    });
+    const first = await admission.admit(runtime.kind);
+    expect(first.executionIdentityToken).toBeUndefined();
+    expect(first.taskOrigin).toEqual(origin);
+    expect(Object.isFrozen(first.taskOrigin)).toBe(true);
+    expect(await admission.admit(runtime.kind)).toBe(first);
+    const nested = captureTaskOrigin({
+      inherited: first.taskOrigin,
+      external: false,
+      channel: "discord",
+      senderId: "new-owner",
+      sourceSessionKey: "other-session",
+      sourceRunId: "next-run",
+    });
+    expect(nested).toEqual(origin);
+    admission.close();
+  });
+  it("never reconstructs missing or malformed origin from a current sender", () => {
+    const unknown = { version: 1, status: "unknown" };
+    expect(captureTaskOrigin({ external: false, senderId: "owner", sourceRunId: "r" })).toEqual(
+      unknown,
+    );
+    expect(normalizeTaskOriginSnapshot({ version: 1, status: "known", senderId: "owner" })).toEqual(
+      unknown,
+    );
+    expect(normalizeTaskOriginSnapshot(undefined)).toEqual(unknown);
   });
 });

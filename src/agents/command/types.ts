@@ -157,6 +157,8 @@ export type AgentCommandOpts = {
   internalEvents?: AgentInternalEvent[];
   runtimeContextFragments?: RuntimeContextFragment[];
   inputProvenance?: InputProvenance;
+  /** Host-owned task attribution; never accepted from public agent arguments. */
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   /** Internal runs can execute against a session without updating visible status/model/usage. */
   sessionEffects?: "visible" | "internal";
   /** Internal handoffs can write transcript turns without changing user-facing model/usage state. */

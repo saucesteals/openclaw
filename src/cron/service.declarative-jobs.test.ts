@@ -201,6 +201,14 @@ describe("CronService declarative jobs", () => {
   });
 
   it("keeps the first creator across declaration convergence and restart", async () => {
+    const taskOrigin = {
+      version: 1 as const,
+      status: "known" as const,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "session-1",
+      sourceRunId: "original-run",
+    };
     const { storePath } = await makeStorePath();
     const writer = createCronService(storePath);
     await writer.start();
@@ -219,22 +227,26 @@ describe("CronService declarative jobs", () => {
         await writer.add(declaration(), {
           createdActor: { type: "human", source: "profile", id: "profile-ada" },
           skillLibrarySelections: selections,
+          taskOrigin,
         }),
       );
       createdId = created.id;
       expect(created.job).toMatchObject({
         createdActor: { type: "human", id: "profile-ada" },
+        taskOrigin,
       });
 
       const converged = declarativeResult(
         await writer.add(declaration({ displayName: "Updated report" }), {
           createdActor: { type: "human", source: "profile", id: "profile-bob" },
           skillLibrarySelections: [],
+          taskOrigin: { ...taskOrigin, senderId: "later-owner" },
         }),
       );
       expect(converged).toMatchObject({ created: false, updated: true, id: created.id });
       expect(converged.job).toMatchObject({
         createdActor: { type: "human", id: "profile-ada" },
+        taskOrigin,
       });
     } finally {
       writer.stop();
@@ -246,6 +258,7 @@ describe("CronService declarative jobs", () => {
       skillLibrarySelections: selections,
     });
     const job = (await loadCronStore(storePath)).jobs.find((stored) => stored.id === createdId)!;
+    expect(job.taskOrigin).toEqual(taskOrigin);
     expect(toPublicCronJob(job)).not.toHaveProperty("skillLibrarySelections");
     const first = resolveCronSession({
       cfg: {},

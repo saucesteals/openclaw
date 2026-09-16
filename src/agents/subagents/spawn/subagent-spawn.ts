@@ -26,6 +26,7 @@ import {
   type SpawnBackendAdapter,
   summarizeSpawnError,
 } from "../../spawn-pipeline.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import { getGatewayToolCallerIdentity } from "../../tools/gateway-caller-context.js";
 import {
   completeCollectorLaunchCleanup,
@@ -87,6 +88,7 @@ export async function spawnSubagentDirect(
   ctx: SpawnSubagentContext,
 ): Promise<SpawnSubagentResult> {
   const assertActive = ctx.assertActive;
+  const taskOrigin = normalizeTaskOriginSnapshot(getGatewayToolCallerIdentity()?.taskOrigin);
   const promptedAt = Date.now();
   const task = params.task;
   const label = params.label?.trim() || "";
@@ -520,6 +522,7 @@ export async function spawnSubagentDirect(
         return {
           runId,
           requesterTurnRunId: ctx.requesterTurnRunId,
+          taskOrigin,
           childSessionKey,
           controllerSessionKey: ownership.controllerSessionKey,
           requesterSessionKey: ownership.completionRequesterSessionKey,

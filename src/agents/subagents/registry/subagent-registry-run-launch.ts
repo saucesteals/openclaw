@@ -17,6 +17,7 @@ import { createSubagentTaskBackingDetail } from "../../../tasks/task-backing-aut
 import { normalizeDeliveryContext } from "../../../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../../../utils/delivery-context.types.js";
 import { resolveSubagentRequesterAgentId } from "../../subagent-requester-owner.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../../task-origin.js";
 import { updateSwarmCollectorCompletion } from "../swarm/swarm-collector.js";
 import { bindSwarmRunReservation } from "../swarm/swarm-scheduler.js";
 import { normalizeSubagentRunState } from "./subagent-delivery-state.js";
@@ -58,6 +59,7 @@ function resolveSwarmWaitOwnerSessionKeys(
 }
 
 export type RegisterSubagentRunParams = {
+  taskOrigin?: TaskOriginSnapshot;
   runId: string;
   requesterTurnRunId?: string;
   childSessionKey: string;
@@ -127,6 +129,7 @@ export class SubagentLaunchManager extends SubagentRecoveryManager {
     const entry: SubagentRunRecord = normalizeSubagentRunState({
       runId,
       taskRunId: runId,
+      taskOrigin: normalizeTaskOriginSnapshot(registerParams.taskOrigin),
       ...(requesterTurnRunId ? { requesterTurnRunId } : {}),
       childSessionKey,
       controllerSessionKey,
@@ -230,6 +233,7 @@ export class SubagentLaunchManager extends SubagentRecoveryManager {
       try {
         const taskParams = {
           runtime: "subagent",
+          taskOrigin: entry.taskOrigin,
           sourceId: runId,
           ownerKey: requesterSessionKey,
           scopeKind: "session",

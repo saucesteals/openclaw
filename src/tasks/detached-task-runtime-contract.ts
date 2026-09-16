@@ -17,6 +17,7 @@ import type {
 export const SUBAGENT_KILL_TASK_ERROR = "Subagent run killed.";
 
 export type DetachedTaskCreateParams = {
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   runtime: TaskRuntime;
   taskKind?: string;
   sourceId?: string;

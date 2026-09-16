@@ -7,6 +7,7 @@ import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../agents/task-origin.js";
 import { channelRouteDedupeKey } from "../plugin-sdk/channel-route.js";
 import { resolveGlobalMap } from "../shared/global-singleton.js";
 import {
@@ -32,6 +33,7 @@ export type SystemEvent = {
   ts: number;
   contextKey?: string | null;
   deliveryContext?: DeliveryContext;
+  taskOrigin?: TaskOriginSnapshot;
 };
 
 const MAX_EVENTS = 20;
@@ -49,6 +51,7 @@ type SystemEventOptions = {
   sessionKey: string;
   contextKey?: string | null;
   deliveryContext?: DeliveryContext;
+  taskOrigin?: TaskOriginSnapshot;
   /** Replace the pending event for this context and delivery route. Requires contextKey. */
   replace?: boolean;
 };
@@ -109,8 +112,9 @@ function findDuplicateInQueue(
   contextKey: string | null,
   deliveryContext: DeliveryContext | undefined,
   ownerAgentId: string | null,
+  taskOrigin: TaskOriginSnapshot | undefined,
 ): boolean {
-  const incoming = { text, contextKey, deliveryContext, ownerAgentId };
+  const incoming = { text, contextKey, deliveryContext, ownerAgentId, taskOrigin };
   if (contextKey === null) {
     const last = queue[queue.length - 1];
     return last ? isDuplicateSystemEvent(last, incoming) : false;
@@ -149,7 +153,11 @@ function enqueueOwnedSystemEventEntry(
       resolveSystemEventOwnerAgentId(event) === normalizedOwnerAgentId &&
       areDeliveryContextsEqual(event.deliveryContext, normalizedDeliveryContext);
     const matching = entry.queue.filter(matches);
-    if (matching.length === 1 && matching[0]?.text === cleaned) {
+    if (
+      matching.length === 1 &&
+      matching[0]?.text === cleaned &&
+      sameTaskOrigin(matching[0].taskOrigin, options.taskOrigin)
+    ) {
       return null;
     }
     // Replacements move to the end without evicting unrelated sources.
@@ -162,6 +170,7 @@ function enqueueOwnedSystemEventEntry(
       normalizedContextKey,
       normalizedDeliveryContext,
       normalizedOwnerAgentId,
+      options.taskOrigin,
     )
   ) {
     return null;
@@ -175,6 +184,7 @@ function enqueueOwnedSystemEventEntry(
     ts: Date.now(),
     contextKey: normalizedContextKey,
     deliveryContext: normalizedDeliveryContext,
+    ...(options.taskOrigin ? { taskOrigin: normalizeTaskOriginSnapshot(options.taskOrigin) } : {}),
   };
   recordSystemEventOwner(event, normalizedOwnerAgentId);
   entry.queue.push(event);
@@ -232,12 +242,13 @@ function areDeliveryContextsEqual(left?: DeliveryContext, right?: DeliveryContex
 
 function isDuplicateSystemEvent(
   existing: SystemEvent,
-  incoming: Pick<SystemEvent, "text" | "contextKey" | "deliveryContext"> & {
+  incoming: Pick<SystemEvent, "text" | "contextKey" | "deliveryContext" | "taskOrigin"> & {
     ownerAgentId: string | null;
   },
 ): boolean {
   return (
     existing.text === incoming.text &&
+    sameTaskOrigin(existing.taskOrigin, incoming.taskOrigin) &&
     (existing.contextKey ?? null) === (incoming.contextKey ?? null) &&
     resolveSystemEventOwnerAgentId(existing) === incoming.ownerAgentId &&
     areDeliveryContextsEqual(existing.deliveryContext, incoming.deliveryContext)
@@ -247,6 +258,7 @@ function isDuplicateSystemEvent(
 function areLegacySystemEventsEqual(left: SystemEvent, right: SystemEvent): boolean {
   return (
     left.text === right.text &&
+    sameTaskOrigin(left.taskOrigin, right.taskOrigin) &&
     left.ts === right.ts &&
     (left.contextKey ?? null) === (right.contextKey ?? null) &&
     resolveSystemEventOwnerAgentId(left) === resolveSystemEventOwnerAgentId(right) &&
@@ -332,4 +344,23 @@ export function resolveSystemEventDeliveryContext(
 
 export function resetSystemEventsForTest() {
   queues.clear();
+}
+
+function sameTaskOrigin(
+  left: TaskOriginSnapshot | undefined,
+  right: TaskOriginSnapshot | undefined,
+): boolean {
+  return (
+    JSON.stringify(normalizeTaskOriginSnapshot(left)) ===
+    JSON.stringify(normalizeTaskOriginSnapshot(right))
+  );
+}
+
+/** A coalesced wake cannot borrow any one participant's origin. */
+export function resolveSystemEventTaskOrigin(events: readonly SystemEvent[]): TaskOriginSnapshot {
+  const origins = events.map((event) => normalizeTaskOriginSnapshot(event.taskOrigin));
+  const first = origins[0];
+  return first && origins.every((origin) => sameTaskOrigin(origin, first))
+    ? first
+    : normalizeTaskOriginSnapshot(undefined);
 }

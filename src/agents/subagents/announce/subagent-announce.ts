@@ -33,6 +33,7 @@ import {
   formatAgentInternalEventsForPrompt,
   type AgentInternalEvent,
 } from "../../internal-events.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import { isAnnounceSkip } from "../../tools/sessions-send-tokens.js";
 import { SUBAGENT_COMPLETION_OUTCOME_INSTRUCTION } from "../completion/subagent-completion-instructions.js";
 import {
@@ -43,6 +44,7 @@ import {
   resolveRequesterForChildSession,
   shouldIgnorePostCompletionAnnounceForSession,
 } from "../registry/subagent-registry-read.js";
+import { getSubagentRunByRunId } from "../registry/subagent-registry.js";
 import { deleteSubagentSessionForCleanup } from "../registry/subagent-session-cleanup.js";
 import { getSubagentDepthFromSessionStore } from "../spawn/subagent-depth.js";
 import type { SpawnSubagentMode } from "../spawn/subagent-spawn.types.js";
@@ -566,6 +568,9 @@ export async function runSubagentAnnounceFlow(params: {
       {
         type: "task_completion",
         source: announceType === "cron job" ? "cron" : "subagent",
+        taskOrigin: normalizeTaskOriginSnapshot(
+          getSubagentRunByRunId(params.childRunId)?.taskOrigin,
+        ),
         childSessionKey: params.childSessionKey,
         childSessionId: announceSessionId,
         announceType,

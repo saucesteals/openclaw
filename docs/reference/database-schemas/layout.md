@@ -15,6 +15,29 @@ title: "Database layout"
 
 The task registry uses the shared state database. Runtime trajectory events live with their sessions in the per-agent database or a configured shared session SQLite store.
 
+### Detached-task original requester
+
+`task_runs.task_origin_json` is an optional, bounded JSON snapshot owned by the
+existing task registry. It records the original authenticated requester and
+source run/session/audience, not execution permissions or an owner grant. The
+snapshot is immutable after task admission. Existing rows remain `NULL` and are
+read as unknown; readers never reconstruct identity from the latest session
+participant or optional audit history.
+
+Writable schema repair adds this nullable column atomically through the existing
+additive-column migration, without a new table or numeric schema-version bump.
+Read-only preflight reports a missing column as requiring migration. Cron jobs
+and subagent runs retain equivalent private snapshots in their existing JSON
+owners; restart claims retain only their exact run's snapshot. Normal lifecycle
+retention deletes these snapshots with their owning records.
+
+Stop older writers and take a verified WAL-aware backup before activation.
+Older full-schema validators may reject the additional column even though the
+numeric version is unchanged. Draining jobs alone does not remove this schema
+incompatibility: rollback requires a compatible build or restoring the complete
+pre-upgrade backup with all writers stopped. Do not drop the column on a live
+database or silently discard attribution to make an older release start.
+
 ### Plugin state listing index
 
 Plugin keyed stores use the shared `plugin_state_entries` table. Its listing

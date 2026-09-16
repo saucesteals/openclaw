@@ -26,6 +26,7 @@ export function clearPendingFinalDelivery(entry: SessionEntry, updatedAt: number
     ...entry,
     pendingFinalDelivery: undefined,
     restartRecoveryForceSafeTools: undefined,
+    restartRecoveryTaskOrigin: undefined,
     restartRecoveryDeliveryMediaUrls: undefined,
     restartRecoveryDeliveryMediaSelected: undefined,
     restartRecoveryDisableMessageTool: undefined,

@@ -2,6 +2,7 @@
 import type { DatabaseSync } from "node:sqlite";
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot } from "../../agents/task-origin.js";
 import { sha256Hex } from "../../infra/crypto-digest.js";
 import { executeSqliteQuerySync, sqliteStringSet } from "../../infra/kysely-sync.js";
 import { normalizeAgentId, parseAgentSessionKey } from "../../routing/session-key.js";
@@ -101,6 +102,7 @@ function normalizeCronJobForSqlite(job: CronStoreFile["jobs"][number]): CronStor
       : createdAtMs;
   return {
     ...normalized,
+    taskOrigin: normalizeTaskOriginSnapshot(raw.taskOrigin),
     createdAtMs,
     updatedAtMs,
     state: isRecord(normalized.state) ? (normalized.state as CronJobState) : {},
@@ -163,6 +165,7 @@ function rowToCronJob(row: CronJobRow, jobJson: Record<string, unknown>): CronSt
   return {
     ...runtimeConfig,
     id: row.job_id,
+    taskOrigin: normalizeTaskOriginSnapshot(jobJson.taskOrigin),
     ...(toolsAllowExecTarget ? { toolsAllowExecTarget } : {}),
     ...(toolsAllowExecTargetRequirement ? { toolsAllowExecTargetRequirement } : {}),
     createdAtMs,

@@ -332,6 +332,7 @@ async function agentCommandInternal(
             disableMessageTool: opts.disableMessageTool,
             entry,
             forceRestartSafeTools: opts.forceRestartSafeTools,
+            taskOrigin: opts.taskOrigin,
             runId,
             sourceIngress: generatedMediaSourceRunId ? "internal" : undefined,
             sourceRunId: generatedMediaSourceRunId,
