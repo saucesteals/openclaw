@@ -508,11 +508,7 @@ export function createAgentHarnessHostCapabilities(params: {
       const tools = bindTools(
         withAgentQuestionAnswerAuthority(resolveAgentQuestionAnswerAuthority(capabilities), () =>
           withInstallationTarget(installationTarget, () =>
-            createOpenClawCodingTools({
-              ...options,
-              operationalRunInstance,
-              taskOrigin: attempt.admittedRunContext.taskOrigin,
-            }),
+            createOpenClawCodingTools({ ...options, operationalRunInstance }),
           ),
         ),
         bindingOptions,

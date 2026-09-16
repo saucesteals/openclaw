@@ -50,6 +50,8 @@ type SetDeliveryStatusParams = Parameters<typeof setDetachedTaskDeliveryStatusBy
 export type AgentHarnessTaskRuntimeScopeParams = {
   scope: AgentHarnessTaskRuntimeScope;
   runIdPrefix?: string;
+  /** Record newly discovered tasks without attributing them to the current turn. */
+  taskOriginMode?: "scope" | "unknown";
 } & (
   | {
       // Core identifies harness-owned subagent rows by the taskKind stamped here
@@ -134,7 +136,13 @@ export function createAgentHarnessTaskRuntime(
     );
     return createRunningTaskRun({
       ...taskParams,
-      taskOrigin: normalizeTaskOriginSnapshot(existing ? existing.taskOrigin : scope.taskOrigin),
+      taskOrigin: normalizeTaskOriginSnapshot(
+        existing
+          ? existing.taskOrigin
+          : params.taskOriginMode === "unknown"
+            ? undefined
+            : scope.taskOrigin,
+      ),
       runtime,
       ...(taskKind ? { taskKind } : {}),
       requesterSessionKey,

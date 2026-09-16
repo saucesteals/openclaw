@@ -234,7 +234,6 @@ export function createMusicGenerateTool(options?: {
   agentSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
-  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   workspaceDir?: string;
   preparedModelRuntime?: PreparedModelRuntimeSnapshot;
   sandbox?: MusicGenerateSandboxConfig;
@@ -434,7 +433,6 @@ export function createMusicGenerateTool(options?: {
             sessionKey: options?.agentSessionKey,
             requesterAgentId: options?.requesterAgentId,
             requesterOrigin: options?.requesterOrigin,
-            taskOrigin: options?.taskOrigin,
             prompt,
             requestKey,
             providerId: selectedProviderId,

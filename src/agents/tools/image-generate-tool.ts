@@ -370,6 +370,8 @@ function validateImageGenerationCapabilities(params: {
   }
 }
 
+type ImageGenerateSandboxConfig = MediaToolSandbox;
+
 const defaultScheduleImageGenerateBackgroundWork = createDefaultMediaGenerateBackgroundScheduler({
   toolName: "image_generate",
   onCrash: (message, meta) => log.error(message, meta),
@@ -382,10 +384,9 @@ export function createImageGenerateTool(options?: {
   agentSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
-  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   workspaceDir?: string;
   preparedModelRuntime?: PreparedModelRuntimeSnapshot;
-  sandbox?: MediaToolSandbox;
+  sandbox?: ImageGenerateSandboxConfig;
   fsPolicy?: ToolFsPolicy;
   scheduleBackgroundWork?: MediaGenerateBackgroundScheduler;
   onAsyncTaskStarted?: MediaGenerateAsyncStartCallback;
@@ -633,7 +634,6 @@ export function createImageGenerateTool(options?: {
             sessionKey: options?.agentSessionKey,
             requesterAgentId: options?.requesterAgentId,
             requesterOrigin: options?.requesterOrigin,
-            taskOrigin: options?.taskOrigin,
             prompt,
             requestKey,
             providerId: selectedProvider?.id,

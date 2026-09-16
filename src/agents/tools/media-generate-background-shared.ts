@@ -33,6 +33,8 @@ import type { AgentInternalEvent } from "../internal-events.js";
 import { MEDIA_GENERATION_DELIVERING_COMPLETION_PROGRESS } from "../media-generation-task-status-shared.js";
 import { loadRequesterSessionEntry } from "../subagents/announce/subagent-announce-delivery.js";
 import { resolveAnnounceOrigin } from "../subagents/announce/subagent-announce-origin.js";
+import { normalizeTaskOriginSnapshot } from "../task-origin.js";
+import { getGatewayToolCallerIdentity } from "./gateway-caller-context.js";
 import {
   type MediaGenerationCompletionWakeOutcome,
   type MediaGenerationTaskHandle,
@@ -101,7 +103,6 @@ type CreateMediaGenerationTaskRunParams = {
   sessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
-  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   providerId?: string;
 };
@@ -193,7 +194,6 @@ function createMediaGenerationTaskRun(params: {
   sessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
-  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   providerId?: string;
   toolName: string;
@@ -222,7 +222,7 @@ function createMediaGenerationTaskRun(params: {
       ownerKey: sessionKey,
       scopeKind: "session",
       requesterOrigin,
-      taskOrigin: params.taskOrigin,
+      taskOrigin: normalizeTaskOriginSnapshot(getGatewayToolCallerIdentity()?.taskOrigin),
       childSessionKey: sessionKey,
       runId,
       label: params.label,

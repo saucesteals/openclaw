@@ -28,7 +28,6 @@ export type OpenClawToolsOptions = {
   runSessionKey?: string;
   agentChannel?: string;
   runId?: string;
-  taskOrigin?: import("./task-origin.js").TaskOriginSnapshot;
   /** Exact admitted session policy shared with terminal-input authorization. */
   execSession?: ExecSessionDefaults;
   /** Effective run-local exec overrides, including prepared permission mode. */

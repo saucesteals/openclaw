@@ -1669,10 +1669,43 @@ describe("runAgentHarnessAttempt", () => {
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
+  it("annotates non-ok harness result classifications for outer model fallback", async () => {
+    const classify = vi.fn<NonNullable<AgentHarness["classify"]>>(() => "empty" as const);
+    const runAttempt = vi.fn<AgentHarness["runAttempt"]>(async () => createAttemptResult("codex"));
+    registerAgentHarness(
+      {
+        id: "codex",
+        label: "Classifying Codex",
+        supports: (ctx) =>
+          ctx.provider === "codex" ? { supported: true, priority: 100 } : { supported: false },
+        runAttempt,
+        classify,
+      },
+      { ownerPluginId: "codex" },
+    );
+
+    const params = createAttemptParams();
+    const result = await runAgentHarnessAttempt(params);
+
+    const classifyCall = classify.mock.calls.at(0);
+    expect(classifyCall?.[0].sessionIdUsed).toBe("codex");
+    expect(classifyCall?.[1]).toEqual(
+      expect.objectContaining({
+        hostCapabilities: expect.objectContaining({ kind: "agent-harness-host-capability" }),
+        pluginHarnessToolPolicyRestricted: false,
+        runId: params.runId,
+        sessionId: params.sessionId,
+      }),
+    );
+    expect(classifyCall?.[1]).not.toHaveProperty("admittedRunContext");
+    expect(classifyCall?.[1]).not.toHaveProperty("operationalRunInstance");
+    expect(result.agentHarnessId).toBe("codex");
+    expect(result.agentHarnessResultClassification).toBe("empty");
+  });
+
   it.each(["owner", "friend", undefined])(
-    "annotates harness fallback and derives original requester relationship for %s",
+    "derives original requester relationship from admission for %s",
     async (senderId) => {
-      const classify = vi.fn<NonNullable<AgentHarness["classify"]>>(() => "empty" as const);
       const runAttempt = vi.fn<AgentHarness["runAttempt"]>(async () =>
         createAttemptResult("codex"),
       );
@@ -1683,7 +1716,6 @@ describe("runAgentHarnessAttempt", () => {
           supports: (ctx) =>
             ctx.provider === "codex" ? { supported: true, priority: 100 } : { supported: false },
           runAttempt,
-          classify,
         },
         { ownerPluginId: "codex" },
       );
@@ -1716,29 +1748,16 @@ describe("runAgentHarnessAttempt", () => {
       // Caller projections and synthetic execution authority must not override admitted attribution.
       params.taskOriginOwnerStatus = "configured_owner";
       params.senderIsOwner = true;
-      const result = await runAgentHarnessAttempt(params);
+      await runAgentHarnessAttempt(params);
 
-      const classifyCall = classify.mock.calls.at(0);
-      expect(classifyCall?.[0].sessionIdUsed).toBe("codex");
-      expect(classifyCall?.[1]).toEqual(
-        expect.objectContaining({
-          hostCapabilities: expect.objectContaining({ kind: "agent-harness-host-capability" }),
-          pluginHarnessToolPolicyRestricted: false,
-          runId: params.runId,
-          sessionId: params.sessionId,
-        }),
-      );
-      expect(classifyCall?.[1]).not.toHaveProperty("admittedRunContext");
-      expect(classifyCall?.[1]?.taskOriginOwnerStatus).toBe(
+      const projected = runAttempt.mock.calls[0]?.[0];
+      expect(projected?.taskOriginOwnerStatus).toBe(
         senderId === "owner"
           ? "configured_owner"
           : senderId === "friend"
             ? "not_configured_owner"
             : "unknown",
       );
-      expect(classifyCall?.[1]).not.toHaveProperty("operationalRunInstance");
-      expect(result.agentHarnessId).toBe("codex");
-      expect(result.agentHarnessResultClassification).toBe("empty");
     },
   );
 

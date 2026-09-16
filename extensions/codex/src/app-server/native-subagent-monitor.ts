@@ -518,19 +518,21 @@ class Monitor {
         requesterSessionKey: state.requesterSessionKey,
         historyOwner: state.historyOwner,
         agentId: state.agentId,
-        resolveTaskRuntime: (threadId) => {
+        resolveTaskRuntime: (threadId, allowUnknownOrigin) => {
           const existing = state.taskRuntime
             ?.listTaskRecords()
             .some((task) => task.runId === codexNativeSubagentRunId(threadId));
           if (existing) {
             return state.taskRuntime;
           }
-          const scope = this.childStates.get(threadId)?.taskRuntimeScope;
+          const childScope = this.childStates.get(threadId)?.taskRuntimeScope;
+          const scope = childScope ?? (allowUnknownOrigin ? state.taskRuntimeScope : undefined);
           return scope
             ? this.runtime.createAgentHarnessTaskRuntime({
                 runtime: CODEX_NATIVE_SUBAGENT_RUNTIME,
                 taskKind: CODEX_NATIVE_SUBAGENT_TASK_KIND,
                 scope,
+                taskOriginMode: childScope ? "scope" : "unknown",
                 runIdPrefix: CODEX_NATIVE_SUBAGENT_RUN_ID_PREFIX,
               })
             : state.taskRuntimeScope?.taskOrigin === undefined

@@ -89,7 +89,8 @@ describe("gateway caller context wrapper", () => {
       await prepared.execute();
     }
 
-    expect(seen).toEqual([identity, identity]);
+    const normalizedIdentity = { ...identity, taskOrigin: { version: 1, status: "unknown" } };
+    expect(seen).toEqual([normalizedIdentity, normalizedIdentity]);
   });
 
   it("pins caller identity to the Gateway present at admission", async () => {

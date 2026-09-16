@@ -8,6 +8,8 @@ import {
   MUSIC_GENERATION_TASK_KIND,
   VIDEO_GENERATION_TASK_KIND,
 } from "../media-generation-task-status.js";
+import type { TaskOriginSnapshot } from "../task-origin.js";
+import { withGatewayToolCallerIdentity } from "./gateway-caller-context.js";
 import {
   announceDeliveryMocks,
   createMediaCompletionFixture,
@@ -23,8 +25,12 @@ vi.mock("../../tasks/detached-task-runtime.js", () => taskExecutorMocks);
 vi.mock("../../tasks/task-registry-delivery-runtime.js", () => taskDeliveryRuntimeMocks);
 vi.mock("../subagents/announce/subagent-announce-delivery.js", () => announceDeliveryMocks);
 
-const { imageGenerationTaskLifecycle, musicGenerationTaskLifecycle, videoGenerationTaskLifecycle } =
-  await import("./media-generate-background.js");
+const {
+  imageGenerationTaskLifecycle,
+  musicGenerationTaskLifecycle,
+  videoGenerationTaskLifecycle,
+  runMediaGenerationTask,
+} = await import("./media-generate-background.js");
 
 describe("image generate background helpers", () => {
   beforeEach(() => {
@@ -34,6 +40,70 @@ describe("image generate background helpers", () => {
       announceDeliveryMocks,
     });
   });
+
+  it.each([
+    ["image", imageGenerationTaskLifecycle],
+    ["music", musicGenerationTaskLifecycle],
+    ["video", videoGenerationTaskLifecycle],
+  ] as const)(
+    "preserves %s execution origin through real admission and detached completion",
+    async (generationLabel, lifecycle) => {
+      const taskOrigin: TaskOriginSnapshot = {
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "friend",
+        sourceSessionKey: "agent:main:discord:shared",
+        sourceRunId: "friend-run",
+      };
+      taskExecutorMocks.createRunningTaskRun.mockImplementation((params) => ({
+        taskId: "task-origin",
+        taskOrigin: params.taskOrigin,
+      }));
+      announceDeliveryMocks.deliverSubagentAnnouncement.mockResolvedValue({ delivered: true });
+      const scheduled: Array<() => Promise<void>> = [];
+      await withGatewayToolCallerIdentity(
+        { agentId: "main", sessionKey: taskOrigin.sourceSessionKey, taskOrigin },
+        () =>
+          runMediaGenerationTask({
+            lifecycle,
+            generationLabel,
+            sessionKey: "agent:main:sandbox-alias",
+            prompt: "synthetic media",
+            requestKey: `${generationLabel}-origin`,
+            scheduleBackgroundWork: (work) => {
+              scheduled.push(work);
+            },
+            onFailure: vi.fn(),
+            run: async () => ({
+              provider: "test",
+              model: "test",
+              count: 1,
+              wakeResult: "synthetic result",
+              contentText: "synthetic result",
+              details: {},
+            }),
+          }),
+      );
+      expect(taskExecutorMocks.createRunningTaskRun).toHaveBeenCalledWith(
+        expect.objectContaining({ taskOrigin }),
+      );
+      expect(scheduled).toHaveLength(1);
+      await withGatewayToolCallerIdentity(
+        {
+          agentId: "main",
+          sessionKey: taskOrigin.sourceSessionKey,
+          taskOrigin: { ...taskOrigin, senderId: "owner", sourceRunId: "later-owner-run" },
+        },
+        () => scheduled[0]!(),
+      );
+      expect(announceDeliveryMocks.deliverSubagentAnnouncement).toHaveBeenCalledWith(
+        expect.objectContaining({
+          internalEvents: [expect.objectContaining({ taskOrigin })],
+        }),
+      );
+    },
+  );
 
   it("creates a running task with queued progress text", () => {
     taskExecutorMocks.createRunningTaskRun.mockReturnValue({
