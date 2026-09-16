@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "edcc44167665d5a2d65d6bbc67f75ede04d3d785",
-  "head": "84eb08f7606c160be196fd148eec839a9ee6782e",
+  "prev": "19ddf76b92045ff7cf832df427d112ca42185e2f",
+  "head": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -9,10 +9,11 @@
     "fix-media-completion-tools",
     "fix-media-failure-status",
     "fix-media-selected-delivery",
-    "fix-xai-video15-inputs",
+    "fix-xai-video15-inputs"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
