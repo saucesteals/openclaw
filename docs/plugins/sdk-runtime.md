@@ -28,6 +28,23 @@ register(api) {
 
 `api.runtime.version` is the current OpenClaw product version, sourced from the shared version resolver so plugins see the same value the CLI reports.
 
+## Harness task attribution
+
+`openclaw/plugin-sdk/agent-harness-runtime` exposes the pure
+`buildTaskOriginContext` renderer for harnesses that assemble their own prompts.
+The host supplies an optional immutable `taskOrigin` on admitted harness
+parameters and a current-config-derived `taskOriginOwnerStatus`. These describe
+the original requester, not the current completion actor, execution authority,
+or a grant to access resources. A plugin must not infer origin from the latest
+speaker or substitute an internal owner flag. Render unknown attribution
+explicitly on warm threads so prior requester context does not remain current.
+
+The renderer does not load configuration, resolve credentials, or assign
+permissions. Host-issued child-task scopes retain original attribution; public
+create/update tool arguments cannot assign it. See
+[detached-task storage](/reference/database-schemas/layout#detached-task-original-requester)
+for legacy and restart behavior.
+
 ## What each page covers
 
 - [Config and utilities](/plugins/sdk-runtime/config-and-utilities) — runtime config reads and writes, plus the shared process, error, and model-picker utilities.

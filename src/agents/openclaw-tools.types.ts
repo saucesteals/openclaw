@@ -105,6 +105,7 @@ export type OpenClawToolsOptions = {
   /** Host-bound standalone request/grant authority, never supplied by tool arguments. */
   assertInvocationCurrent?: () => void;
   assertInputCommitAllowed?: () => void;
+  taskOrigin?: import("./task-origin.js").TaskOriginSnapshot;
   /** Exact admitted session policy shared with terminal-input authorization. */
   execSession?: ExecSessionDefaults;
   /** Effective run-local exec overrides, including prepared permission mode. */

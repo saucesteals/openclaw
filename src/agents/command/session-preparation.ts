@@ -57,6 +57,7 @@ export function prepareCommandSessionRecoveryEntry(
         disableMessageTool: opts.disableMessageTool,
         entry,
         forceRestartSafeTools: opts.forceRestartSafeTools,
+        taskOrigin: opts.taskOrigin,
         runId,
         harnessCompletion,
         ...sourceOptions,

@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { z } from "zod";
 import type { OperationalRunInstanceRef } from "../agents/admitted-run-context.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../agents/task-origin.js";
 import {
   parseExecutionIdentityAdmissionToken,
   type ExecutionIdentityAdmissionToken,
@@ -50,6 +51,7 @@ export type AgentRuntimeIdentity = {
   delegatedAuthority: AgentRuntimeDelegatedAuthority;
   approvalOwnerPluginId?: string;
   executionIdentity?: ExecutionIdentityAdmissionToken;
+  taskOrigin?: TaskOriginSnapshot;
   turnSourceChannel?: string;
   /** Explicit admission fact; omission is unknown, never inferred from session routing. */
   turnSourceLocal?: true;
@@ -216,6 +218,7 @@ const agentRuntimeIdentityTokenPayloadSchema = z.object({
   delegatedAuthority: delegatedAuthoritySchema,
   approvalOwnerPluginId: z.string().optional().catch(undefined),
   executionIdentity: z.unknown().optional(),
+  taskOrigin: z.unknown().optional(),
   turnSourceChannel: z.string().optional().catch(undefined),
   turnSourceLocal: z.literal(true).optional(),
   turnSourceTo: z.string().optional().catch(undefined),
@@ -399,6 +402,7 @@ function parsePayload(value: unknown, nowMs: number): AgentRuntimeIdentityTokenP
       operationalRunInstance,
       delegatedAuthority,
       ...(approvalOwnerPluginId ? { approvalOwnerPluginId } : {}),
+      taskOrigin: normalizeTaskOriginSnapshot(raw.taskOrigin),
       ...(turnSourceChannel ? { turnSourceChannel } : {}),
       ...(turnSourceLocal ? { turnSourceLocal } : {}),
       ...(turnSourceTo ? { turnSourceTo } : {}),
@@ -428,6 +432,7 @@ export type AgentRuntimeIdentityTokenParams = {
   operationalRunInstance: OperationalRunInstanceRef;
   approvalOwnerPluginId?: string;
   executionIdentityToken?: ExecutionIdentityAdmissionToken;
+  taskOrigin?: TaskOriginSnapshot;
   turnSourceChannel?: string;
   turnSourceLocal?: true;
   turnSourceTo?: string;
@@ -545,6 +550,7 @@ function prepareAgentRuntimeIdentityTokenPayload(
       ? { approvalOwnerPluginId: normalizeOptionalString(params.approvalOwnerPluginId) }
       : {}),
     ...(turnSourceChannel ? { turnSourceChannel } : {}),
+    taskOrigin: normalizeTaskOriginSnapshot(params.taskOrigin),
     ...(params.turnSourceLocal === true ? { turnSourceLocal: true } : {}),
     ...(turnSourceTo ? { turnSourceTo } : {}),
     ...(turnSourceAccountId ? { turnSourceAccountId } : {}),
@@ -653,6 +659,7 @@ function resolveAgentRuntimeIdentityPayload(
     kind: "agentRuntime",
     ...(executionIdentity ? { executionIdentity } : {}),
     ...(sessionSpawnContext ? { sessionSpawnContext } : {}),
+    taskOrigin: normalizeTaskOriginSnapshot(payload.taskOrigin),
   };
   return handoff
     ? withAgentRuntimeExecutionLineageRedemption(identity, handoff.redemption)

@@ -43,6 +43,7 @@ import { MEDIA_GENERATION_DELIVERING_COMPLETION_PROGRESS } from "../media-genera
 import { tryResolveSubagentRequesterAgentId } from "../subagents/announce/subagent-announce-delivery.runtime.js";
 import { resolveAnnounceOrigin } from "../subagents/announce/subagent-announce-origin.js";
 import { resolveRequesterStoreKey } from "../subagents/announce/subagent-requester-store-key.js";
+import { normalizeTaskOriginSnapshot } from "../task-origin.js";
 import { captureGatewayToolCallerAssertion } from "./gateway-caller-context.js";
 import {
   retainBlockedMediaCompletion,
@@ -98,6 +99,7 @@ type CreateMediaGenerationTaskRunParams = {
   requesterRunSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   providerId?: string;
   assertCurrent?: () => void;
@@ -300,6 +302,7 @@ async function createMediaGenerationTaskRun(
       detach: Boolean(requesterTranscript) && shouldDetachMediaGenerationTask(sessionKey, entry),
       requesterTranscript,
       taskLabel: params.prompt,
+      taskOrigin: normalizeTaskOriginSnapshot(params.taskOrigin),
     };
     touchMediaGenerationTaskRunContext(handle);
     return handle;

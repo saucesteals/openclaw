@@ -58,6 +58,7 @@ export function clearMainSessionRecoveryAfterAgentRun(
   }
   if (clearForceSafeTools) {
     entry.restartRecoveryForceSafeTools = undefined;
+    entry.restartRecoveryTaskOrigin = undefined;
   }
   Object.assign(entry, buildMainSessionRecoveryClearPatch(entry));
 }

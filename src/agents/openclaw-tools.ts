@@ -186,6 +186,7 @@ export function createOpenClawTools(options?: OpenClawToolsOptions): AnyAgentToo
     requesterRunSessionKey: trimmedRunSessionKey,
     requesterAgentId: sessionAgentId,
     requesterOrigin: widgetPresentation.deliveryContext ?? undefined,
+    taskOrigin: options?.taskOrigin,
     workspaceDir,
     preparedModelRuntime: options?.preparedModelRuntime,
     sandbox,

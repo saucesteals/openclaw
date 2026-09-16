@@ -49,6 +49,7 @@ export type MediaGenerateToolOptions = {
   requesterRunSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   workspaceDir?: string;
   cwd?: string;
   preparedModelRuntime?: PreparedModelRuntimeSnapshot;
@@ -221,6 +222,7 @@ export async function prepareMediaGenerationTask<
   return runMediaGenerationTask({
     ...prepared.params,
     requesterRunSessionKey: options?.requesterRunSessionKey,
+    taskOrigin: options?.taskOrigin,
     generationLabel: params.generationLabel,
     resources,
     assertAdmissionCurrent: () => {
@@ -238,6 +240,7 @@ export async function runMediaGenerationTask<T extends MediaGenerationExecutionR
   requesterRunSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   requestKey: string;
   providerId?: string;
@@ -282,6 +285,7 @@ export async function runMediaGenerationTask<T extends MediaGenerationExecutionR
       requesterRunSessionKey: params.requesterRunSessionKey,
       requesterAgentId: params.requesterAgentId,
       requesterOrigin: params.requesterOrigin,
+      taskOrigin: params.taskOrigin,
       prompt: params.prompt,
       providerId: params.providerId,
       assertCurrent: assertAdmissionCurrent,

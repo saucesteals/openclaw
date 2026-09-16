@@ -519,6 +519,7 @@ export function createOpenClawCodingToolsInternal(
             ...pluginToolOptions,
             sessionPortalTarget,
             ...(options?.systemAgentTool ? { systemAgentTool: options.systemAgentTool } : {}),
+            taskOrigin: options?.taskOrigin,
             ...(options?.questionPrompt ? { questionPrompt: options.questionPrompt } : {}),
             requesterThinkingLevel: options?.requesterThinkingLevel,
             requesterModel: options?.requesterModel,

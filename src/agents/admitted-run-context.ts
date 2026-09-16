@@ -22,6 +22,7 @@ import {
 import type { GatewayAccessGrantRef } from "../plugins/gateway-access-policy.types.js";
 import { prepareGatewayContextBindingOwner } from "../plugins/runtime/gateway-context-binding-owner.js";
 import type { PreparedOperatorModelPolicy } from "./operator-model-policy.types.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "./task-origin.js";
 
 /** Operational lifecycle correlation. This is never identity or authorization evidence. */
 export type OperationalRunInstanceRef = Readonly<{
@@ -35,6 +36,7 @@ export type AdmittedRunContext = Readonly<{
   /** Scheduler-authored ingress authority, independent of optional audit collection. */
   admissionSource?: "operator-schedule" | "requester-schedule";
   executionIdentityToken?: ExecutionIdentityAdmissionToken;
+  taskOrigin?: TaskOriginSnapshot;
 }>;
 
 export type AdmittedRunOperatorAuthority = Readonly<{
@@ -464,6 +466,7 @@ export function prepareAgentRunAdmission(params: {
   cfg: OpenClawConfig;
   admissionSource?: AdmittedRunContext["admissionSource"];
   facts: Omit<ExecutionIdentityAdmissionFacts, "runtime">;
+  taskOrigin?: TaskOriginSnapshot;
   operationalRunInstance: OperationalRunInstanceRef;
   recovery?: ExecutionIdentityRecoveryAdmission;
   onAdmitted?: (context: AdmittedRunContext) => void | Promise<void>;
@@ -471,6 +474,8 @@ export function prepareAgentRunAdmission(params: {
   operatorAuthority?: AdmittedRunOperatorAuthority;
 }): PreparedAgentRunAdmission {
   const operationalRunInstance = params.operationalRunInstance;
+  const taskOrigin =
+    params.taskOrigin === undefined ? undefined : normalizeTaskOriginSnapshot(params.taskOrigin);
   if (operationalRunInstance.runId !== params.facts.runId) {
     throw new Error("operational run instance disagrees with prepared admission");
   }
@@ -545,6 +550,7 @@ export function prepareAgentRunAdmission(params: {
         const context = admitPreparedAgentRun({
           cfg: params.cfg,
           admissionSource: params.admissionSource,
+          taskOrigin,
           facts,
           operationalRunInstance,
           runtimeInstanceId: admittedRuntimeInstanceId,
@@ -621,6 +627,7 @@ function admitPreparedAgentRun(params: {
   cfg: OpenClawConfig;
   admissionSource?: AdmittedRunContext["admissionSource"];
   facts: ExecutionIdentityAdmissionFacts;
+  taskOrigin?: TaskOriginSnapshot;
   operationalRunInstance: OperationalRunInstanceRef;
   runtimeInstanceId?: string;
   recovery?: ExecutionIdentityRecoveryAdmission;
@@ -631,6 +638,7 @@ function admitPreparedAgentRun(params: {
   const operationalRunInstance = params.operationalRunInstance;
   const admitted = {
     operationalRunInstance,
+    ...(params.taskOrigin ? { taskOrigin: params.taskOrigin } : {}),
     ...(params.admissionSource ? { admissionSource: params.admissionSource } : {}),
   };
   // Consume the one-shot recovery lease even while collection is disabled so a

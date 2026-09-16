@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../../agents/task-origin.js";
 import {
   buildRestartRecoveryClaimCleanupPatch,
   hasRestartRecoverySourceClaim,
@@ -101,6 +102,7 @@ export async function retireTerminalRestartRecoverySourceClaim(params: {
 export function createReplyRestartRecoveryClaimController(params: {
   agentId: string;
   admissionRunId?: unknown;
+  resolveTaskOrigin?: (runId: string) => TaskOriginSnapshot;
   lifecycleGeneration: string | undefined;
   getEntry: () => SessionEntry | undefined;
   getSessionId: () => string;
@@ -328,6 +330,9 @@ export function createReplyRestartRecoveryClaimController(params: {
           restartRecoveryDeliveryContext: recoverableDeliveryContext,
           restartRecoveryDeliveryRequestFingerprint: undefined,
           restartRecoveryDeliveryRunId: recoveryRunId,
+          restartRecoveryTaskOrigin: normalizeTaskOriginSnapshot(
+            params.resolveTaskOrigin?.(recoveryRunId),
+          ),
           restartRecoveryDeliverySourceRunId: sourceTurnId,
           restartRecoveryRequesterAccountId: sourceTurnId
             ? normalizeOptionalString(params.requesterAccountId)
