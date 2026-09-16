@@ -1,6 +1,6 @@
 Bottom: 52a2e8b3e1c6cda6a73eaa4a63994ea9f7d54353
-Top:    52a2e8b3e1c6cda6a73eaa4a63994ea9f7d54353
+Top:    14341aead80454724a8bcc4e1b0fe1b703e51c59
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-09-15 21:43:17 -0700
+Date:   2026-09-15 21:43:18 -0700
 
 fix(agents): capture media origin and retain terminal child records
