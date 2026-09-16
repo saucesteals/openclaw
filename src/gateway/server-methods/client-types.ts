@@ -85,6 +85,7 @@ export type GatewayClient = {
     /** Host-owned exact media set for a scoped automatic recovery delivery. */
     internalDeliveryMediaUrls?: string[];
     runtimeContextFragments?: RuntimeContextFragment[];
+    taskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
     internalDeliverySuppressText?: boolean;
     /** Plugin-owned tools authorized for this internal subagent run. */
     runtimePluginToolGrant?: RuntimePluginToolGrant;

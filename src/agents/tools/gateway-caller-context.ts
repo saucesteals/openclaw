@@ -21,9 +21,11 @@ import {
   attachInternalToolExecutionPreparer,
   getInternalToolExecutionPreparer,
 } from "../runtime/internal-hooks.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../task-origin.js";
 import type { AnyAgentTool } from "./common.js";
 
 type GatewayToolCallerIdentity = {
+  taskOrigin?: TaskOriginSnapshot;
   agentId: string;
   sessionKey: string;
   /** Prepared requesting-tool posture; absent authority never bypasses approvals. */
@@ -152,6 +154,7 @@ export function createAdmittedGatewayToolCallerIdentity(
     agentId,
     sessionKey,
     operationalRunInstance: params.admittedRunContext.operationalRunInstance,
+    taskOrigin: normalizeTaskOriginSnapshot(params.admittedRunContext.taskOrigin),
     ...(delegatedAuthority ? { approvalAuthority: delegatedAuthority } : {}),
     ...(params.receiptAuthority ? { approvalAuthorityCheck: params.receiptAuthority } : {}),
     executionIdentityToken: params.admittedRunContext.executionIdentityToken,
@@ -246,6 +249,7 @@ export async function withGatewayToolCallerIdentity<T>(
       sessionKey: inheritedOwner?.sessionKey ?? identity.sessionKey.trim(),
       ...(fullPermission !== undefined ? { fullPermission } : {}),
       ...(operationalRunInstance ? { operationalRunInstance } : {}),
+      taskOrigin: normalizeTaskOriginSnapshot(inheritedOwner?.taskOrigin ?? identity.taskOrigin),
       ...(embeddedRunToolAuthorityBinding ? { embeddedRunToolAuthorityBinding } : {}),
       ...(approvalAuthority ? { approvalAuthority } : {}),
       ...(approvalAuthorityCheck ? { approvalAuthorityCheck } : {}),

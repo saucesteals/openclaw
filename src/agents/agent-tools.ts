@@ -237,6 +237,7 @@ type OpenClawCodingToolsOptions = {
   requesterThinkingLevel?: ThinkLevel;
   /** Exact admitted run instance for lifecycle-bound subprocess capabilities. */
   operationalRunInstance?: OperationalRunInstanceRef;
+  taskOrigin?: import("./task-origin.js").TaskOriginSnapshot;
   /** Session-owned desktop resolved before optional paired-node discovery. */
   computerTransport?: import("./tools/computer-tool.js").ComputerToolTransport | null;
   /** Host-prepared effective paired-node Computer Use surface. */
@@ -870,6 +871,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
             allowHostBrowserControl: sandbox ? sandbox.browserAllowHostControl : true,
             agentSessionKey: options?.sessionKey,
             runId: options?.runId,
+            taskOrigin: options?.taskOrigin,
             ...(options?.questionPrompt ? { questionPrompt: options.questionPrompt } : {}),
             requesterThinkingLevel: options?.requesterThinkingLevel,
             sessionPermissionPolicy,

@@ -58,6 +58,7 @@ type NativeSubagentMonitorClient = Pick<
 >;
 
 type ParentOwner = {
+  taskRuntimeScope?: AgentHarnessTaskRuntimeScope;
   turnId?: string;
   claimDirectChild?: (threadId: string) => (() => void) | undefined;
   rejectPendingDirectChild?: (threadId: string, reason: string) => void;
@@ -88,6 +89,7 @@ type DirectSpawnEvidence = {
 };
 
 type ChildState = {
+  taskRuntimeScope?: AgentHarnessTaskRuntimeScope;
   childThreadId: string;
   parentThreadId: string;
   readonly agentId?: string;
@@ -412,6 +414,7 @@ class Monitor {
     state.agentId ??= params.agentId;
     const owner = Symbol("codex-native-subagent-owner");
     state.owners.set(owner, {
+      taskRuntimeScope: params.taskRuntimeScope,
       claimDirectChild: params.claimDirectChild,
       rejectPendingDirectChild: params.rejectPendingDirectChild,
       onDirectChildAccepted: params.onDirectChildAccepted,
@@ -515,6 +518,25 @@ class Monitor {
         requesterSessionKey: state.requesterSessionKey,
         historyOwner: state.historyOwner,
         agentId: state.agentId,
+        resolveTaskRuntime: (threadId) => {
+          const existing = state.taskRuntime
+            ?.listTaskRecords()
+            .some((task) => task.runId === codexNativeSubagentRunId(threadId));
+          if (existing) {
+            return state.taskRuntime;
+          }
+          const scope = this.childStates.get(threadId)?.taskRuntimeScope;
+          return scope
+            ? this.runtime.createAgentHarnessTaskRuntime({
+                runtime: CODEX_NATIVE_SUBAGENT_RUNTIME,
+                taskKind: CODEX_NATIVE_SUBAGENT_TASK_KIND,
+                scope,
+                runIdPrefix: CODEX_NATIVE_SUBAGENT_RUN_ID_PREFIX,
+              })
+            : state.taskRuntimeScope?.taskOrigin === undefined
+              ? state.taskRuntime
+              : undefined;
+        },
       },
       state.taskRuntime,
     );
@@ -1411,6 +1433,7 @@ class Monitor {
     childThreadIdInput: string,
     options: {
       agentPath?: string;
+      taskRuntimeScope?: AgentHarnessTaskRuntimeScope;
       claimDirectChild?: (threadId: string) => (() => void) | undefined;
     } = {},
   ): ChildState | undefined {
@@ -1475,6 +1498,7 @@ class Monitor {
     ) {
       childState.releaseDirectChild = options.claimDirectChild(childThreadId);
     }
+    childState.taskRuntimeScope ??= options.taskRuntimeScope;
     this.registerAgentPath(childState, childThreadId);
     state.mirror?.markAuthoritativeCompletionExpected(childThreadId);
     const agentPath = normalizeOptionalString(options.agentPath);
@@ -1506,10 +1530,12 @@ class Monitor {
     const childState = this.registerChildThread(state, evidence.childThreadId, {
       ...(evidence.agentPath === undefined ? {} : { agentPath: evidence.agentPath }),
       ...(owner?.claimDirectChild ? { claimDirectChild: owner.claimDirectChild } : {}),
+      taskRuntimeScope: owner?.taskRuntimeScope,
     });
     if (!owner) {
       this.bufferPendingDirectSpawnEvidence(turnIdInput, evidence);
     } else if (childState) {
+      state.mirror?.retryPendingCreation(childState.childThreadId);
       owner.onDirectChildAccepted?.();
     }
     return childState;
@@ -1557,8 +1583,10 @@ class Monitor {
         const childState = this.registerChildThread(state, evidence.childThreadId, {
           ...(evidence.agentPath === undefined ? {} : { agentPath: evidence.agentPath }),
           claimDirectChild: owner.claimDirectChild,
+          taskRuntimeScope: owner.taskRuntimeScope,
         });
         if (childState) {
+          state.mirror?.retryPendingCreation(childState.childThreadId);
           owner.onDirectChildAccepted?.();
         }
       }

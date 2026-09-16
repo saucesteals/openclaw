@@ -97,6 +97,7 @@ export function isFollowupRunDeferredError(error: unknown): error is FollowupRun
 }
 
 export type FollowupRun = {
+  taskOrigin?: import("../../../agents/task-origin.js").TaskOriginSnapshot;
   prompt: string;
   /** Latest session to claim without rewriting the queued run before store refresh. */
   admissionSessionId?: string;

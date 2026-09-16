@@ -47,6 +47,7 @@ function systemIngress(boundary: string): AgentCommandAdmissionIngress {
 function prepareAgentCommandRunAdmission(
   params: {
     admission?: AgentCommandOpts["executionIdentityAdmission"];
+    taskOrigin?: AgentCommandOpts["taskOrigin"];
     agentId: string;
     cfg: OpenClawConfig;
     ingress: AgentCommandAdmissionIngress;
@@ -64,6 +65,7 @@ function prepareAgentCommandRunAdmission(
   const assurance = spawnFacts?.assurance ?? admissionFacts.assurance;
   return prepareAgentRunAdmission({
     cfg: params.cfg,
+    taskOrigin: params.taskOrigin,
     operationalRunInstance: params.operationalRunInstance,
     facts: executionIdentitySpawnAdmission({
       operation: "attach",
@@ -160,6 +162,7 @@ export function prepareAgentCommandExecutionIdentity(params: {
     getAdmittedRunDelegatedAuthority(admittedContext) !== undefined;
   const admissionParams: Parameters<typeof prepareAgentCommandRunAdmission>[0] = {
     admission: opts.executionIdentityAdmission,
+    taskOrigin: opts.taskOrigin,
     agentId: prepared.sessionAgentId,
     cfg: prepared.cfg,
     ingress: params.ingress,
@@ -224,6 +227,7 @@ export function sanitizePublicAgentCommandIngressOpts(
   return withoutAgentCommandExecutionIdentitySpawnFacts({
     ...opts,
     runtimeContextFragments: undefined,
+    taskOrigin: undefined,
     senderIsOwner: false,
     mainRestartRecoveryOwnerLease: undefined,
     mainRestartRecoveryAdmitted: undefined,

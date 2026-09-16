@@ -101,6 +101,7 @@ type CreateMediaGenerationTaskRunParams = {
   sessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   providerId?: string;
 };
@@ -192,6 +193,7 @@ function createMediaGenerationTaskRun(params: {
   sessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   providerId?: string;
   toolName: string;
@@ -220,6 +222,7 @@ function createMediaGenerationTaskRun(params: {
       ownerKey: sessionKey,
       scopeKind: "session",
       requesterOrigin,
+      taskOrigin: params.taskOrigin,
       childSessionKey: sessionKey,
       runId,
       label: params.label,
@@ -240,6 +243,7 @@ function createMediaGenerationTaskRun(params: {
       requesterAgentId: params.requesterAgentId,
       requesterOrigin,
       taskLabel: params.prompt,
+      taskOrigin: task.taskOrigin,
     };
     touchMediaGenerationTaskRunContext(handle);
     return handle;

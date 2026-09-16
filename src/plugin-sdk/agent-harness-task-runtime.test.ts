@@ -43,7 +43,17 @@ describe("agent-harness-task-runtime", () => {
   });
 
   function createScope(requesterSessionKey = "agent:main:channel:C123") {
-    return createAgentHarnessTaskRuntimeScope({ requesterSessionKey });
+    return createAgentHarnessTaskRuntimeScope({
+      requesterSessionKey,
+      taskOrigin: {
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "friend",
+        sourceSessionKey: requesterSessionKey,
+        sourceRunId: "original-run",
+      },
+    });
   }
 
   it("scopes task lifecycle mutations to the owning requester session", () => {
@@ -74,6 +84,7 @@ describe("agent-harness-task-runtime", () => {
         ownerKey: "agent:main:channel:C123",
         scopeKind: "session",
         runId: "example:child-1",
+        taskOrigin: expect.objectContaining({ senderId: "friend", sourceRunId: "original-run" }),
       }),
     );
     expect(finalizeTaskRunByRunId).toHaveBeenCalledWith(

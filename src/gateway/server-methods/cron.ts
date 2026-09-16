@@ -943,6 +943,7 @@ export const cronHandlers: GatewayRequestHandlers = {
     try {
       result = await context.cron.add(jobCreate, {
         enabledExplicit,
+        taskOrigin: callerScope?.taskOrigin,
         ...(createdActor ? { createdActor } : {}),
         ...(creatorSession?.skillLibrarySelections
           ? { skillLibrarySelections: creatorSession.skillLibrarySelections }

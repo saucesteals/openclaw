@@ -23,6 +23,7 @@ export type MediaGenerationTaskHandle = {
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
   taskLabel: string;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
 };
 
 export type MediaGenerationCompletionWakeOutcome =
@@ -99,6 +100,7 @@ export async function wakeMediaGenerationTaskCompletion(params: {
   const internalEvents: AgentInternalEvent[] = [
     {
       type: "task_completion",
+      taskOrigin: params.handle.taskOrigin,
       source: params.eventSource,
       childSessionKey: `${params.toolName}:${params.handle.taskId}`,
       childSessionId: params.handle.taskId,

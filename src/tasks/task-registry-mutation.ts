@@ -153,7 +153,10 @@ export function syncFlowFromTaskAfterTaskMutation(task: TaskRecord, operation: s
   scheduleTaskFlowSyncRetry(task, operation);
 }
 
-export function updateTask(taskId: string, patch: Partial<TaskRecord>): TaskRecord | null {
+export function updateTask(
+  taskId: string,
+  patch: Partial<Omit<TaskRecord, "taskOrigin">>,
+): TaskRecord | null {
   const current = tasks.get(taskId);
   if (!current) {
     return null;
@@ -161,6 +164,7 @@ export function updateTask(taskId: string, patch: Partial<TaskRecord>): TaskReco
   const updated = {
     ...current,
     ...patch,
+    taskOrigin: current.taskOrigin,
     ...(patch.detail !== undefined ? { detail: structuredClone(patch.detail) } : {}),
   };
   const becomesTerminal =

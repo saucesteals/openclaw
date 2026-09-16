@@ -80,6 +80,7 @@ function buildWorkerAgentRuntimeIdentity(params: {
     sessionKey: params.sessionKey,
     operationalRunInstance: params.admittedRunContext.operationalRunInstance,
     executionIdentityToken: params.admittedRunContext.executionIdentityToken,
+    taskOrigin: params.admittedRunContext.taskOrigin,
     turnSourceChannel: turn.messageChannel ?? turn.messageProvider,
     turnSourceTo: turn.currentMessagingTarget ?? turn.currentChannelId,
     turnSourceAccountId: turn.agentAccountId,

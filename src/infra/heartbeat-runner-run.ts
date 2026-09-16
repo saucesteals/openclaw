@@ -25,6 +25,7 @@ import {
 } from "./heartbeat-runner-execution.js";
 import { createHeartbeatTypingCallbacks } from "./heartbeat-typing.js";
 import { getHeartbeatWakeAbortSignal, type HeartbeatRunResult } from "./heartbeat-wake.js";
+import { resolveSystemEventTaskOrigin } from "./system-events.js";
 
 export async function runHeartbeatOnce(opts: HeartbeatRunOptions): Promise<HeartbeatRunResult> {
   const wake = await resolveHeartbeatWakeStage(opts);
@@ -109,6 +110,10 @@ export async function runHeartbeatOnce(opts: HeartbeatRunOptions): Promise<Heart
       replyOptions: withReplySystemEventContext<InternalGetReplyOptions>(
         {
           isHeartbeat: true,
+          inheritedTaskOrigin: resolveSystemEventTaskOrigin([
+            ...prepared.inspectedSystemEventsToConsume,
+            ...(prepared.inspectsRunQueue ? prepared.genericEvents : []),
+          ]),
           replyConversation: prepareReplyConversation({
             ctx: heartbeatContext,
             sessionEntry: suppressOriginatingContext ? undefined : prepared.conversationEntry,

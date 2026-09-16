@@ -4,6 +4,7 @@ import {
   AgentDeletionAuthorityRollbackError,
   AgentDeletionCommitUncertainError,
 } from "../../agents/agent-lifecycle-registry.js";
+import { normalizeTaskOriginSnapshot } from "../../agents/task-origin.js";
 import { parseAgentSessionKey } from "../../routing/session-key.js";
 import {
   type CronActiveJobMarker,
@@ -414,6 +415,7 @@ export async function add(
       toolsAllowExecTarget: opts?.toolsAllowExecTarget,
       configuredChannels,
     });
+    job.taskOrigin = normalizeTaskOriginSnapshot(opts?.taskOrigin);
     if (opts?.createdActor) {
       job.createdActor = structuredClone(opts.createdActor);
     }

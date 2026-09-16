@@ -362,6 +362,9 @@ export async function executePreparedReplyRun(state: PreparedReplyRunAdmission) 
   }
   const admittedSessionSettings = opts?.admittedSessionSettings;
   const followupRun = {
+    ...(opts?.inheritedTaskOrigin
+      ? { taskOrigin: opts.inheritedTaskOrigin, disableCollectBatching: true }
+      : {}),
     prompt: queuedBody,
     transcriptPrompt: transcriptCommandBody,
     ...(userTurnTranscriptRecorder ? { userTurnTranscriptRecorder } : {}),

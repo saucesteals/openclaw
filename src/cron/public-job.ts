@@ -5,6 +5,7 @@ export function toPublicCronJob(job: CronStoredJob): CronJob {
   const {
     skillLibrarySelections: _skillLibrarySelections,
     createdActor: _createdActor,
+    taskOrigin: _taskOrigin,
     toolsAllowProvenance: _toolsAllowProvenance,
     toolsAllowExecTarget: _toolsAllowExecTarget,
     toolsAllowExecTargetRequirement: _toolsAllowExecTargetRequirement,

@@ -21,6 +21,7 @@ import { accountAgentTurnCompaction } from "./agent-runner-result-accounting.js"
 import { finalizeReplyAgentRun } from "./agent-runner-result.js";
 import { buildThreadingToolContext } from "./agent-runner-utils.js";
 import type { BlockReplyPipeline } from "./block-reply-pipeline.js";
+import { captureChannelTaskOrigin } from "./channel-run-admission.js";
 import type { CompactionNoticePhase } from "./compaction-notice.js";
 import { createFollowupRunner } from "./followup-runner.js";
 import {
@@ -480,6 +481,14 @@ export function createReplyAgentRestartRecoveryController(
     isArmed: isRestartRecoveryArmed,
   } = createReplyRestartRecoveryClaimController({
     lifecycleGeneration: replyOperation.lifecycleGeneration,
+    resolveTaskOrigin: (sourceRunId) =>
+      captureChannelTaskOrigin(
+        followupRun,
+        sourceRunId,
+        sessionKey,
+        replyOperation.lifecycleGeneration,
+        replyOperation.sessionId,
+      ),
     admissionRunId:
       normalizeOptionalString(sessionCtx.MessageSid) ??
       normalizeOptionalString(sessionCtx.MessageSidFull),
