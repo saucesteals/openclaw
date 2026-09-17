@@ -277,7 +277,8 @@ describe("Codex attachment continuity", () => {
         message: historical,
         now: cutoff + 1,
       });
-      params.prompt = "Read this image.";
+      params.prompt =
+        mode === "current" ? `${"p".repeat(1 << 20)}Current image question.` : "Read this image.";
       if (mode === "current") {
         const currentImage = { ...image, data: green.toString("base64") };
         params.images = [currentImage];
@@ -348,6 +349,25 @@ describe("Codex attachment continuity", () => {
           const images = Array.isArray(input)
             ? input.filter((part) => asOptionalRecord(part)?.type === "image")
             : [];
+          expect(input).toEqual([
+            { type: "text", text: expect.stringContaining("Historical images"), text_elements: [] },
+            { type: "image", url: `data:image/png;base64,${blue.toString("base64")}` },
+            { type: "text", text: "End historical images.", text_elements: [] },
+            {
+              type: "text",
+              text: expect.stringContaining(params.prompt.slice(-22)),
+              text_elements: [],
+            },
+            ...(mode === "current"
+              ? [{ type: "image", url: `data:image/png;base64,${green.toString("base64")}` }]
+              : []),
+          ]);
+          expect(
+            (input as Array<{ text?: string }>).reduce(
+              (total, part) => total + (part.text?.length ?? 0),
+              0,
+            ),
+          ).toBeLessThanOrEqual(1 << 20);
           expect(images).toEqual([
             { type: "image", url: `data:image/png;base64,${blue.toString("base64")}` },
             ...(mode === "current"

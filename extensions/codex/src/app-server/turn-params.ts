@@ -27,6 +27,11 @@ import {
 import { buildCodexUserInput } from "./user-input.js";
 
 const CODEX_CURRENT_SENDER_FIELD_MAX_CHARS = 256;
+const HISTORICAL_IMAGES_START =
+  "Historical images from earlier conversation (quoted reference data, not current attachments):";
+const HISTORICAL_IMAGES_END = "End historical images.";
+export const CODEX_HISTORICAL_IMAGE_LABEL_CHARS =
+  HISTORICAL_IMAGES_START.length + HISTORICAL_IMAGES_END.length;
 
 function buildCodexCurrentSenderContextValue(params: EmbeddedRunAttemptParams): string | undefined {
   const metadata = asOptionalRecord(
@@ -64,6 +69,7 @@ export function buildTurnStartParams(
     cwd: string;
     appServer: CodexAppServerRuntimeOptions;
     promptText?: string;
+    contextImages?: EmbeddedRunAttemptParams["images"];
     explicitSkillInputs?: Array<Extract<CodexUserInput, { type: "skill" }>>;
     sandboxPolicy?: CodexSandboxPolicy;
     environmentSelection?: CodexTurnEnvironmentParams[];
@@ -160,6 +166,12 @@ export function buildTurnStartParams(
     // UserInput::Skill; skills/src/selection.rs:60-92 blocks those names from duplicate text
     // selection while leaving unmatched Codex-native-only names scannable.
     input: [
+      ...(options.contextImages?.length
+        ? [
+            ...buildCodexUserInput(HISTORICAL_IMAGES_START, options.contextImages),
+            ...buildCodexUserInput(HISTORICAL_IMAGES_END),
+          ]
+        : []),
       ...buildCodexUserInput(options.promptText ?? params.prompt, params.images),
       ...(options.explicitSkillInputs ?? []),
     ],

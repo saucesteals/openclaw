@@ -37,7 +37,10 @@ import {
   codexLegacyDynamicToolsFingerprint,
 } from "./thread-lifecycle.js";
 import { hasCodexMirrorOrigin } from "./transcript-mirror-attestation.js";
-import { buildCodexParentLocalInstructions } from "./turn-params.js";
+import {
+  buildCodexParentLocalInstructions,
+  CODEX_HISTORICAL_IMAGE_LABEL_CHARS,
+} from "./turn-params.js";
 import { readMirrorIdentity } from "./upstream-prompt-provenance.js";
 
 function isRestrictivePromptToolsAllow(toolsAllow: string[] | undefined): boolean {
@@ -360,6 +363,7 @@ export async function prepareCodexAttemptPrompt(context: CodexAttemptContext) {
         decoratedPrompt: turnPromptText,
       });
     return fitCodexProjectedContextForTurnStart({
+      maxChars: contextImages.length ? (1 << 20) - CODEX_HISTORICAL_IMAGE_LABEL_CHARS : undefined,
       promptText: turnPromptText,
       contextRange: projectedRanges?.contextRange,
       requestRange: projectedRanges?.requestRange,
