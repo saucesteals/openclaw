@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "a15bbf697a7d540e1b1d3d68aa24ae1fc80a397e",
-  "head": "a2dc29a4a8c9d28f4f6d07b8ebbce390eead2133",
+  "prev": "17750fb4f7f435083084f63d642b754c34227c91",
+  "head": "78d57e3e2c2e03aba268d74b895780eee5234e23",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -11,10 +11,11 @@
     "fix-media-selected-delivery",
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
-    "fix-request-origin-lifecycle",
+    "fix-request-origin-lifecycle"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
