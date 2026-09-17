@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "dc23c2848f42fc0f3de82bfc69bb16074e8c9c1b",
+  "prev": "5f9b10bc702cdeaee36e106935242b16c2b6ba27",
   "head": "37cb8838ec123e5adc9657bbc64d1303e41929b8",
   "applied": [
     "feat-exec-session-key",
@@ -15,9 +15,7 @@
     "fix-discord-reply-quote",
     "fix-codex-historical-image-input"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -52,9 +50,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
-    },
-    "version-bump": {
-      "oid": "a48484b9961562989b73b3e96a25b8019d9b63c7"
     }
   }
 }
