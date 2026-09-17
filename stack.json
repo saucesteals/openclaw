@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "4d63b0f53172588b8aa37d7ff39dbb96fb5b087e",
-  "head": "a48484b9961562989b73b3e96a25b8019d9b63c7",
+  "prev": "dc23c2848f42fc0f3de82bfc69bb16074e8c9c1b",
+  "head": "37cb8838ec123e5adc9657bbc64d1303e41929b8",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -13,10 +13,11 @@
     "fix-request-origin-context",
     "fix-request-origin-lifecycle",
     "fix-discord-reply-quote",
-    "fix-codex-historical-image-input",
+    "fix-codex-historical-image-input"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
