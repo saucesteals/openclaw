@@ -391,6 +391,7 @@ export async function buildDiscordMessageProcessContext(params: {
     channelIngress,
     channel: "discord",
     resolveSupplementalMedia: true,
+    suppressSelfQuoteBody: false,
     contextVisibility: contextVisibilityMode,
     accountId: route.accountId,
     messageId: canonicalMessageId ?? message.id,
