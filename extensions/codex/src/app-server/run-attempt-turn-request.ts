@@ -136,38 +136,33 @@ export async function prepareCodexAttemptTurnRequest(
     const inferenceRoute = usesSupervisionConnection
       ? undefined
       : getCodexInferenceThread(resourceState.client, resourceState.thread.threadId);
-    const turnStartParams = buildTurnStartParams(
-      {
-        ...runtimeParams,
-        images: [...prompt.contextImages, ...(runtimeParams.images ?? [])],
-      },
-      {
-        threadId: resourceState.thread.threadId,
-        cwd: resourceState.codexExecutionCwd,
-        appServer: turnAppServer,
-        promptText: turnState.codexTurnPromptText,
-        explicitSkillInputs,
-        sandboxPolicy: resourceState.codexSandboxPolicy,
-        environmentSelection: resourceState.codexEnvironmentSelection,
-        clearInheritedServiceTier: resourceState.thread.clearInheritedServiceTier,
-        ...(usesSupervisionConnection
-          ? {}
-          : {
-              model: resourceState.thread.model,
-              modelProvider: resourceState.thread.modelProvider,
-            }),
-        turnScopedDeveloperInstructions: workspaceBootstrapContext.turnScopedDeveloperInstructions,
-        skillsCollaborationInstructions: context.skillsCollaborationInstructions,
-        memoryCollaborationInstructions: workspaceBootstrapContext.memoryCollaborationInstructions,
-        preserveNativeTurnSettings: usesSupervisionConnection,
-        parentLocalEgress: inferenceRoute !== undefined,
-        messageToolAvailable: toolBridge.availableTools.some((tool) => tool.name === "message"),
-        requireExplicitMessageTarget: attemptTools.requireExplicitMessageTarget,
-        sessionStatusAvailable: toolBridge.availableTools.some(
-          (tool) => tool.name === "session_status",
-        ),
-      },
-    );
+    const turnStartParams = buildTurnStartParams(runtimeParams, {
+      threadId: resourceState.thread.threadId,
+      cwd: resourceState.codexExecutionCwd,
+      appServer: turnAppServer,
+      promptText: turnState.codexTurnPromptText,
+      contextImages: prompt.contextImages,
+      explicitSkillInputs,
+      sandboxPolicy: resourceState.codexSandboxPolicy,
+      environmentSelection: resourceState.codexEnvironmentSelection,
+      clearInheritedServiceTier: resourceState.thread.clearInheritedServiceTier,
+      ...(usesSupervisionConnection
+        ? {}
+        : {
+            model: resourceState.thread.model,
+            modelProvider: resourceState.thread.modelProvider,
+          }),
+      turnScopedDeveloperInstructions: workspaceBootstrapContext.turnScopedDeveloperInstructions,
+      skillsCollaborationInstructions: context.skillsCollaborationInstructions,
+      memoryCollaborationInstructions: workspaceBootstrapContext.memoryCollaborationInstructions,
+      preserveNativeTurnSettings: usesSupervisionConnection,
+      parentLocalEgress: inferenceRoute !== undefined,
+      messageToolAvailable: toolBridge.availableTools.some((tool) => tool.name === "message"),
+      requireExplicitMessageTarget: attemptTools.requireExplicitMessageTarget,
+      sessionStatusAvailable: toolBridge.availableTools.some(
+        (tool) => tool.name === "session_status",
+      ),
+    });
     if (inferenceRoute) {
       prompt.setParentLocalEgress();
       resourceState.releaseInferenceContext?.();
