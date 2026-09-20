@@ -41,11 +41,6 @@ import {
 import { buildEmptyInteractiveReplyPayload } from "./agent-runner-failure-reply.js";
 import { signalTypingIfNeeded } from "./agent-runner-helpers.js";
 import { buildReplyPayloads, loadReplyPayloadsDedupeRuntime } from "./agent-runner-payloads.js";
-import {
-  appendUnscheduledReminderNote,
-  hasSessionRelatedCronJobs,
-  hasUnbackedReminderCommitment,
-} from "./agent-runner-reminder-guard.js";
 import type { accountAgentTurn } from "./agent-runner-result-accounting.js";
 import type { FinalizeReplyAgentRunInput } from "./agent-runner-result.types.js";
 import { resolveResponseUsageLine } from "./agent-runner-usage-line.js";
@@ -521,30 +516,8 @@ export async function prepareReplyAgentPayloads(state: {
     return { kind: "return" as const, value: returnWithQueuedFollowupDrain(undefined) };
   }
 
-  const successfulCronAdds = runResult.successfulCronAdds ?? 0;
-  const hasReminderCommitment = replyPayloads.some(
-    (payload) =>
-      !payload.isError &&
-      !isReplyPayloadStatusNotice(payload) &&
-      typeof payload.text === "string" &&
-      hasUnbackedReminderCommitment(payload.text),
-  );
-  // Suppress the guard note when an existing cron job (created in a prior
-  // turn) already covers the commitment — avoids false positives (#32228).
-  const coveredByExistingCron =
-    hasReminderCommitment && successfulCronAdds === 0
-      ? await hasSessionRelatedCronJobs({
-          cronStorePath: undefined,
-          sessionKey,
-        })
-      : false;
-  const guardedReplyPayloads =
-    hasReminderCommitment && successfulCronAdds === 0 && !coveredByExistingCron
-      ? appendUnscheduledReminderNote(replyPayloads)
-      : replyPayloads;
-
   if (implicitContinuation) {
-    const statusPayload = guardedReplyPayloads.find(
+    const statusPayload = replyPayloads.find(
       (payload) => getReplyPayloadMetadata(payload)?.continuationStatus === true,
     );
     const acceptedSessionSpawns = runResult.acceptedSessionSpawns;
@@ -571,7 +544,7 @@ export async function prepareReplyAgentPayloads(state: {
     opts?.onPendingContinuation?.(settlement);
   }
 
-  await signalTypingIfNeeded(guardedReplyPayloads, typingSignals);
+  await signalTypingIfNeeded(replyPayloads, typingSignals);
 
   const diagnosticUsage = runResult.meta?.agentMeta?.diagnosticUsage ?? usage;
   if (isDiagnosticsEnabled(cfg) && hasBillableUsage(diagnosticUsage)) {
@@ -645,7 +618,7 @@ export async function prepareReplyAgentPayloads(state: {
     activeSessionEntry,
     completedSourceReplyDelivery,
     didLogHeartbeatStrip,
-    guardedReplyPayloads,
+    guardedReplyPayloads: replyPayloads,
     responseUsageLine,
   };
 }
