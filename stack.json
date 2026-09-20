@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "9e254ed15d9e76b022877e62e6aa048e0c430091",
+  "prev": "88d4aec68e4f670788fbb89a77302d1cb4050915",
   "head": "768f6ad79996b8fecb16871d9693495610560117",
   "applied": [
     "feat-exec-session-key",
@@ -16,9 +16,7 @@
     "fix-codex-historical-image-input",
     "remove-unscheduled-reminder-note"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -56,9 +54,6 @@
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
-    },
-    "version-bump": {
-      "oid": "f9b6ac52be46507395176618158e885065ee9e39"
     }
   }
 }
