@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "88d4aec68e4f670788fbb89a77302d1cb4050915",
-  "head": "768f6ad79996b8fecb16871d9693495610560117",
+  "prev": "98d2146815e17f245ca17e8df9ca573436b4738a",
+  "head": "da9496af39b660e549acef41d8390332d99b332d",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -14,7 +14,8 @@
     "fix-request-origin-lifecycle",
     "fix-discord-reply-quote",
     "fix-codex-historical-image-input",
-    "remove-unscheduled-reminder-note"
+    "remove-unscheduled-reminder-note",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -54,6 +55,9 @@
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
+    },
+    "version-bump": {
+      "oid": "da9496af39b660e549acef41d8390332d99b332d"
     }
   }
 }
