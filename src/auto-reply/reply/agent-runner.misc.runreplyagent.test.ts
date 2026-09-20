@@ -2458,7 +2458,7 @@ describe("runReplyAgent messaging tool dedupe", () => {
   });
 });
 
-describe("runReplyAgent reminder commitment guard", () => {
+describe("runReplyAgent preserves reminder reply text", () => {
   function createRun(params?: { sessionKey?: string; omitSessionKey?: boolean }) {
     return createBaseRun({
       context: {
@@ -2477,7 +2477,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     }).run();
   }
 
-  it("appends guard note when reminder commitment is not backed by cron.add", async () => {
+  it("keeps reply unchanged without cron.add", async () => {
     runEmbeddedAgentMock.mockResolvedValueOnce({
       payloads: [{ text: "I'll remind you tomorrow morning." }],
       meta: {},
@@ -2485,10 +2485,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     });
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll remind you tomorrow morning.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
   it("does not append a reminder note to a plain memory promise", async () => {
@@ -2513,7 +2510,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
-  it("suppresses guard note when session already has an active cron job", async () => {
+  it("keeps reply unchanged with an active cron job", async () => {
     loadCronStoreMock.mockResolvedValueOnce({
       version: 1,
       jobs: [
@@ -2538,7 +2535,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     expectReplyText(result, "I'll ping you when it's done.");
   });
 
-  it("still appends guard note when cron jobs exist but not for the current session", async () => {
+  it("keeps reply unchanged when cron jobs exist but not for the current session", async () => {
     loadCronStoreMock.mockResolvedValueOnce({
       version: 1,
       jobs: [
@@ -2560,13 +2557,10 @@ describe("runReplyAgent reminder commitment guard", () => {
     });
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll remind you tomorrow morning.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
-  it("still appends guard note when cron jobs for session exist but are disabled", async () => {
+  it("keeps reply unchanged when cron jobs for session exist but are disabled", async () => {
     loadCronStoreMock.mockResolvedValueOnce({
       version: 1,
       jobs: [
@@ -2588,13 +2582,10 @@ describe("runReplyAgent reminder commitment guard", () => {
     });
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll check back in an hour.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll check back in an hour.");
   });
 
-  it("still appends guard note when sessionKey is missing", async () => {
+  it("keeps reply unchanged when sessionKey is missing", async () => {
     loadCronStoreMock.mockResolvedValueOnce({
       version: 1,
       jobs: [
@@ -2616,13 +2607,10 @@ describe("runReplyAgent reminder commitment guard", () => {
     });
 
     const result = await createRun({ omitSessionKey: true });
-    expectReplyText(
-      result,
-      "I'll ping you later.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll ping you later.");
   });
 
-  it("still appends guard note when cron store read fails", async () => {
+  it("keeps reply unchanged when cron store read fails", async () => {
     loadCronStoreMock.mockRejectedValueOnce(new Error("store read failed"));
 
     runEmbeddedAgentMock.mockResolvedValueOnce({
@@ -2632,10 +2620,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     });
 
     const result = await createRun({ sessionKey: "main" });
-    expectReplyText(
-      result,
-      "I'll remind you after lunch.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you after lunch.");
   });
 });
 
