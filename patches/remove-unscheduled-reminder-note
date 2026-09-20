@@ -1,0 +1,6 @@
+Bottom: 8d9b9b77c9daf2496e5aa7e88f4cb61d423969f5
+Top:    8d9b9b77c9daf2496e5aa7e88f4cb61d423969f5
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-09-20 14:23:24 -0700
+
+fix(reply): remove automatic unscheduled reminder disclaimer
