@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "fca4dc66101adfa8e263051025243ed2598d4cfc",
-  "head": "caf5a46997d36fccbcabef686594aa2af269a139",
+  "prev": "de73e7d71977c61d64a5547ee157d46180f92f74",
+  "head": "bda86054ca6044d3b507f5ede893eccb2dfd89a8",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -15,11 +15,10 @@
     "fix-discord-reply-quote",
     "fix-codex-historical-image-input",
     "remove-unscheduled-reminder-note",
-    "fix-progress-error-rollout"
-  ],
-  "unapplied": [
+    "fix-progress-error-rollout",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -62,7 +61,7 @@
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
     },
     "version-bump": {
-      "oid": "da9496af39b660e549acef41d8390332d99b332d"
+      "oid": "bda86054ca6044d3b507f5ede893eccb2dfd89a8"
     }
   }
 }
