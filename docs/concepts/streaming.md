@@ -292,6 +292,9 @@ Slack-only:
 - Without that handoff, `progress` mode deletes the status draft once the final
   answer is delivered, so busy channels keep no orphaned tool log above the
   reply. Error finals keep the draft as the record of the failed turn.
+- In Discord's compact progress preview, failed tools appear immediately but roll
+  out as newer activity arrives. Only pending approvals stay pinned. Plans leave
+  room for at least one activity row unless approvals fill the window.
 - Final media, error, and explicit-reply payloads cancel pending previews
   without flushing a new draft, then use normal delivery.
 

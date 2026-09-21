@@ -182,6 +182,11 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
         expect(update.mock.lastCall?.[0]).toContain("Run checks");
         expect(update.mock.lastCall?.[1]).toMatchObject({ flush: true });
         for (let index = 0; index < 20; index++) {
+          await progress.pushCommandOutputEvent({
+            phase: "end",
+            toolCallId: `failure-${index}`,
+            exitCode: 1,
+          });
           await progress.pushToolEvent({
             name: "read",
             toolCallId: `call-${index}`,
@@ -192,7 +197,7 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
         await progress.pushApprovalEvent({ phase: "resolved", approvalId: "approval-1" });
         expect(update.mock.lastCall?.[0]).not.toContain("Run checks");
         if (!toolProgress) {
-          expect(update.mock.lastCall?.[0]).toBe("Working");
+          expect(update.mock.lastCall?.[0]).not.toContain("🛠️ Read");
         }
       } finally {
         progress.cancel();
@@ -297,7 +302,7 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
     { presentation: "summary" as const, toolProgress: false, maxLines: 1 },
     { presentation: "summary" as const, toolProgress: true, maxLines: 3 },
   ])(
-    "keeps failed commands out of quiet plans through reasoning and commentary ($presentation, $toolProgress, $maxLines)",
+    "shows exits immediately, then rolls them out for commentary with a full plan ($presentation, $toolProgress, $maxLines)",
     async ({ presentation, toolProgress, maxLines }) => {
       const update = vi.fn();
       const progress = createTestProgressDraftCompositor({
@@ -334,12 +339,12 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
             phase: "start",
           });
           await progress.pushReasoningProgress(`Thinking ${index}`, { snapshot: true });
-          expect(update.mock.lastCall?.[0]).not.toContain("failed");
           await progress.pushCommentaryProgress(`Inspecting file ${index}`, {
             itemId: `comment-${index}`,
           });
-          expect(update.mock.lastCall?.[0]).not.toContain("failed");
+          expect(update.mock.lastCall?.[0]).toContain(`Inspecting file ${index}`);
         }
+        expect(update.mock.lastCall?.[0]).not.toContain("exit 1");
         expect(update.mock.lastCall?.[0].split("\n").filter(Boolean).length).toBeLessThanOrEqual(
           maxLines,
         );
@@ -358,15 +363,19 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
     },
   );
 
-  it.each(["failed", "error", "blocked"])(
-    "flushes explicit %s status and retains only protected outcomes",
-    async (status) => {
+  it.each(
+    ["failed", "error", "blocked"].flatMap((status) =>
+      [false, true].map((toolProgress) => ({ status, toolProgress })),
+    ),
+  )(
+    "flushes an updated $status status, then yields to new activity ($toolProgress)",
+    async ({ status, toolProgress }) => {
       const update = vi.fn();
       const progress = createTestProgressDraftCompositor({
         entry: {
           streaming: {
             mode: "progress",
-            progress: { toolProgress: true, maxLines: 3, commentary: true, label: false },
+            progress: { toolProgress, maxLines: 3, commentary: true, label: false },
           },
         },
         update,
@@ -377,6 +386,14 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
           { step: "Repair", status: "in_progress" },
           { step: "Verify", status: "pending" },
         ]);
+        await progress.pushItemEvent({
+          itemId: "attention-item",
+          kind: "tool",
+          name: "read",
+          status: "running",
+          progressText: "Reading",
+        });
+        await progress.pushCommentaryProgress("Newer activity", { itemId: "newer-comment" });
         await progress.pushItemEvent({
           itemId: "attention-item",
           kind: "tool",
@@ -396,11 +413,8 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
             itemId: `comment-${index}`,
           });
         }
-        if (status === "failed") {
-          expect(update.mock.lastCall?.[0]).not.toContain("Check access");
-        } else {
-          expect(update.mock.lastCall?.[0]).toContain("Check access");
-        }
+        expect(update.mock.lastCall?.[0]).not.toContain("Check access");
+        expect(update.mock.lastCall?.[0]).toContain("Inspecting file 4");
         expect(update.mock.lastCall?.[0].split("\n").filter(Boolean).length).toBeLessThanOrEqual(3);
       } finally {
         progress.cancel();
@@ -408,52 +422,61 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
     },
   );
 
-  it("lets new activity replace completed work without collapsing the plan", async () => {
-    const update = vi.fn();
-    const progress = createTestProgressDraftCompositor({
-      entry: {
-        streaming: {
-          mode: "progress",
-          progress: { toolProgress: true, maxLines: 8, commentary: true, label: false },
+  it.each(
+    [false, true].flatMap((toolProgress) =>
+      [1, 3, 8].flatMap((maxLines) =>
+        [false, true].map((withPlan) => ({ toolProgress, maxLines, withPlan })),
+      ),
+    ),
+  )(
+    "rolls error bursts out for new commentary and reasoning ($toolProgress, $maxLines, $withPlan)",
+    async ({ toolProgress, maxLines, withPlan }) => {
+      const update = vi.fn();
+      const progress = createTestProgressDraftCompositor({
+        entry: {
+          streaming: {
+            mode: "progress",
+            progress: { toolProgress, maxLines, commentary: true, label: false },
+          },
         },
-      },
-      update,
-    });
-    try {
-      await progress.pushPlanProgress([
-        { step: "Inspect", status: "completed" },
-        { step: "Repair", status: "in_progress" },
-        { step: "Verify", status: "pending" },
-        { step: "Audit", status: "pending" },
-        { step: "Ship", status: "pending" },
-      ]);
-      for (let index = 1; index <= 8; index++) {
-        await progress.pushItemEvent(
-          projectAgentToolActivity({
-            name: "exec",
-            phase: "result",
-            toolCallId: `completed-${index}`,
-            status: "completed",
-          }),
+        update,
+      });
+      try {
+        if (withPlan) {
+          await progress.pushPlanProgress([
+            { step: "Inspect", status: "completed" },
+            { step: "Repair", status: "in_progress" },
+            { step: "Verify", status: "pending" },
+            { step: "Audit", status: "pending" },
+            { step: "Ship", status: "pending" },
+          ]);
+        }
+        for (let index = 1; index <= 12; index++) {
+          await progress.pushCommandOutputEvent({
+            phase: "end",
+            toolCallId: `failed-${index}`,
+            exitCode: index,
+          });
+        }
+        expect(update.mock.lastCall?.[0]).toContain("exit 12");
+        await progress.pushCommentaryProgress("Recovered; checking the result", {
+          itemId: "latest",
+        });
+        expect(update.mock.lastCall?.[0]).toContain("Recovered; checking the result");
+        await progress.pushReasoningProgress("Verifying the fix", { snapshot: true });
+        expect(update.mock.lastCall?.[0]).toContain("Verifying the fix");
+        if (withPlan && maxLines === 8) {
+          for (const step of ["Inspect", "Repair", "Verify", "Audit", "Ship"]) {
+            expect(update.mock.lastCall?.[0]).toContain(step);
+          }
+        }
+        expect(progress.getSnapshot().lines).toHaveLength(maxLines);
+        expect(update.mock.lastCall?.[0].split("\n").filter(Boolean).length).toBeLessThanOrEqual(
+          maxLines,
         );
+      } finally {
+        progress.cancel();
       }
-      await progress.pushItemEvent(
-        projectAgentToolActivity({ name: "read", toolCallId: "new-work", phase: "start" }),
-      );
-
-      const rendered = update.mock.lastCall?.[0] ?? "";
-      for (const step of ["Inspect", "Repair", "Verify", "Audit", "Ship"]) {
-        expect(rendered).toContain(step);
-      }
-      expect(rendered).toContain("Read");
-      expect(
-        progress
-          .getSnapshot()
-          .lines.some((line) => typeof line !== "string" && line.id === "tool:completed-1"),
-      ).toBe(false);
-      expect(progress.getSnapshot().lines).toHaveLength(8);
-    } finally {
-      progress.cancel();
-    }
-  });
+    },
+  );
 });
