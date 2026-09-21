@@ -278,6 +278,9 @@ Slack-only:
   plan milestones, and approval or failure lines. The same default applies on
   every progress-draft channel; `streaming.progress.toolProgress: true` adds
   the rolling tool log with its icons.
+- In Discord's compact progress preview, failed tools appear immediately but roll
+  out as newer activity arrives. Only pending approvals stay pinned. Plans leave
+  room for at least one activity row unless approvals fill the window.
 - `progress` mode deletes the status draft once the final answer is delivered,
   so busy channels keep no orphaned tool log above the reply. Error finals keep
   the draft as the record of the failed turn.

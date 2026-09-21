@@ -517,12 +517,24 @@ describe("processDiscordMessage draft streaming final delivery", () => {
           status: "error",
           exitCode: 1,
         });
+        for (let index = 0; index < 12; index++) {
+          await params?.replyOptions?.onCommandOutput?.({
+            phase: "end",
+            toolCallId: `failed-${index}`,
+            exitCode: 1,
+          });
+        }
+        await params?.replyOptions?.onItemEvent?.({
+          itemId: "comment-latest",
+          kind: "preamble",
+          progressText: "Recovered; verifying the result",
+        });
         return createNoQueuedDispatchResult();
       });
 
       const ctx = await createAutomaticDraftContext({
         discordConfig: {
-          streaming: { mode: "progress", progress: { toolProgress } },
+          streaming: { mode: "progress", progress: { toolProgress, commentary: true } },
           maxLinesPerMessage: 5,
         },
       });
@@ -530,6 +542,7 @@ describe("processDiscordMessage draft streaming final delivery", () => {
       await runProcessDiscordMessage(ctx);
 
       expect(callbackResult).toBe(true);
+      expect(draftStream.update.mock.lastCall?.[0]).toContain("💬 Recovered; verifying the result");
       expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("exit 1"), {
         complete: true,
       });
