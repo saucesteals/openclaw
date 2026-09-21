@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "0778d8625369d5341157301646f3def1d7623e5d",
-  "head": "afb1f21873c21baf546b36d49a557088cf4eda2a",
+  "prev": "bb07d8b99ba822be599f8847c11e704954ed75c5",
+  "head": "868ef129c62ad49670318c250f60ee052583834f",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -15,7 +15,8 @@
     "fix-discord-reply-quote",
     "fix-codex-historical-image-input",
     "remove-unscheduled-reminder-note",
-    "fix-progress-error-rollout"
+    "fix-progress-error-rollout",
+    "refresh-temp"
   ],
   "unapplied": [
     "version-bump"
@@ -57,6 +58,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
+    },
+    "refresh-temp": {
+      "oid": "868ef129c62ad49670318c250f60ee052583834f"
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
