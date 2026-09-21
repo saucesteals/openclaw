@@ -1,0 +1,6 @@
+Bottom: 9e66f1c52f90b48caac421f500b62615ac93a0dd
+Top:    9e66f1c52f90b48caac421f500b62615ac93a0dd
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-09-21 16:00:21 -0700
+
+fix(streaming): let completed errors roll out of progress drafts
