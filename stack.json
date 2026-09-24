@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "0119800352f6a02e38a8c3d0db7ef792d1e4eaf5",
+  "prev": "21bef3003171b6ddeb33ec3b25e49534203fea12",
   "head": "caf5a46997d36fccbcabef686594aa2af269a139",
   "applied": [
     "feat-exec-session-key",
@@ -17,9 +17,7 @@
     "remove-unscheduled-reminder-note",
     "fix-progress-error-rollout"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -60,9 +58,6 @@
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
-    },
-    "version-bump": {
-      "oid": "bda86054ca6044d3b507f5ede893eccb2dfd89a8"
     }
   }
 }
