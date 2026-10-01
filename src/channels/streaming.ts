@@ -1081,8 +1081,8 @@ export function mergeChannelProgressDraftLine<TLine extends string | ChannelProg
 
 export function mergeChannelProgressDraftLineForStreaming<
   TLine extends string | ChannelProgressDraftLine,
->(lines: TLine[], line: TLine, params: { maxLines: number }): TLine[] {
-  return mergeProgressDraftLine(lines, line, params.maxLines, isChannelProgressPriorityLine);
+>(lines: TLine[], line: TLine, params: { maxLines: number; toolProgress?: boolean }): TLine[] {
+  return mergeProgressDraftLine(lines, line, params.maxLines, isPendingProgressApproval, true);
 }
 
 function mergeProgressDraftLine<TLine extends string | ChannelProgressDraftLine>(
@@ -1090,6 +1090,7 @@ function mergeProgressDraftLine<TLine extends string | ChannelProgressDraftLine>
   line: TLine,
   limit: number,
   isPriorityLine: typeof isChannelProgressAttentionLine,
+  refreshAttention = false,
 ): TLine[] {
   const normalized = normalizeChannelProgressDraftLineIdentity(line);
   if (!normalized) {
@@ -1111,7 +1112,17 @@ function mergeProgressDraftLine<TLine extends string | ChannelProgressDraftLine>
         return lines;
       }
       const next = [...lines];
-      next[existingIndex] = replacement;
+      // A tool failing after newer work must surface once, not stay at its old start position.
+      if (
+        refreshAttention &&
+        isChannelProgressAttentionLine(replacement) &&
+        !isPriorityLine(replacement)
+      ) {
+        next.splice(existingIndex, 1);
+        next.push(replacement);
+      } else {
+        next[existingIndex] = replacement;
+      }
       return limitProgressDraftLines(next, maxLines, isPriorityLine);
     }
   } else {
@@ -1243,13 +1254,17 @@ export function formatChannelProgressDraftText(params: ChannelProgressDraftTextP
 export function formatChannelProgressDraftTextForStreaming(
   params: ChannelProgressDraftTextParams,
 ): string {
-  return formatProgressDraftText(params, isChannelProgressPriorityLine, true);
+  return formatProgressDraftText(params, isPendingProgressApproval, true);
+}
+
+function isPendingProgressApproval(line: string | ChannelProgressDraftLine): boolean {
+  return typeof line !== "string" && line.kind === "approval";
 }
 
 function formatProgressDraftText(
   params: ChannelProgressDraftTextParams,
   isPriorityLine: typeof isChannelProgressAttentionLine,
-  reserveRollingLine = false,
+  reserveLatestLine = false,
 ): string {
   const narration = compactProgressText(
     params.narration?.replace(/\s+/g, " ").trim() ?? "",
@@ -1259,9 +1274,11 @@ function formatProgressDraftText(
   const maxLineChars = resolveChannelProgressDraftMaxLineChars(params.entry);
   const formatLine = params.formatLine ?? ((line: string) => line);
   const attention = params.lines.filter(isPriorityLine);
+  // Streaming errors roll with other activity; only unresolved approvals stay pinned.
+  // Even a full plan must leave room for the latest activity (including a new failure).
+  const rollingSlots = reserveLatestLine && params.lines.length > attention.length ? 1 : 0;
   const planLines = formatPlanChecklistLines(params.plan ?? [], {
-    maxLines:
-      maxLines - Math.max(attention.length, reserveRollingLine && params.lines.length ? 1 : 0),
+    maxLines: Math.max(0, maxLines - attention.length - rollingSlots),
     maxLineChars,
     plain: params.presentation === "summary",
   }).map(formatLine);
