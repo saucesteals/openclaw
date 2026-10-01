@@ -49,6 +49,7 @@ import type { SubagentCompletionToolHandoffRegistration } from "./subagent-annou
 import { inferDeliveryTargetChatType } from "./subagent-announce-origin.js";
 
 export async function runAnnounceAgentCall(params: {
+  taskOrigin?: import("../../task-origin.js").TaskOriginSnapshot;
   agentParams: Record<string, unknown>;
   privateCompletion?: true;
   typing?: Omit<GatewayRecoveryTypingParams, "isCurrent">;
@@ -89,6 +90,7 @@ export async function runAnnounceAgentCall(params: {
     signal.throwIfAborted();
     const dispatch = dispatchSubagentAnnounceAgent(params.agentParams, {
       cancelOnDeadline: true,
+      taskOrigin: params.taskOrigin,
       privateCompletion: params.privateCompletion,
       settleWakeReplay: params.settleWakeSourceSessionKeys
         ? {

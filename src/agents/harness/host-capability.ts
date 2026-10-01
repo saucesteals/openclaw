@@ -520,6 +520,7 @@ export function createAgentHarnessHostCapabilities(params: {
                 skillsSnapshot: options?.skillsSnapshot ?? skillsSnapshot,
                 skillUsagePaths: options?.skillUsagePaths ?? skillUsagePaths,
                 operationalRunInstance,
+                taskOrigin: attempt.admittedRunContext.taskOrigin,
               },
               // Sandboxes use their materialized snapshot paths, never host library pins.
               !hostSandboxEnabled &&

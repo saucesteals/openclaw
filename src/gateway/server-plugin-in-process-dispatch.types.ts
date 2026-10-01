@@ -21,6 +21,7 @@ export type PrepareInProcessAgentExecutionOptions = {
 };
 
 export type DispatchGatewayMethodInProcessOptions = {
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   privateCompletion?: true;
   settleWakeReplay?: RequesterSettleWakeReplay;
   allowSyntheticModelOverride?: boolean;

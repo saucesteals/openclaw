@@ -452,6 +452,7 @@ function cloneMessageCutSessionEntry(params: {
     systemPromptReport: undefined,
     restartRecoveryRuns: undefined,
     restartRecoveryForceSafeTools: undefined,
+    restartRecoveryTaskOrigin: undefined,
     abortCutoffMessageSid: undefined,
     abortCutoffTimestamp: undefined,
     usageFamilyKey: params.forked ? undefined : params.currentEntry.usageFamilyKey,

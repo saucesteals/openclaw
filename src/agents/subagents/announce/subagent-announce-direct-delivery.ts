@@ -427,6 +427,7 @@ export async function sendSubagentAnnounceDirectly(
               }
               return await runAnnounceAgentCall({
                 agentParams: directAgentParams,
+                taskOrigin: trustedCompletionEvent?.taskOrigin,
                 // A resumed parent has no inbound channel dispatcher to keep activity visible.
                 typing:
                   sourceToolId === "subagent_settle" &&

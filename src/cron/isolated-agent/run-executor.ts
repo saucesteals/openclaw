@@ -245,6 +245,7 @@ function createCronPromptExecutor(
       close: closePromptAdmission,
     } = prepareCronPromptRunAdmission({
       admissionSource: params.admissionSource,
+      taskOrigin: params.job.taskOrigin,
       cfg: params.cfgWithAgentDefaults,
       agentId: params.agentId,
       runId,

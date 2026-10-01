@@ -1,7 +1,8 @@
-import { prepareActiveNodeContext } from "../../infra/active-node-context.js";
 /**
  * Selects and invokes native agent harnesses for embedded run attempts.
  */
+import { isConfiguredCommandOwner } from "../../auto-reply/command-auth.js";
+import { prepareActiveNodeContext } from "../../infra/active-node-context.js";
 import {
   createChildDiagnosticTraceContext,
   createDiagnosticTraceContext,
@@ -623,7 +624,14 @@ function withoutPluginHarnessPrivateState(
   } = params as EmbeddedRunAttemptInternalParams & {
     __openclawSourceReplyDeliveryRuntime?: unknown;
   };
-  return pluginParams;
+  const taskOrigin = params.admittedRunContext.taskOrigin;
+  const taskOriginOwnerStatus =
+    taskOrigin?.status === "known" && params.config
+      ? isConfiguredCommandOwner(params.config, taskOrigin)
+        ? ("configured_owner" as const)
+        : ("not_configured_owner" as const)
+      : ("unknown" as const);
+  return { ...pluginParams, taskOrigin, taskOriginOwnerStatus };
 }
 
 function preparePluginHarnessParams(

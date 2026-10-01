@@ -264,6 +264,7 @@ export async function markSessionCompletedAfterRecoveryCheckpoint(params: {
     endedAt,
     pendingFinalDelivery: undefined,
     restartRecoveryForceSafeTools: undefined,
+    restartRecoveryTaskOrigin: undefined,
     restartRecoveryRuns: undefined,
     ...buildMainSessionRecoveryClearPatch(params.entry),
     runtimeMs:
