@@ -1,10 +1,11 @@
 {
   "version": 5,
-  "prev": "c6a28f2068dc3fe7b60132cb33651d2a173e7103",
-  "head": "9d8afaa6d35b40569194d16163abf0de40d6a472",
+  "prev": "9075a58473f20cf0065c64c56f76430199f41205",
+  "head": "1a89687cd60daaa59eb2db360c89af69e8f74153",
   "applied": [
     "feat-exec-session-key",
-    "chore-agents-remove-safety-section"
+    "chore-agents-remove-safety-section",
+    "refresh-temp"
   ],
   "unapplied": [
     "fix-discord-gateway-delegation",
@@ -61,6 +62,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
+    },
+    "refresh-temp": {
+      "oid": "1a89687cd60daaa59eb2db360c89af69e8f74153"
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
