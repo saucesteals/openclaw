@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "2e994b7a1dae59cb388c7d00679576f71fd95eb5",
-  "head": "b14f666faf2301f0708cf0ae27794932fc75e29a",
+  "prev": "5abb85db45d053dd0dfb1a2d7a8aa66067bd3d36",
+  "head": "0d25853e03265ea1a9dc57672f0fa6b7b26b2ef1",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -16,7 +16,8 @@
     "fix-codex-historical-image-input",
     "remove-unscheduled-reminder-note",
     "fix-progress-error-rollout",
-    "fix-codex-managed-runtime"
+    "fix-codex-managed-runtime",
+    "refresh-temp"
   ],
   "unapplied": [
     "version-bump"
@@ -61,6 +62,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
+    },
+    "refresh-temp": {
+      "oid": "0d25853e03265ea1a9dc57672f0fa6b7b26b2ef1"
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
