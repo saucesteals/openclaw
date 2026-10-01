@@ -72,6 +72,7 @@ export type QueuedSessionDeliveryPayload =
       route?: SessionDeliveryRoute;
       deliveryContext?: SessionDeliveryContext;
       inputProvenance?: InputProvenance;
+      taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
       sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
       expectedMediaUrls?: string[];
       expectedMediaAttachments?: Record<string, ReplyMediaAttachment>;

@@ -132,6 +132,7 @@ export async function prepareWorkerAgentRuntimeIdentity(
       sessionKey: params.sessionKey,
       operationalRunInstance: admittedRunContext.operationalRunInstance,
       executionIdentityToken: admittedRunContext.executionIdentityToken,
+      taskOrigin: admittedRunContext.taskOrigin,
       turnSourceChannel: turn.messageChannel ?? turn.messageProvider,
       turnSourceTo: turn.currentMessagingTarget ?? turn.currentChannelId,
       turnSourceAccountId: turn.agentAccountId,

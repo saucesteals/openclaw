@@ -26,6 +26,7 @@ import {
 import { createHeartbeatTypingCallbacks } from "./heartbeat-typing.js";
 import { getHeartbeatWakeAbortSignal, type HeartbeatRunResult } from "./heartbeat-wake.js";
 import { markSessionEventWakeWorkStarted } from "./session-event-wake.js";
+import { resolveSystemEventTaskOrigin } from "./system-events.js";
 
 export async function runHeartbeatOnce(opts: HeartbeatRunOptions): Promise<HeartbeatRunResult> {
   const wake = await resolveHeartbeatWakeStage(opts);
@@ -115,6 +116,10 @@ export async function runHeartbeatOnce(opts: HeartbeatRunOptions): Promise<Heart
           // Isolated heartbeats mint a fresh session ID per run, so nothing later
           // reuses this run's bundle MCP runtime; retire it at settlement.
           ...(prepared.run.kind === "isolated" ? { cleanupBundleMcpOnRunEnd: true } : {}),
+          inheritedTaskOrigin: resolveSystemEventTaskOrigin([
+            ...prepared.inspectedSystemEventsToConsume,
+            ...(prepared.inspectsRunQueue ? prepared.genericEvents : []),
+          ]),
           replyConversation: prepareReplyConversation({
             ctx: heartbeatContext,
             sessionEntry: suppressOriginatingContext ? undefined : prepared.conversationEntry,

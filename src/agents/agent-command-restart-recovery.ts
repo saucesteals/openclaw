@@ -38,10 +38,14 @@ export function resolveCommandRecoveryOptions(params: {
     Array.isArray(entry.restartRecoveryDeliveryMediaUrls)
       ? entry.restartRecoveryDeliveryMediaUrls
       : undefined;
+  const originOptions =
+    entry?.restartRecoveryDeliveryRunId === params.runId
+      ? { ...params.opts, taskOrigin: entry.restartRecoveryTaskOrigin }
+      : params.opts;
   const opts =
     media !== undefined
       ? {
-          ...params.opts,
+          ...originOptions,
           internalDeliveryMediaUrls: [...media],
           internalDeliveryMediaSelected: entry?.restartRecoveryDeliveryMediaSelected === true,
           internalDeliverySuppressText: entry?.restartRecoverySuppressTextDelivery,
@@ -49,7 +53,7 @@ export function resolveCommandRecoveryOptions(params: {
           disableMessageTool: entry?.restartRecoveryDisableMessageTool,
           forceRestartSafeTools: entry?.restartRecoveryForceSafeTools,
         }
-      : params.opts;
+      : originOptions;
   if (
     (opts.internalDeliverySuppressText === true && opts.internalDeliveryMediaUrls === undefined) ||
     ((opts.internalDeliveryMediaUrls !== undefined || opts.internalDeliverySuppressText === true) &&
@@ -354,6 +358,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   disableMessageTool?: boolean;
   entry: SessionEntry;
   forceRestartSafeTools?: boolean;
+  taskOrigin?: SessionEntry["restartRecoveryTaskOrigin"];
   runId: string;
   sourceIngress?: SessionEntry["restartRecoverySourceIngress"];
   sourceRunId?: string;
@@ -369,6 +374,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   | "restartRecoveryDeliverySourceRunId"
   | "restartRecoveryHarnessCompletion"
   | "restartRecoveryForceSafeTools"
+  | "restartRecoveryTaskOrigin"
   | "restartRecoverySourceIngress"
   | "restartRecoverySourceReplyDeliveryMode"
   | "restartRecoverySuppressTextDelivery"
@@ -421,6 +427,9 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
       params.deliveryContext || adoptsExistingClaim || createsTranscriptOnlySourceClaim
         ? params.runId
         : undefined,
+    restartRecoveryTaskOrigin: adoptsExistingClaim
+      ? params.entry.restartRecoveryTaskOrigin
+      : params.taskOrigin,
     restartRecoveryDeliverySourceRunId: adoptsExistingClaim
       ? params.entry.restartRecoveryDeliverySourceRunId
       : params.sourceRunId,

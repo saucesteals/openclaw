@@ -114,6 +114,11 @@ describe("buildTurnStartParams temporal context", () => {
     const firstTurn = buildTurnStartParams(params, options);
     expect(firstTurn.input).toEqual([{ type: "text", text: "run exactly", text_elements: [] }]);
     expect(firstTurn.additionalContext).toEqual({
+      openclaw_task_origin: {
+        kind: "application",
+        value: expect.stringContaining('"status":"unknown"'),
+      },
+      openclaw_current_sender: { kind: "untrusted", value: JSON.stringify({ sender: null }) },
       openclaw_active_computer: {
         kind: "application",
         value: "Current active computer: active_node=unknown (host presence unavailable)",
@@ -344,6 +349,11 @@ describe("buildTurnStartParams native supervised settings", () => {
       expect(request).not.toHaveProperty("collaborationMode");
       expect(request).not.toHaveProperty("personality");
       expect(request.additionalContext).toEqual({
+        openclaw_task_origin: {
+          kind: "application",
+          value: expect.stringContaining('"status":"unknown"'),
+        },
+        openclaw_current_sender: { kind: "untrusted", value: JSON.stringify({ sender: null }) },
         openclaw_active_computer: {
           kind: "application",
           value: "Current active computer: active_node=unknown (host presence unavailable)",
@@ -364,4 +374,60 @@ describe("buildTurnStartParams native supervised settings", () => {
       });
     },
   );
+});
+
+describe("buildTurnStartParams current sender", () => {
+  it("replaces human attribution on internal and unattributed turns, then restores it", () => {
+    const params = createParams("/tmp/session.jsonl", "/repo");
+    const options = { threadId: "thread-1", cwd: "/repo", appServer: createAppServerOptions() };
+    const sender = () =>
+      JSON.parse(
+        buildTurnStartParams(params, options).additionalContext!.openclaw_current_sender!.value,
+      );
+    params.trigger = "user";
+    params.senderId = "friend-id";
+    params.senderName = "Friend";
+    expect(sender()).toEqual({ sender: { id: "friend-id", name: "Friend" } });
+    params.inputProvenance = { kind: "inter_session", sourceTool: "video_generate" };
+    expect(sender()).toEqual({ sender: null });
+    params.inputProvenance = { kind: "internal_system" };
+    expect(sender()).toEqual({ sender: null });
+    params.inputProvenance = undefined;
+    params.trigger = "cron";
+    expect(sender()).toEqual({ sender: null });
+    params.trigger = "user";
+    params.senderId = undefined;
+    params.senderName = undefined;
+    expect(sender()).toEqual({ sender: null });
+    params.senderId = "owner-id";
+    params.inputProvenance = { kind: "external_user" };
+    expect(sender()).toEqual({ sender: { id: "owner-id" } });
+  });
+});
+
+describe("buildTurnStartParams task origin", () => {
+  it("keeps the original requester distinct from a newer sender and explicitly clears legacy origin", () => {
+    const params = createParams("/tmp/session.jsonl", "/repo");
+    const options = { threadId: "thread-1", cwd: "/repo", appServer: createAppServerOptions() };
+    params.senderId = "new-owner";
+    params.taskOriginOwnerStatus = "not_configured_owner";
+    params.inputProvenance = { kind: "inter_session", sourceTool: "video_generate" };
+    params.taskOrigin = {
+      version: 1,
+      status: "known",
+      channel: "discord",
+      senderId: "original-friend",
+      sourceSessionKey: "source-room",
+      sourceRunId: "original-run",
+    };
+    const context = () =>
+      buildTurnStartParams(params, options).additionalContext!.openclaw_task_origin!;
+    expect(context().kind).toBe("application");
+    expect(context().value).toContain('"senderId":"original-friend"');
+    expect(context().value).not.toContain("new-owner");
+    expect(context().value).toContain('"originalRequesterOwnerStatus":"not_configured_owner"');
+    params.taskOrigin = undefined;
+    expect(context().value).toContain('"status":"unknown"');
+    expect(context().value).not.toContain("original-friend");
+  });
 });
