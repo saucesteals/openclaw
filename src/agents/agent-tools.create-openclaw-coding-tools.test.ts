@@ -949,6 +949,7 @@ describe("createOpenClawCodingTools", () => {
       expect(observedIdentity).toEqual({
         agentId: "main",
         assertToolAllowed: expect.any(Function),
+        taskOrigin: { version: 1, status: "unknown" },
         sessionKey: "agent:main:telegram:direct:alice",
         turnSourceChannel: "discord",
         turnSourceTo: "channel:123",
