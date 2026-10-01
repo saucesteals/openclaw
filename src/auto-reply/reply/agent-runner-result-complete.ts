@@ -58,12 +58,12 @@ export async function completeReplyAgentRun(input: {
     storePath,
   } = context;
   const { autoCompactionCount, runResult, verboseEnabled } = accounting;
-  const { completedSourceReplyDelivery, guardedReplyPayloads, responseUsageLine } = prepared;
+  const { completedSourceReplyDelivery, replyPayloads, responseUsageLine } = prepared;
   let { activeSessionEntry } = prepared;
 
   // Prepend verbose operational notices. Model fallback notices are prepared
   // earlier so they pass through normal reply threading and stream-dedupe.
-  let finalPayloads = guardedReplyPayloads;
+  let finalPayloads = replyPayloads;
   const prefixNotices: ReplyPayload[] = [];
 
   if (verboseEnabled && activeIsNewSession) {
