@@ -230,24 +230,139 @@ describe("processDiscordMessage draft streaming final delivery", () => {
     await runProcessDiscordMessage(ctx);
   });
 
-  it("suppresses terminal progress callbacks without their terminal phase", async () => {
-    const draftStream = createMockDraftStreamForTest();
-
-    dispatchInboundMessage.mockImplementationOnce(async (params?: DispatchInboundParams) => {
-      await params?.replyOptions?.onApprovalEvent?.({ command: "must stay hidden" });
-      await params?.replyOptions?.onCommandOutput?.({ title: "must stay hidden", exitCode: 0 });
-      await params?.replyOptions?.onPatchSummary?.({ summary: "must stay hidden" });
-      return createNoQueuedDispatchResult();
-    });
+  it("omits the narration callback when progress narration is disabled", async () => {
+    createMockDraftStreamForTest();
+    dispatchInboundMessage.mockImplementationOnce(async () => createNoQueuedDispatchResult());
 
     const ctx = await createAutomaticDraftContext({
-      discordConfig: { streaming: { mode: "progress", progress: { toolProgress: true } } },
+      discordConfig: {
+        streaming: {
+          mode: "progress",
+          progress: { toolProgress: true, label: "Shelling", narration: false },
+        },
+      },
     });
 
     await runProcessDiscordMessage(ctx);
 
-    expect(draftStream.update).not.toHaveBeenCalled();
+    expect(getLastDispatchReplyOptions()?.onNarrationUpdate).toBeUndefined();
+    expect(getLastDispatchReplyOptions()?.isProgressDraftVisible).toBeUndefined();
   });
+
+  it("mirrors status-only command text into the narration input policy", async () => {
+    createMockDraftStreamForTest();
+    dispatchInboundMessage.mockImplementationOnce(async () => createNoQueuedDispatchResult());
+
+    const ctx = await createAutomaticDraftContext({
+      discordConfig: {
+        streaming: {
+          mode: "progress",
+          progress: { toolProgress: true, label: "Shelling", commandText: "status" },
+        },
+      },
+    });
+
+    await runProcessDiscordMessage(ctx);
+
+    const replyOptions = getLastDispatchReplyOptions();
+    expect(replyOptions?.onNarrationUpdate).toBeDefined();
+    expect(replyOptions?.isProgressDraftVisible).toBeDefined();
+    expect(replyOptions?.narrationHideCommandText).toBe(true);
+  });
+
+  it.each([false, true])(
+    "respects toolProgress=%s for failed item progress",
+    async (toolProgress) => {
+      const draftStream = createMockDraftStreamForTest();
+      let callbackResult: boolean | void = undefined;
+
+      dispatchInboundMessage.mockImplementationOnce(async (params?: DispatchInboundParams) => {
+        callbackResult = await params?.replyOptions?.onItemEvent?.({
+          itemId: "tool-1",
+          kind: "tool",
+          name: "exec",
+          phase: "end",
+          status: "failed",
+          progressText: "exec failed",
+        });
+        return createNoQueuedDispatchResult();
+      });
+
+      const ctx = await createAutomaticDraftContext({
+        discordConfig: {
+          streaming: { mode: "progress", progress: { toolProgress } },
+          maxLinesPerMessage: 5,
+        },
+      });
+
+      await runProcessDiscordMessage(ctx);
+
+      expect(callbackResult).toBe(toolProgress);
+      if (toolProgress) {
+        expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("failed"), {
+          complete: true,
+        });
+      } else {
+        expect(draftStream.update).not.toHaveBeenCalled();
+      }
+    },
+  );
+
+  it.each([false, true])(
+    "rolls completed command failures out with toolProgress=%s",
+    async (toolProgress) => {
+      const draftStream = createMockDraftStreamForTest();
+      let callbackResult: boolean | void = undefined;
+
+      dispatchInboundMessage.mockImplementationOnce(async (params?: DispatchInboundParams) => {
+        callbackResult = await params?.replyOptions?.onItemEvent?.({
+          itemId: "failed-command",
+          kind: "tool",
+          phase: "end",
+          name: "exec",
+          status: "failed",
+          progressText: "Exec exit 1",
+        });
+        for (let index = 0; index < 12; index++) {
+          await params?.replyOptions?.onItemEvent?.({
+            itemId: `failed-${index}`,
+            kind: "tool",
+            phase: "end",
+            name: "exec",
+            status: "failed",
+            progressText: "Exec exit 1",
+          });
+        }
+        await params?.replyOptions?.onItemEvent?.({
+          itemId: "comment-latest",
+          kind: "preamble",
+          progressText: "Recovered; verifying the result",
+        });
+        return createNoQueuedDispatchResult();
+      });
+
+      const ctx = await createAutomaticDraftContext({
+        discordConfig: {
+          streaming: { mode: "progress", progress: { toolProgress, commentary: true } },
+          maxLinesPerMessage: 5,
+        },
+      });
+
+      await runProcessDiscordMessage(ctx);
+
+      expect(callbackResult).toBe(toolProgress);
+      expect(draftStream.update.mock.lastCall?.[0]).toContain("💬 Recovered; verifying the result");
+      if (toolProgress) {
+        expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("Exec: failed"), {
+          complete: true,
+        });
+      } else {
+        expect(draftStream.update.mock.calls.some(([text]) => text.includes("Exec: failed"))).toBe(
+          false,
+        );
+      }
+    },
+  );
 
   it("retires coding-profile guild progress only after a confirmed message-tool reply", async () => {
     const elapseProgressDraftStartDelay = useProgressDraftStartDelay();
