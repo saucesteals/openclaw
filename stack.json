@@ -1,10 +1,9 @@
 {
   "version": 5,
-  "prev": "86a2bc002b99c1b96864b7cccbc572a1b0fd9364",
-  "head": "3e05860a81db0ab38f7f59c561b76d68c0726dc5",
+  "prev": "6eb46c0695491723bb840c97b20cd9fdf94e2029",
+  "head": "31083bdbf89df037f97e99f6010e8627bd56005e",
   "applied": [
-    "feat-exec-session-key",
-    "refresh-temp"
+    "feat-exec-session-key"
   ],
   "unapplied": [
     "chore-agents-remove-safety-section",
@@ -28,7 +27,7 @@
       "oid": "9828ed885ac1148c5423ce11801b405b66aa322a"
     },
     "feat-exec-session-key": {
-      "oid": "a18944add4215f6e1536a562437d7588928b1b45"
+      "oid": "31083bdbf89df037f97e99f6010e8627bd56005e"
     },
     "fix-codex-historical-image-input": {
       "oid": "37cb8838ec123e5adc9657bbc64d1303e41929b8"
@@ -62,9 +61,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
-    },
-    "refresh-temp": {
-      "oid": "3e05860a81db0ab38f7f59c561b76d68c0726dc5"
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
