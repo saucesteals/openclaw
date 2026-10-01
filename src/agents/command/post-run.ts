@@ -11,11 +11,12 @@ import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { isSubagentSessionKey } from "../../routing/session-key.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import type { DeliveryContext } from "../../utils/delivery-context.shared.js";
+import { isInternalMessageChannel } from "../../utils/message-channel.js";
 import {
   buildRestartRecoveryTerminalDeliveryEvidence,
   constrainRestartRecoveryDeliveryPayloads,
+  freezeCurrentRunDeliveryMedia,
   shouldPersistCurrentRunSessionCleanup,
-  shouldPersistRestartRecoveryCleanup,
 } from "../agent-command-restart-recovery.js";
 import { normalizeAgentRunTerminalDeliverySnapshot } from "../agent-run-terminal-delivery.js";
 import {
@@ -28,6 +29,7 @@ import { normalizeAgentRunTerminalReplySnapshot } from "../agent-run-terminal-re
 import { OPENCLAW_AGENT_RUNTIME_ID } from "../agent-runtime-id.js";
 import { isHeartbeatLifecycleRunKind } from "../bootstrap-mode.js";
 import type { AcceptedCompactionSuccessor } from "../embedded-agent-runner/compaction-successor.js";
+import { collectDeliveredMediaUrls } from "../embedded-agent-runner/delivery-evidence.js";
 import { buildMainSessionRecoveryClearPatch } from "../main-session-recovery/main-session-recovery-clear.js";
 import { persistPendingFinalDeliveryMarker } from "../pending-final-delivery-marker.js";
 import type { AgentRunSessionTarget } from "../run-session-target.types.js";
@@ -52,54 +54,6 @@ import type { AgentCommandOpts } from "./types.js";
 type EmbeddedAgentAttempt = Awaited<ReturnType<typeof runEmbeddedAgentAttempt>>;
 
 const log = createSubsystemLogger("agents/agent-command");
-
-export async function clearCommandRecoveryClaim(params: {
-  prepared: PreparedAgentCommandExecution;
-  sessionEntry?: SessionEntry;
-  runOwnedSessionId: string;
-  sessionReboundDuringRun: boolean;
-  trackedRestartRecoveryDeliveryClaim: boolean;
-  terminalDeliveryEvidence?: RestartRecoveryTerminalDeliveryEvidenceResult;
-}): Promise<void> {
-  const { sessionStore, sessionKey, storePath, runId } = params.prepared;
-  if (
-    params.sessionReboundDuringRun ||
-    !params.trackedRestartRecoveryDeliveryClaim ||
-    !sessionStore ||
-    !sessionKey
-  ) {
-    return;
-  }
-  try {
-    const entry = sessionStore[sessionKey] ?? params.sessionEntry;
-    if (entry?.restartRecoveryDeliveryRunId === runId) {
-      await persistAgentSession({
-        agentId: params.prepared.sessionAgentId,
-        sessionStore,
-        sessionKey,
-        storePath,
-        initialEntry: entry,
-        entry: {
-          ...entry,
-          ...buildRestartRecoveryClaimCleanupPatch({
-            entry,
-            recordTerminalSource: true,
-            terminalRunId: runId,
-            terminalDeliveryEvidence: params.terminalDeliveryEvidence,
-          }),
-          ...buildMainSessionRecoveryClearPatch(entry),
-          updatedAt: Date.now(),
-        },
-        shouldPersist: (current) =>
-          shouldPersistRestartRecoveryCleanup(current, params.runOwnedSessionId, runId),
-      });
-    }
-  } catch (error) {
-    log.warn(
-      `failed to clear restart recovery delivery context for ${sessionKey}: ${coerceErrorMessage(error)}`,
-    );
-  }
-}
 
 export function createCompactionSessionIdReporter(
   sessionId: string,
@@ -227,6 +181,22 @@ export async function finalizeEmbeddedAgentCommand(params: {
     );
   };
 
+  const freezeDeliveryMedia = async (mediaUrls: string[]) => {
+    sessionEntry = await freezeCurrentRunDeliveryMedia({
+      agentId: sessionAgentId,
+      sessionStore,
+      sessionKey,
+      storePath,
+      sessionId: runOwnedSessionId,
+      runId,
+      mediaUrls,
+      assertCurrent: () => {
+        params.opts.abortSignal?.throwIfAborted();
+        assertAgentRunLifecycleGenerationCurrent(lifecycleGeneration);
+      },
+    });
+  };
+
   try {
     await fallbackTrajectoryRecorder?.flush();
     const finalVisiblePayload = result.payloads
@@ -236,12 +206,17 @@ export async function finalizeEmbeddedAgentCommand(params: {
       finalVisiblePayload !== undefined &&
       getReplyPayloadMetadata(finalVisiblePayload)?.assistantTranscriptOwned === true;
     if (params.opts.internalDeliveryMediaUrls !== undefined) {
+      const freshSelection =
+        params.opts.forceRestartSafeTools !== true &&
+        params.opts.internalDeliveryMediaSelected !== true;
       result = {
         ...result,
         payloads: constrainRestartRecoveryDeliveryPayloads(
           result.payloads,
           params.opts.internalDeliveryMediaUrls,
           params.opts.internalDeliverySuppressText === true,
+          freshSelection,
+          params.opts.deliver === true && freshSelection,
         ),
       };
     }
@@ -358,6 +333,27 @@ export async function finalizeEmbeddedAgentCommand(params: {
       }
     }
 
+    // Freeze the normalized selection before publishing replayable final custody.
+    // A restart after the pending-final marker must never restore the original clip.
+    if (
+      params.opts.deliver === true &&
+      (params.opts.internalDeliveryMediaUrls?.length ?? 0) > 0 &&
+      params.currentRunDeliveryContext?.channel &&
+      !isInternalMessageChannel(params.currentRunDeliveryContext.channel) &&
+      !sessionReboundDuringRun
+    ) {
+      const { normalizeReplyMediaPathsForDelivery } = await loadDeliveryRuntime();
+      const normalized = await normalizeReplyMediaPathsForDelivery({
+        cfg,
+        payloads: result.payloads ?? [],
+        sessionKey,
+        outboundSession,
+        deliveryChannel: params.currentRunDeliveryContext.channel,
+        accountId: params.currentRunDeliveryContext.accountId,
+      });
+      result = { ...result, payloads: normalized.payloads };
+      await freezeDeliveryMedia(collectDeliveredMediaUrls({ payloads: normalized.payloads }));
+    }
     const payloads = result.payloads ?? [];
     const pendingFinalDeliveryMarker = await persistPendingFinalDeliveryMarker({
       assertCurrent: () => {
@@ -560,6 +556,11 @@ export async function finalizeEmbeddedAgentCommand(params: {
         params.opts.abortSignal?.throwIfAborted();
         assertAgentRunLifecycleGenerationCurrent(lifecycleGeneration);
       },
+      ...((params.opts.internalDeliveryMediaUrls?.length ?? 0) > 0
+        ? {
+            onPreparedMedia: freezeDeliveryMedia,
+          }
+        : {}),
       onDeliveryResult: (delivered: AgentCommandDeliveryResult) => {
         const deliveryStatus = delivered.deliveryStatus;
         const terminalDelivery = normalizeAgentRunTerminalDeliverySnapshot(
