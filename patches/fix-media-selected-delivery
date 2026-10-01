@@ -1,0 +1,7 @@
+Bottom: 2b7e8c86cf8462a8d8dc9edd805bf952c161a98a
+Top:    ffd51aa3fd60d0e6c8133afaa74e02f29ad0bb5b
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-10-01 00:34:48 -0700
+
+fix(media): preserve selected final artifacts through recovery
+
