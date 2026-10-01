@@ -237,6 +237,14 @@ describe("CronService declarative jobs", () => {
   );
 
   it("keeps the first creator across declaration convergence and restart", async () => {
+    const taskOrigin = {
+      version: 1 as const,
+      status: "known" as const,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "session-1",
+      sourceRunId: "original-run",
+    };
     const { cron: writer, storePath } = await setup();
     const sourceConversation = {
       sessionKey: "agent:ops:conversation",
@@ -256,9 +264,11 @@ describe("CronService declarative jobs", () => {
       createdActor: { type: "human", source: "profile", id: "profile-ada" },
       sourceConversation,
       skillLibrarySelections: selections,
+      taskOrigin,
     });
     expect(created.job).toMatchObject({
       createdActor: { type: "human", id: "profile-ada" },
+      taskOrigin,
       sourceConversation,
     });
 
@@ -275,10 +285,12 @@ describe("CronService declarative jobs", () => {
       createdActor: { type: "human", source: "profile", id: "profile-bob" },
       sourceConversation: { sessionKey: "agent:ops:other", sessionId: "other-session" },
       skillLibrarySelections: [],
+      taskOrigin: { ...taskOrigin, senderId: "later-owner" },
     });
     expect(converged).toMatchObject({ created: false, updated: true, id: created.id });
     expect(converged.job).toMatchObject({
       createdActor: { type: "human", id: "profile-ada" },
+      taskOrigin,
       sourceConversation,
     });
     await writer.update(created.id, { sessionKey: "agent:ops:other" });
@@ -287,10 +299,12 @@ describe("CronService declarative jobs", () => {
     const reader = createCronService(storePath, false);
     await expect(reader.readJob(created.id)).resolves.toMatchObject({
       createdActor: { type: "human", id: "profile-ada" },
+      taskOrigin,
       sourceConversation,
       skillLibrarySelections: selections,
     });
     const job = (await loadCronStore(storePath)).jobs.find((stored) => stored.id === created.id)!;
+    expect(job.taskOrigin).toEqual(taskOrigin);
     expect(toPublicCronJob(job)).not.toHaveProperty("skillLibrarySelections");
     const session = {
       cfg: {},

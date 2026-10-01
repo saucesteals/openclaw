@@ -294,6 +294,14 @@ describe("restart recovery claim settlement", () => {
       abortedLastRun: false,
       lifecycleRunId: "recovery-run",
       restartRecoveryDeliveryRunId: "recovery-run",
+      restartRecoveryTaskOrigin: {
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "friend",
+        sourceSessionKey: "agent:main:source",
+        sourceRunId: "original-run",
+      },
       sessionId,
       startedAt: 1,
       status: undefined,
@@ -304,6 +312,14 @@ describe("restart recovery claim settlement", () => {
       agentId: "main",
       lifecycleGeneration: getAgentEventLifecycleGeneration(),
       admissionRunId: "recovery-run",
+      resolveTaskOrigin: (sourceRunId) => ({
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "later-owner",
+        sourceSessionKey: sessionKey,
+        sourceRunId,
+      }),
       getEntry: () => entry,
       getSessionId: () => sessionId,
       isRestartAbort: () => restartAborted,
@@ -323,6 +339,7 @@ describe("restart recovery claim settlement", () => {
     expect(persisted).toMatchObject({
       lifecycleRunId: "recovery-run",
       restartRecoveryDeliveryRunId: "recovery-run",
+      restartRecoveryTaskOrigin: { senderId: "friend", sourceRunId: "original-run" },
     });
     expect(persisted?.status).toBeUndefined();
   });

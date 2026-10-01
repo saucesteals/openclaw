@@ -74,6 +74,7 @@ export function registerPluginOnlyCallerIdentityCase({
       expect(observedIdentity).toEqual({
         agentId: "main",
         assertToolAllowed: expect.any(Function),
+        taskOrigin: { version: 1, status: "unknown" },
         personalToolIdentityScoped: undefined,
         personalToolParticipants: undefined,
         personalToolSelection: undefined,
