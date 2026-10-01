@@ -412,6 +412,7 @@ export function resolveInProcessGatewayDispatch(
     ...(operatorAuthority
       ? { authenticatedUserProfile: operatorAuthority.authenticatedUserProfile }
       : {}),
+    taskOrigin: options?.taskOrigin,
     allowModelOverride: options?.allowSyntheticModelOverride === true,
     agentToolCaller: options?.agentToolCaller,
     agentRunTracking: options?.agentRunTracking,
@@ -436,6 +437,7 @@ export function resolveInProcessGatewayDispatch(
   const scopedClient = mergePluginRuntimeClientInternal(
     scope?.client,
     pluginRuntimeOwnerId ||
+      options?.taskOrigin ||
       options?.agentRunTracking ||
       options?.pluginSubagentRequester ||
       options?.runtimePluginToolGrant ||
@@ -451,6 +453,7 @@ export function resolveInProcessGatewayDispatch(
           runtimePluginToolGrant: options?.runtimePluginToolGrant,
           pluginSubagentToolsAllow: options?.pluginSubagentToolsAllow,
           delegatedToolPolicyHandoffId,
+          ...(options?.taskOrigin ? { taskOrigin: options.taskOrigin } : {}),
         }
       : undefined,
   );

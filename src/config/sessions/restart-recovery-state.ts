@@ -569,6 +569,7 @@ export function buildRestartRecoveryClaimCleanupPatch(params: {
     restartRecoverySourceIngress: undefined,
     restartRecoverySourceReplyDeliveryMode: undefined,
     restartRecoveryForceSafeTools: undefined,
+    restartRecoveryTaskOrigin: undefined,
     ...(terminalDeliveryEvidence
       ? { restartRecoveryTerminalDeliveryEvidence: terminalDeliveryEvidence }
       : {}),

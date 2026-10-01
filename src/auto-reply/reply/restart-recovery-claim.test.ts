@@ -237,6 +237,14 @@ describe("createReplyRestartRecoveryClaimController", () => {
       abortedLastRun: false,
       lifecycleRunId: "recovery-run",
       restartRecoveryDeliveryRunId: "recovery-run",
+      restartRecoveryTaskOrigin: {
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "friend",
+        sourceSessionKey: "agent:main:source",
+        sourceRunId: "original-run",
+      },
       sessionId,
       startedAt: 1,
       status: "running",
@@ -247,6 +255,14 @@ describe("createReplyRestartRecoveryClaimController", () => {
       agentId: "main",
       lifecycleGeneration: getAgentEventLifecycleGeneration(),
       admissionRunId: "recovery-run",
+      resolveTaskOrigin: (sourceRunId) => ({
+        version: 1,
+        status: "known",
+        channel: "discord",
+        senderId: "later-owner",
+        sourceSessionKey: sessionKey,
+        sourceRunId,
+      }),
       getEntry: () => entry,
       getSessionId: () => sessionId,
       isRestartAbort: () => restartAborted,
@@ -265,6 +281,7 @@ describe("createReplyRestartRecoveryClaimController", () => {
     expect(loadSessionEntry({ storePath, sessionKey })).toMatchObject({
       lifecycleRunId: "recovery-run",
       restartRecoveryDeliveryRunId: "recovery-run",
+      restartRecoveryTaskOrigin: { senderId: "friend", sourceRunId: "original-run" },
       status: "running",
     });
   });
