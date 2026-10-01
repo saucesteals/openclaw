@@ -1,7 +1,7 @@
-Bottom: 4af875c94613df804fa2d1a3654db0c7458ff205
-Top:    c2ee225ab77539774838af12f52567c30257c403
+Bottom: aeca0854b11a80d677f5de4cd52302c8f0255589
+Top:    aeca0854b11a80d677f5de4cd52302c8f0255589
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-09-14 21:37:12 -0700
+Date:   2026-09-30 19:13:43 -0700
 
 fix: preserve Gateway delegation for channel replies
 

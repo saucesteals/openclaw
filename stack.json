@@ -1,12 +1,12 @@
 {
   "version": 5,
-  "prev": "07a8218599925c270851bf60dc984c3d3e9718de",
-  "head": "31083bdbf89df037f97e99f6010e8627bd56005e",
+  "prev": "f2728e21917e614508a16ba49238501d87b1273e",
+  "head": "e4861131b617f72195edf5bd0f3d89ea696debab",
   "applied": [
-    "feat-exec-session-key"
+    "feat-exec-session-key",
+    "fix-discord-gateway-delegation"
   ],
   "unapplied": [
-    "fix-discord-gateway-delegation",
     "fix-media-completion-tools",
     "fix-media-failure-status",
     "fix-media-selected-delivery",
@@ -32,7 +32,7 @@
       "oid": "f8a2a10eaee9a817d421c8e053ec9508623e8eb0"
     },
     "fix-discord-gateway-delegation": {
-      "oid": "33d78b7b18880b0d66f7ab548f9530b65f3aae47"
+      "oid": "e4861131b617f72195edf5bd0f3d89ea696debab"
     },
     "fix-discord-reply-quote": {
       "oid": "68baa51b25275e437c8d61f4bc3312a0c6360418"
