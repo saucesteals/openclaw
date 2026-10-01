@@ -1712,6 +1712,64 @@ describe("runAgentHarnessAttempt", () => {
     expect(result.agentHarnessResultClassification).toBe("empty");
   });
 
+  it.each(["owner", "friend", undefined])(
+    "derives original requester relationship from admission for %s",
+    async (senderId) => {
+      const runAttempt = vi.fn<AgentHarness["runAttempt"]>(async () =>
+        createAttemptResult("codex"),
+      );
+      registerAgentHarness(
+        {
+          id: "codex",
+          label: "Classifying Codex",
+          supports: (ctx) =>
+            ctx.provider === "codex" ? { supported: true, priority: 100 } : { supported: false },
+          runAttempt,
+        },
+        { ownerPluginId: "codex" },
+      );
+
+      selectionAdmission.close();
+      selectionAdmission = prepareAgentRunAdmission({
+        cfg: {},
+        facts: {
+          runId: "run-1",
+          agentId: "main",
+          ingress: { kind: "system", boundary: "origin-test", state: "present" },
+        },
+        operationalRunInstance: createOperationalRunInstanceRef("run-1"),
+        taskOrigin: senderId
+          ? {
+              version: 1,
+              status: "known",
+              channel: "discord",
+              senderId,
+              sourceSessionKey: "source-room",
+              sourceRunId: "source-run",
+            }
+          : undefined,
+      });
+      selectionAdmittedRunContext = await selectionAdmission.admit(
+        "plugin-harness",
+        "harness-selection-test",
+      );
+      const params = createAttemptParams({ commands: { ownerAllowFrom: ["owner"] } });
+      // Caller projections and synthetic execution authority must not override admitted attribution.
+      params.taskOriginOwnerStatus = "configured_owner";
+      params.senderIsOwner = true;
+      await runAgentHarnessAttempt(params);
+
+      const projected = runAttempt.mock.calls[0]?.[0];
+      expect(projected?.taskOriginOwnerStatus).toBe(
+        senderId === "owner"
+          ? "configured_owner"
+          : senderId === "friend"
+            ? "not_configured_owner"
+            : "unknown",
+      );
+    },
+  );
+
   it("collapses channel group sender deny-all to empty toolsAllow for plugin harnesses", async () => {
     const delivered = vi.fn(async () => {});
     const runAttempt = vi.fn<AgentHarness["runAttempt"]>(async (prepared) => {

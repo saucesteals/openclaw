@@ -1,5 +1,6 @@
 import {
   buildTemporalContextText,
+  buildTaskOriginContext,
   buildHarnessVisibleReplyGuidance,
   type EmbeddedRunAttemptParamsV2 as EmbeddedRunAttemptParams,
 } from "openclaw/plugin-sdk/agent-harness-runtime";
@@ -125,7 +126,11 @@ export function buildTurnStartParams(
     collaborationMode.settings.developer_instructions = null;
   }
   const useThreadPermissionProfile = options.appServer.networkProxy && !options.sandboxPolicy;
-  const currentSender = params.trigger === "user" ? readCodexCurrentSender(params) : undefined;
+  const currentSender =
+    params.trigger === "user" &&
+    (!params.inputProvenance || params.inputProvenance.kind === "external_user")
+      ? readCodexCurrentSender(params)
+      : undefined;
   // Codex emits only changed values and cannot retract omitted fragments from model history.
   // Always send configured-or-host context so warm threads see rollover and removed overrides.
   const additionalContext: NonNullable<CodexTurnStartParams["additionalContext"]> = {
@@ -139,6 +144,15 @@ export function buildTurnStartParams(
         params.hostCapabilities.activeComputerContext?.() ??
         "Current active computer: active_node=unknown (host presence unavailable)",
     },
+    openclaw_task_origin: {
+      kind: "application",
+      value: buildTaskOriginContext({
+        taskOrigin: params.taskOrigin,
+        ownerStatus: params.taskOriginOwnerStatus ?? "unknown",
+        inputProvenance: params.inputProvenance,
+        trigger: params.trigger,
+      }),
+    },
     openclaw_source_delivery: {
       kind: "application",
       value: [
@@ -151,13 +165,11 @@ export function buildTurnStartParams(
       ].join("\n"),
     },
   };
-  // Untrusted context exposes authenticated attribution without promoting human-controlled labels.
-  if (currentSender) {
-    additionalContext.openclaw_current_sender = {
-      kind: "untrusted",
-      value: JSON.stringify({ sender: currentSender }),
-    };
-  }
+  // Omission cannot retract earlier sender attribution from native history.
+  additionalContext.openclaw_current_sender = {
+    kind: "untrusted",
+    value: JSON.stringify({ sender: currentSender ?? null }),
+  };
   if (params.permissionChange?.notice) {
     // Application context is a developer message in Codex 0.151.0 and also
     // reaches native-preserved threads without overriding their turn settings.

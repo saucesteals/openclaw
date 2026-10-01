@@ -64,6 +64,8 @@ type ReasoningStreamPayload = Pick<
 };
 
 export type RunEmbeddedAgentParams = {
+  taskOrigin?: import("../../task-origin.js").TaskOriginSnapshot;
+  taskOriginOwnerStatus?: import("../../task-origin.js").TaskOriginOwnerStatus;
   /** Detached runs may read session identity but never write its durable transcript or metadata. */
   sessionPersistence?: "durable" | "detached";
   /** Storage-neutral transcript/session target. Defaults to sessionId/sessionKey/agentId. */

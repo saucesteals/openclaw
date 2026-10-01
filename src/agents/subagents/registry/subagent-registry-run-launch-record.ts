@@ -1,8 +1,10 @@
 import type { GatewayContextResolver } from "../../../gateway/server-methods/types.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import { normalizeSubagentRunState } from "./subagent-delivery-state.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
 
 export type RegisterSubagentRunParams = {
+  taskOrigin?: import("../../task-origin.js").TaskOriginSnapshot;
   runId: string;
   requesterTurnRunId?: string;
   childSessionKey: string;
@@ -65,6 +67,7 @@ export function createSubagentRegistrationRecord(
   return normalizeSubagentRunState({
     runId,
     taskRunId: runId,
+    taskOrigin: normalizeTaskOriginSnapshot(registerParams.taskOrigin),
     ...(requesterTurnRunId ? { requesterTurnRunId } : {}),
     childSessionKey,
     controllerSessionKey,

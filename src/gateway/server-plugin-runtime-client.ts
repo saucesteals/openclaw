@@ -45,6 +45,7 @@ export function createSyntheticPluginRuntimeClient(params?: {
   cronRunContinuation?: boolean;
   internalDeliveryMediaUrls?: string[];
   runtimeContextFragments?: RuntimeContextFragment[];
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   internalDeliverySuppressText?: boolean;
   pluginRuntimeOwnerId?: string;
   nodeInvokeApprovalSessionKey?: string;
@@ -77,6 +78,7 @@ export function createSyntheticPluginRuntimeClient(params?: {
     },
     internal: {
       syntheticClient: true,
+      ...(params?.taskOrigin ? { taskOrigin: params.taskOrigin } : {}),
       ...(params?.operatorRoleActor ? { operatorRoleActor: params.operatorRoleActor } : {}),
       ...(params?.operatorRunAuthority
         ? { operatorRunAuthority: params.operatorRunAuthority }

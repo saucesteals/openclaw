@@ -1603,6 +1603,7 @@ CREATE TABLE IF NOT EXISTS task_runs (
   parent_task_id TEXT,
   agent_id TEXT,
   requester_agent_id TEXT,
+  task_origin_json TEXT,
   run_id TEXT,
   execution_owner_host TEXT,
   execution_owner_pid INTEGER,

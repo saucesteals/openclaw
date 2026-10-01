@@ -53,6 +53,14 @@ function getCompletionOwner(
   return owner;
 }
 
+/** Read the original per-turn scope from its validated custody owner. */
+export function resolveAgentHarnessCompletionCustodyScope(
+  custody: AgentHarnessCompletionCustody,
+  scope: AgentHarnessCompletionScope,
+): AgentHarnessCompletionScope {
+  return getCompletionOwner(custody, scope).scope;
+}
+
 /** Retains admitted completion work for this exact physical requester lifecycle. */
 export function captureAgentHarnessCompletionCustody(
   scope: AgentHarnessCompletionScope,
