@@ -111,11 +111,11 @@ describe("xai video generation provider", () => {
     expect(provider.defaultModel).toBe("grok-imagine-video");
     expect(provider.models).toEqual(["grok-imagine-video", "grok-imagine-video-1.5"]);
     expect(provider.catalogByModel?.["grok-imagine-video-1.5"]).toMatchObject({
-      modes: ["imageToVideo"],
+      modes: ["generate", "imageToVideo"],
       capabilities: {
         imageToVideo: {
           enabled: true,
-          maxInputImages: 1,
+          maxInputImages: 9,
           resolutions: ["480P", "720P", "1080P"],
         },
         videoToVideo: { enabled: false },
@@ -134,7 +134,7 @@ describe("xai video generation provider", () => {
       });
       expect(capabilities?.imageToVideo).toMatchObject({
         enabled: true,
-        maxInputImages: 1,
+        maxInputImages: 9,
         maxDurationSeconds: 15,
         resolutions: ["480P", "720P", "1080P"],
       });
@@ -142,7 +142,7 @@ describe("xai video generation provider", () => {
     }
   });
 
-  it("uses the 1.5 default while preserving aliases, 1080p, and source aspect ratio", async () => {
+  it("supports 1.5 image modes while preserving aliases and mode-specific geometry", async () => {
     const models = [
       "grok-imagine-video-1.5",
       "grok-imagine-video-1.5-preview",
@@ -150,47 +150,79 @@ describe("xai video generation provider", () => {
     ];
     const provider = buildXaiVideoGenerationProvider();
 
-    for (const [index, model] of models.entries()) {
-      const requestId = `req_15_${index}`;
-      postJsonRequestMock.mockResolvedValueOnce({
-        response: Response.json({ request_id: requestId }),
-        release: vi.fn(async () => {}),
-      });
-      fetchWithTimeoutMock
-        .mockResolvedValueOnce(
-          Response.json({
-            request_id: requestId,
-            status: "done",
-            video: { url: `https://cdn.x.ai/${requestId}.mp4` },
-          }),
-        )
-        .mockResolvedValueOnce({
-          headers: new Headers({ "content-type": "video/mp4" }),
-          arrayBuffer: async () => Buffer.from("video-bytes"),
+    const firstFrame = { url: "https://example.com/first.png", role: "first_frame" };
+    const lastFrame = { url: "https://example.com/last.png", role: "last_frame" };
+    const references = Array.from({ length: 7 }, (_, index) => ({
+      url: `https://example.com/reference-${index}.png`,
+      role: "reference_image",
+    }));
+    const cases = [
+      { images: [], expected: {}, referenceMode: false },
+      {
+        images: [{ url: firstFrame.url }],
+        expected: { image: { url: firstFrame.url } },
+        referenceMode: false,
+      },
+      {
+        images: [references[0]],
+        expected: { reference_images: [{ url: references[0].url }] },
+        referenceMode: true,
+      },
+      {
+        images: [lastFrame],
+        expected: { last_frame: { url: lastFrame.url } },
+        referenceMode: true,
+      },
+      {
+        images: [lastFrame, firstFrame],
+        expected: { image: { url: firstFrame.url }, last_frame: { url: lastFrame.url } },
+        referenceMode: true,
+      },
+      {
+        // Put the references first so list order cannot turn one into the pinned frame.
+        images: [...references, lastFrame, firstFrame],
+        expected: {
+          image: { url: firstFrame.url },
+          last_frame: { url: lastFrame.url },
+          reference_images: references.map(({ url }) => ({ url })),
+        },
+        referenceMode: true,
+      },
+    ];
+    let callIndex = 0;
+    for (const model of models) {
+      for (const testCase of cases) {
+        mockXaiVideoTask({
+          requestId: `req_15_${callIndex}`,
+          videoUrl: `https://cdn.x.ai/video-${callIndex}.mp4`,
+          videoBytes: "video-bytes",
         });
-
-      const result = await provider.generateVideo({
-        provider: "xai",
-        model,
-        prompt: "Animate this still image",
-        cfg: {},
-        durationSeconds: 20,
-        resolution: index === 0 ? undefined : "1080P",
-        inputImages: [
-          {
-            url: "https://example.com/first-frame.png",
-            ...(index === 0 ? {} : { role: "first_frame" as const }),
-          },
-        ],
-      });
-
-      const body = requirePostJsonCall(index).body ?? {};
-      expect(body.model).toBe(model);
-      expect(body.image).toEqual({ url: "https://example.com/first-frame.png" });
-      expect(body.duration).toBe(15);
-      expect(body.resolution).toBe(index === 0 ? "480p" : "1080p");
-      expect(body).not.toHaveProperty("aspect_ratio");
-      expect(result.model).toBe(model);
+        const result = await provider.generateVideo({
+          provider: "xai",
+          model,
+          prompt: "Animate the supplied frames and references",
+          cfg: {},
+          durationSeconds: 20,
+          resolution: testCase.images.length === 0 ? undefined : "1080P",
+          inputImages: testCase.images,
+        });
+        const body = requirePostJsonCall(callIndex++).body ?? {};
+        expect(body).toEqual({
+          model,
+          prompt: "Animate the supplied frames and references",
+          ...testCase.expected,
+          duration: 15,
+          resolution:
+            testCase.images.length === 0 ? "480p" : testCase.referenceMode ? "720p" : "1080p",
+          ...(testCase.referenceMode || testCase.images.length === 0
+            ? { aspect_ratio: "16:9" }
+            : {}),
+        });
+        expect(result.model).toBe(model);
+        expect(result.metadata?.mode).toBe(
+          testCase.referenceMode ? "referenceToVideo" : "generate",
+        );
+      }
     }
   });
 
@@ -201,13 +233,30 @@ describe("xai video generation provider", () => {
     > = [
       {
         model: "grok-imagine-video-1.5",
-        inputImages: undefined,
-        error: "xAI grok-imagine-video-1.5 requires exactly one first-frame image.",
+        inputImages: [
+          { url: "https://example.com/last.png", role: "last_frame" },
+          { url: "https://example.com/other.png", role: "last_frame" },
+        ],
+        error: "xAI video generation supports at most one last-frame image.",
       },
       {
         model: "grok-imagine-video-1.5-preview",
-        inputImages: [{ url: "https://example.com/reference.png", role: "reference_image" }],
-        error: "xAI grok-imagine-video-1.5 supports only an ordinary or first_frame image.",
+        inputImages: [{ url: "https://example.com/reference.png", role: "unknown" }],
+        error:
+          "xAI video generation supports only first_frame, last_frame, and reference_image roles.",
+      },
+      {
+        model: "grok-imagine-video-1.5",
+        inputImages: Array.from({ length: 8 }, () => ({
+          url: "https://example.com/ref.png",
+          role: "reference_image",
+        })),
+        error: "xAI reference-image video generation supports at most 7 reference images.",
+      },
+      {
+        model: "grok-imagine-video",
+        inputImages: [{ url: "https://example.com/last.png", role: "last_frame" }],
+        error: "xAI last_frame inputs require grok-imagine-video-1.5.",
       },
       {
         model: "grok-imagine-video-1.5-2026-05-30",
@@ -215,7 +264,7 @@ describe("xai video generation provider", () => {
           { url: "https://example.com/first.png" },
           { url: "https://example.com/second.png", role: "first_frame" },
         ],
-        error: "xAI grok-imagine-video-1.5 requires exactly one first-frame image.",
+        error: "xAI image-to-video generation supports at most one first-frame image.",
       },
       {
         model: "grok-imagine-video-1.5",
