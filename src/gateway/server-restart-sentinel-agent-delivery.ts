@@ -625,6 +625,7 @@ export async function deliverQueuedGeneratedMediaAgentTurn(params: {
         ...(cronSessionId ? { allowSyntheticCronRunContinuation: true } : {}),
         expectFinal: true,
         ...(binding ? { assertAdmissionCurrent: assertRequesterAdmissionCurrent } : {}),
+        taskOrigin: entry.taskOrigin,
         forceSyntheticClient: true,
         runtimeContextFragments:
           (entry.expectedMediaUrls?.length ?? 0) > 0

@@ -15,6 +15,7 @@ import {
   summarizeSpawnError,
   type SpawnBackendAdapter,
 } from "../../spawn-pipeline.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import { getGatewayToolCallerIdentity } from "../../tools/gateway-caller-context.js";
 import { cleanupMaterializedSubagentAttachments } from "../subagent-attachment-cleanup.js";
 import { activateSwarmRun } from "../swarm/swarm-scheduler.js";
@@ -59,6 +60,7 @@ export async function spawnSubagentDirect(
   ctx: SpawnSubagentContext,
 ): Promise<SpawnSubagentResult> {
   const assertActive = ctx.assertActive;
+  const taskOrigin = normalizeTaskOriginSnapshot(getGatewayToolCallerIdentity()?.taskOrigin);
   const promptedAt = Date.now();
   const task = params.task;
   const label = params.label?.trim() || "";
@@ -556,6 +558,7 @@ export async function spawnSubagentDirect(
         return {
           runId,
           requesterTurnRunId: ctx.requesterTurnRunId,
+          taskOrigin,
           childSessionKey,
           controllerSessionKey: ownership.controllerSessionKey,
           requesterSessionKey: ownership.completionRequesterSessionKey,

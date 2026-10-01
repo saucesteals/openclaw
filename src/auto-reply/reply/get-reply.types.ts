@@ -48,6 +48,8 @@ type InternalReplySessionOptions = {
   /** Rechecks the live Gateway caller before a chat login has a durable effect. */
   assertProviderLoginAuthority?: () => void;
   getProviderLoginConfig?: () => OpenClawConfig;
+  /** Host-selected system-event attribution; never read from message text. */
+  inheritedTaskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
   /** Invocation-owned conversation facts; never execution or sender authority. */
   replyConversation?: PreparedReplyConversation;
   prepareAssistantTranscriptMessage?: PrepareAssistantTranscriptMessage;

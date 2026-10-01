@@ -6,6 +6,7 @@ import { parseAgentSessionKey } from "../routing/session-key.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "./task-origin.js";
 
 const scopeRegistryKey = Symbol.for("openclaw.agentHarnessCompletionScope.registry");
 
@@ -21,6 +22,7 @@ function getScopeRegistry(): ScopeRegistry {
 }
 
 export type AgentHarnessCompletionScope = {
+  readonly taskOrigin?: TaskOriginSnapshot;
   readonly requesterSessionKey: string;
   readonly requesterAgentId: string;
   readonly requesterOrigin?: DeliveryContext;
@@ -28,6 +30,7 @@ export type AgentHarnessCompletionScope = {
 
 /** Creates a host-issued requester scope for agent harness completion. */
 export function createAgentHarnessCompletionScope(params: {
+  taskOrigin?: TaskOriginSnapshot;
   requesterSessionKey: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
@@ -44,6 +47,7 @@ export function createAgentHarnessCompletionScope(params: {
   }
   const requesterOrigin = normalizeDeliveryContext(params.requesterOrigin);
   const scope: AgentHarnessCompletionScope = {
+    taskOrigin: normalizeTaskOriginSnapshot(params.taskOrigin),
     requesterSessionKey,
     requesterAgentId,
     ...(requesterOrigin ? { requesterOrigin } : {}),

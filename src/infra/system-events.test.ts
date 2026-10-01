@@ -29,6 +29,7 @@ import {
   peekSystemEvents,
   resetSystemEventsForTest,
   resolveSystemEventDeliveryContext,
+  resolveSystemEventTaskOrigin,
   type SystemEvent,
 } from "./system-events.js";
 
@@ -89,6 +90,32 @@ describe("system events (session routing)", () => {
     const discord = await drainFormattedEvents("agent:main:discord:group:123");
     expect(discord).toMatch(/System:\s+\[[^\]]+\] Discord reaction added: ✅/);
     expect(peekSystemEvents("agent:main:discord:group:123")).toStrictEqual([]);
+  });
+
+  it("preserves queued origin and never assigns mixed events to the latest sender", () => {
+    const origin = {
+      version: 1,
+      status: "known",
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "source",
+      sourceRunId: "run",
+    } as const;
+    const key = "agent:main:origin";
+    enqueueSystemEvent("Reminder", { sessionKey: key, taskOrigin: origin });
+    expect(resolveSystemEventTaskOrigin(peekSystemEventEntries(key))).toEqual(origin);
+    // Equal text from another principal must not be deduplicated into the first event.
+    enqueueSystemEvent("Reminder", {
+      sessionKey: key,
+      taskOrigin: { ...origin, senderId: "owner" },
+    });
+    expect(peekSystemEventEntries(key)).toHaveLength(2);
+    expect(resolveSystemEventTaskOrigin(peekSystemEventEntries(key))).toEqual({
+      version: 1,
+      status: "unknown",
+    });
+    expect(drainSystemEventEntries(key)[0]?.taskOrigin).toEqual(origin);
+    expect(resolveSystemEventTaskOrigin([])).toEqual({ version: 1, status: "unknown" });
   });
 
   it("requires an explicit session key", () => {

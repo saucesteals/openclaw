@@ -351,6 +351,42 @@ describe("agent runtime identity token", () => {
       });
     },
   );
+  it("round-trips the authenticated plugin owner and turn-source route", async () => {
+    const taskOrigin = {
+      version: 1 as const,
+      status: "known" as const,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "session-1",
+      sourceRunId: "original-run",
+    };
+    useTempHome();
+    const runtimeToken = await importRuntimeTokenModule();
+    const token = await runtimeToken.mintAgentRuntimeIdentityToken({
+      agentId: "main",
+      sessionKey: "session-1",
+      ...operationalRun(),
+      approvalOwnerPluginId: " codex ",
+      taskOrigin,
+      turnSourceChannel: " telegram ",
+      turnSourceTo: " chat-1 ",
+      turnSourceAccountId: " Work ",
+      turnSourceThreadId: " thread-1 ",
+    });
+
+    await expect(runtimeToken.verifyAgentRuntimeIdentityToken(token)).resolves.toMatchObject({
+      kind: "agentRuntime",
+      agentId: "main",
+      sessionKey: "session-1",
+      operationalRunInstance: operationalRun().operationalRunInstance,
+      approvalOwnerPluginId: "codex",
+      taskOrigin,
+      turnSourceChannel: "telegram",
+      turnSourceTo: "chat-1",
+      turnSourceAccountId: "work",
+      turnSourceThreadId: "thread-1",
+    });
+  });
 
   it("round-trips explicit local turn provenance without inferring it from the session key", async () => {
     useTempHome();

@@ -3,6 +3,7 @@
  */
 import {
   isAgentHarnessCompletionCustodyCurrent,
+  resolveAgentHarnessCompletionCustodyScope,
   runWithAgentHarnessCompletionCustody,
   type AgentHarnessCompletionCustody,
 } from "../agents/agent-harness-completion-custody.js";
@@ -30,6 +31,7 @@ import {
   resolveAnnounceOrigin,
   resolveSubagentCompletionOrigin,
 } from "../agents/subagents/announce/subagent-announce-origin.js";
+import { normalizeTaskOriginSnapshot } from "../agents/task-origin.js";
 import {
   getGatewayContextResolver,
   withPluginRuntimeGatewayContextResolver,
@@ -70,8 +72,11 @@ export async function deliverAgentHarnessCompletion(params: {
   /** Plugin-owned historical locator can narrow admission, never grant ownership. */
   expectedRequester?: { sessionId: string; lifecycleRevision?: string };
 }): Promise<AgentHarnessCompletionDelivery> {
-  const scope = assertAgentHarnessCompletionScope(params.scope);
+  const requestedScope = assertAgentHarnessCompletionScope(params.scope);
   const completionCustody = params.completionCustody;
+  const scope = completionCustody
+    ? resolveAgentHarnessCompletionCustodyScope(completionCustody, requestedScope)
+    : requestedScope;
   const signal = completionCustody
     ? AbortSignal.any([completionCustody.signal, ...(params.signal ? [params.signal] : [])])
     : params.signal;
@@ -122,6 +127,7 @@ export async function deliverAgentHarnessCompletion(params: {
     {
       type: AGENT_INTERNAL_EVENT_TYPE_TASK_COMPLETION,
       source: "subagent",
+      taskOrigin: normalizeTaskOriginSnapshot(scope.taskOrigin),
       childSessionKey,
       childSessionId,
       announceType,

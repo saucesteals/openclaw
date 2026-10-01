@@ -32,6 +32,7 @@ import {
   formatAgentInternalEventsForPrompt,
   type AgentInternalEvent,
 } from "../../internal-events.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import { admitCorrelatedSubagentSessionDelivery } from "../completion/subagent-completion-delivery.js";
 import { getSubagentDepthFromSessionStore } from "../spawn/subagent-depth.js";
 import { maybeSteerSubagentAnnounce } from "./subagent-announce-active-wake.js";
@@ -190,6 +191,16 @@ export async function deliverSubagentAnnouncement(
             ? "message_tool_only"
             : "automatic";
       const expectedMedia = collectExpectedMediaFromInternalEvents(params.internalEvents);
+      const taskOrigins = (params.internalEvents ?? []).map((event) =>
+        normalizeTaskOriginSnapshot(
+          event.type === "task_completion" ? event.taskOrigin : undefined,
+        ),
+      );
+      const taskOrigin =
+        taskOrigins.length > 0 &&
+        taskOrigins.every((origin) => JSON.stringify(origin) === JSON.stringify(taskOrigins[0]))
+          ? taskOrigins[0]
+          : normalizeTaskOriginSnapshot(undefined);
       const queuePayload = {
         kind: "agentTurn",
         sessionKey: canonicalSessionKey,
@@ -197,6 +208,7 @@ export async function deliverSubagentAnnouncement(
         messageId: `${params.directIdempotencyKey}:agent-loop`,
         route: queuedRoute.route,
         ...(queuedRoute.deliveryContext ? { deliveryContext: queuedRoute.deliveryContext } : {}),
+        taskOrigin,
         inputProvenance: {
           kind: "inter_session",
           ...(params.sourceSessionKey ? { sourceSessionKey: params.sourceSessionKey } : {}),
