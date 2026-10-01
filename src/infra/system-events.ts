@@ -6,6 +6,7 @@ import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../agents/task-origin.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { channelRouteDedupeKey } from "../plugin-sdk/channel-route.js";
 import { parseAgentSessionKey } from "../routing/session-key.js";
@@ -45,6 +46,7 @@ export type SystemEvent = {
   /** Queued by work a conversation turn started, not heartbeat or automation work. */
   fromConversationTurn?: true;
   sessionStorePath?: string | null;
+  taskOrigin?: TaskOriginSnapshot;
 };
 
 const MAX_EVENTS = 20;
@@ -124,6 +126,7 @@ type SystemEventOptions = {
   contextKey?: string | null;
   deliveryContext?: DeliveryContext;
   fromConversationTurn?: boolean;
+  taskOrigin?: TaskOriginSnapshot;
   /** Replace the pending event for this context and delivery route. Requires contextKey. */
   replace?: boolean;
 };
@@ -242,12 +245,19 @@ function enqueueOwnedSystemEventEntry(
       throw new Error("replaced system events require a contextKey");
     }
     const matching = entry.queue.filter(matches);
-    if (matching.length === 1 && matching[0]?.text === cleaned) {
+    if (
+      matching.length === 1 &&
+      matching[0]?.text === cleaned &&
+      sameTaskOrigin(matching[0].taskOrigin, options.taskOrigin)
+    ) {
       return null;
     }
   } else if (receiptOptions?.allowDuplicate !== true) {
     const duplicate = (event: SystemEvent | undefined) =>
-      event !== undefined && event.text === cleaned && matches(event);
+      event !== undefined &&
+      event.text === cleaned &&
+      sameTaskOrigin(event.taskOrigin, options.taskOrigin) &&
+      matches(event);
     if (
       normalizedContextKey === null ? duplicate(entry.queue.at(-1)) : entry.queue.some(duplicate)
     ) {
@@ -277,6 +287,9 @@ function enqueueOwnedSystemEventEntry(
       ...(sessionStorePath === undefined ? {} : { sessionStorePath }),
       contextKey: normalizedContextKey,
       deliveryContext: normalizedDeliveryContext,
+      ...(options.taskOrigin
+        ? { taskOrigin: normalizeTaskOriginSnapshot(options.taskOrigin) }
+        : {}),
       ...(options.fromConversationTurn ? { fromConversationTurn: true as const } : {}),
     },
     readExecRequestOwners(options),
@@ -417,6 +430,7 @@ function matchesConsumedSystemEvent(queued: SystemEvent, consumed: SystemEvent):
   }
   return (
     queued.text === consumed.text &&
+    sameTaskOrigin(queued.taskOrigin, consumed.taskOrigin) &&
     queued.ts === consumed.ts &&
     (queued.contextKey ?? null) === (consumed.contextKey ?? null) &&
     areDeliveryContextsEqual(queued.deliveryContext, consumed.deliveryContext)
@@ -527,4 +541,23 @@ export function holdSystemEventDelivery(
       event.deliveryHeld = true;
     }
   }
+}
+
+function sameTaskOrigin(
+  left: TaskOriginSnapshot | undefined,
+  right: TaskOriginSnapshot | undefined,
+): boolean {
+  return (
+    JSON.stringify(normalizeTaskOriginSnapshot(left)) ===
+    JSON.stringify(normalizeTaskOriginSnapshot(right))
+  );
+}
+
+/** A coalesced wake cannot borrow any one participant's origin. */
+export function resolveSystemEventTaskOrigin(events: readonly SystemEvent[]): TaskOriginSnapshot {
+  const origins = events.map((event) => normalizeTaskOriginSnapshot(event.taskOrigin));
+  const first = origins[0];
+  return first && origins.every((origin) => sameTaskOrigin(origin, first))
+    ? first
+    : normalizeTaskOriginSnapshot(undefined);
 }

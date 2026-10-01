@@ -1,13 +1,9 @@
 import path from "node:path";
 import {
   collectAmbiguousAutomaticMediaUrls,
-  collectAutomaticDeliveredMediaUrls,
-  collectDeliveredMediaUrls,
   getAgentCommandDeliveryFailure,
   getGatewayAgentResult,
-  hasCommittedOutboundDeliveryEvidence,
   hasCompleteAutomaticMediaDeliveryOutcomeEvidence,
-  hasExplicitlyVisibleAgentPayload,
   type AgentDeliveryEvidence,
 } from "../agents/embedded-agent-runner/delivery-evidence.js";
 import {
@@ -56,6 +52,11 @@ import {
 } from "./managed-image-attachments.js";
 import type { GatewayContextResolver } from "./server-methods/types.js";
 import { dispatchGatewayLifecycleMethod as dispatchGatewayMethodInProcess } from "./server-recovery-runtime-context.js";
+import {
+  collectQueuedDeliveredMediaUrls,
+  hasQueuedVisibleReplyEvidence,
+  hasUnexpectedRecoverySideEffects,
+} from "./server-restart-sentinel-agent-delivery-evidence.js";
 import { loadSessionEntry } from "./session-utils.js";
 
 const log = createSubsystemLogger("gateway/restart-sentinel");
@@ -75,74 +76,9 @@ async function deadLetterSessionDelivery(
   throw new SessionDeliveryDeadLetteredError(reason);
 }
 
-function hasQueuedVisibleAgentPayload(result: Pick<AgentDeliveryEvidence, "payloads">): boolean {
-  return Array.isArray(result.payloads) && result.payloads.some(hasExplicitlyVisibleAgentPayload);
-}
-
-function hasUnexpectedRecoverySideEffects(result: AgentDeliveryEvidence): boolean {
-  return (
-    result.restartUnsafeSideEffectsDetected === true ||
-    result.messagingToolAggregateEvidenceUnaccounted === true ||
-    result.messagingToolSentTargetsTruncated === true ||
-    result.didSendDeterministicApprovalPrompt === true ||
-    hasCommittedOutboundDeliveryEvidence(result)
-  );
-}
-
 function resolveQueuedAgentRunId(entry: QueuedAgentTurnSessionDelivery) {
   const base = entry.idempotencyKey ?? entry.messageId;
   return entry.agentRunAttempt ? `${base}:attempt:${entry.agentRunAttempt}` : base;
-}
-
-function collectVisiblePayloadMediaUrls(result: AgentDeliveryEvidence): string[] {
-  const payloads = Array.isArray(result.payloads) ? result.payloads : [];
-  return collectDeliveredMediaUrls({ payloads: payloads.filter(hasExplicitlyVisibleAgentPayload) });
-}
-
-function collectQueuedDeliveredMediaUrls(params: {
-  result: AgentDeliveryEvidence;
-  route: SessionDeliveryRoute;
-}): string[] {
-  if (params.route.channel === INTERNAL_MESSAGE_CHANNEL) {
-    return collectVisiblePayloadMediaUrls(params.result);
-  }
-  return collectAutomaticDeliveredMediaUrls(params.result);
-}
-
-function hasAutomaticVisibleSendEvidence(result: AgentDeliveryEvidence): boolean {
-  if (result.deliveryStatus?.status === "sent" || result.deliveryStatus?.status === "suppressed") {
-    return hasQueuedVisibleAgentPayload(result);
-  }
-  const payloads = Array.isArray(result.payloads) ? result.payloads : [];
-  const outcomes = Array.isArray(result.deliveryStatus?.payloadOutcomes)
-    ? result.deliveryStatus.payloadOutcomes
-    : [];
-  return outcomes.some((outcome) => {
-    if (!outcome || typeof outcome !== "object" || Array.isArray(outcome)) {
-      return false;
-    }
-    const record = outcome as Record<string, unknown>;
-    if (
-      record.status !== "sent" &&
-      record.status !== "suppressed" &&
-      record.sentBeforeError !== true
-    ) {
-      return false;
-    }
-    const index =
-      typeof record.index === "number" && Number.isInteger(record.index) ? record.index : undefined;
-    return index !== undefined && hasExplicitlyVisibleAgentPayload(payloads[index]);
-  });
-}
-
-function hasQueuedVisibleReplyEvidence(params: {
-  result: AgentDeliveryEvidence;
-  route: SessionDeliveryRoute;
-}): boolean {
-  if (params.route.channel === INTERNAL_MESSAGE_CHANNEL) {
-    return hasQueuedVisibleAgentPayload(params.result);
-  }
-  return hasAutomaticVisibleSendEvidence(params.result);
 }
 
 async function evaluateQueuedGeneratedMediaAgentResult(params: {
@@ -643,6 +579,7 @@ export async function deliverQueuedGeneratedMediaAgentTurn(params: {
         ...(cronSessionId ? { allowSyntheticCronRunContinuation: true } : {}),
         expectFinal: true,
         ...(binding ? { assertAdmissionCurrent: assertRequesterAdmissionCurrent } : {}),
+        taskOrigin: entry.taskOrigin,
         forceSyntheticClient: true,
         runtimeContextFragments:
           (entry.expectedMediaUrls?.length ?? 0) > 0

@@ -29,6 +29,7 @@ import type { CronExecutionIdentityAdmission } from "./service/state.js";
 
 /** Owns one cron tool admission and its private message grant through settlement. */
 export function prepareCronRunAdmission(params: {
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   admissionSource?: AdmittedRunContext["admissionSource"];
   cfg: OpenClawConfig;
   agentId: string;
@@ -51,6 +52,7 @@ export function prepareCronRunAdmission(params: {
   let assertAdmitted: (() => void) | undefined;
   const basePreparedRunAdmission = prepareAgentRunAdmission({
     operationalRunInstance,
+    taskOrigin: params.taskOrigin,
     admissionSource: params.admissionSource,
     cfg: params.cfg,
     facts: {
