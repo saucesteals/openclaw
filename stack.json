@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "230eac71b015caae74c30460dd183ebb03b6148a",
-  "head": "465c39df753bc9efc26a7aeb5f84ef6f74994e47",
+  "prev": "6528134da9b4e6e0d18c342c0f3cddf90ee68f26",
+  "head": "b422f84f9c31c43b5b11c24aff054ecb0264ddef",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -13,47 +13,43 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "version-bump",
-    "refresh-temp"
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
-      "oid": "56f54a09787888cbccb8853f5ecf6d31db2d2619"
+      "oid": "cc69a5b57c0b3d31e76785944d65e2eadd23849c"
     },
     "feat-exec-session-key": {
       "oid": "2beca53d94fdf9665150dac079215aca01188fad"
     },
     "fix-channel-admission-evidence": {
-      "oid": "e74d77988c0f4fcd15a28811cb55100366da9b12"
+      "oid": "c29f573f32b677ebb1e5621ab271f675d359777c"
     },
     "fix-codex-installer-alias": {
-      "oid": "e43de28e0729501f51d3c347fdf9ef1d396f3b3e"
+      "oid": "16ef608522f304defba2962e1014afba8ac10013"
     },
     "fix-media-completion-tools": {
-      "oid": "6e2fe1f53575d0b0bd7c542d1c1e29bae2897180"
+      "oid": "e6e36867e037651c44054ca7c24c2390f9d0f930"
     },
     "fix-media-failure-status": {
-      "oid": "6c7dbe0777a05a4958be284cf0f1a9048a4353d7"
+      "oid": "d92cbb3d5743f8f433c03cec659ad3e1ada28315"
     },
     "fix-media-selected-delivery": {
-      "oid": "18cd3ed23a5fd91294d47dd9b69321758bd42325"
+      "oid": "1bae744f4f335dc84bd13ac23f66cb4deab4368d"
     },
     "fix-progress-error-rollout": {
-      "oid": "c8758c98787eca0de749f5ad8ee71a3683229779"
+      "oid": "ac4ceb5023c2cf6630b35bf6a9496a423283d50f"
     },
     "fix-request-origin-context": {
-      "oid": "d57d4b05498d9fe55349409e539b704673bbe5da"
+      "oid": "0c17fceffab21df28c4e112777d443e9c73b8a59"
     },
     "fix-xai-video15-inputs": {
-      "oid": "8a80fc9db8914bf8b3597989407000b0caf13b6c"
-    },
-    "refresh-temp": {
-      "oid": "465c39df753bc9efc26a7aeb5f84ef6f74994e47"
+      "oid": "2f437c2517fd4c795b3edd376414616ab15fa969"
     },
     "version-bump": {
-      "oid": "2edae36e1d9a727621acb6060713c79d8495bc65"
+      "oid": "b422f84f9c31c43b5b11c24aff054ecb0264ddef"
     }
   }
 }
