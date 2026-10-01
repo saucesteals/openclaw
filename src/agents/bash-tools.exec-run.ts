@@ -450,6 +450,7 @@ export function createExecTool(
           pluginEnv: resolvedExecEnvState?.pluginEnv,
           storeEnv: host === "gateway" ? storeEnv.env : undefined,
           storeSecretEnv: useSecretEgress ? storeEnv.secretSentinels : undefined,
+          sessionKey: defaults?.sessionKey,
           ...preparedRunEnvironment,
           warnings,
         });
