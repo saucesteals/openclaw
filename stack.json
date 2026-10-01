@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "30a7fd8203f4ebeb76d66d740a3f63bae38fd2a2",
-  "head": "93c561d95ee596638d01da0d3176090dbc42a9a5",
+  "prev": "ca5c6706af57056d4903916e35460cf16f346bf6",
+  "head": "1d5e85706bcdf6388354381799ee71fe9ede13ef",
   "applied": [
     "feat-exec-session-key",
     "fix-discord-gateway-delegation",
@@ -14,7 +14,8 @@
     "fix-discord-reply-quote",
     "remove-unscheduled-reminder-note",
     "fix-progress-error-rollout",
-    "fix-upstream-integration"
+    "fix-upstream-integration",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -54,6 +55,9 @@
     },
     "remove-unscheduled-reminder-note": {
       "oid": "a8af78fd54536ded1cc9758abcfa5c4658d73a35"
+    },
+    "version-bump": {
+      "oid": "1d5e85706bcdf6388354381799ee71fe9ede13ef"
     }
   }
 }
