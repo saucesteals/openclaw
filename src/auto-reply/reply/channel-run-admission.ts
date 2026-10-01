@@ -5,6 +5,7 @@ import {
   type AdmittedRunOperatorAuthority,
   type PreparedAgentRunAdmission,
 } from "../../agents/admitted-run-context.js";
+import { captureTaskOrigin } from "../../agents/task-origin.js";
 import type { ExecutionIdentityAdmissionFacts } from "../../audit/execution-identity-admission.js";
 import {
   consumeChannelAdmissionEvidence,
@@ -16,6 +17,7 @@ import {
   readGatewayLocalUserIngressFacts,
   type GatewayLocalUserIngress,
 } from "../../gateway/local-user-ingress.js";
+import type { FollowupRun } from "./queue/types.js";
 
 /** Adapt reply ingress to admission; authenticated Gateway attach has no plugin-channel decision. */
 function consumeChannelRunAdmission(
@@ -81,6 +83,7 @@ export function prepareChannelRunAdmission(params: {
   gatewayLocalUserIngress?: GatewayLocalUserIngress;
   assertSourceCurrent?: () => void;
   operatorAuthority?: AdmittedRunOperatorAuthority;
+  taskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
   onAdmitted?: (context: AdmittedRunContext) => void;
 }): PreparedAgentRunAdmission {
   const operationalRunInstance = createOperationalRunInstanceRef(params.runId);
@@ -116,6 +119,7 @@ export function prepareChannelRunAdmission(params: {
         prepared = prepareAgentRunAdmission({
           cfg: params.cfg,
           assertSourceCurrent: params.assertSourceCurrent,
+          taskOrigin: params.taskOrigin,
           operationalRunInstance,
           operatorAuthority: params.operatorAuthority,
           facts: {
@@ -140,5 +144,30 @@ export function prepareChannelRunAdmission(params: {
       closed = true;
       prepared?.close();
     },
+  });
+}
+
+/** The same exact source facts bind live admission and its durable recovery claim. */
+export function captureChannelTaskOrigin(
+  followupRun: FollowupRun,
+  sourceRunId: string,
+  sessionKey?: string,
+  lifecycleGeneration?: string,
+  sourceSessionId = followupRun.run.sessionId,
+) {
+  return captureTaskOrigin({
+    inherited: followupRun.taskOrigin,
+    external:
+      !followupRun.run.inputProvenance || followupRun.run.inputProvenance.kind === "external_user",
+    channel: followupRun.run.messageProvider,
+    accountId: followupRun.run.agentAccountId,
+    senderId: followupRun.run.senderId,
+    sourceSessionKey: sessionKey,
+    sourceSessionId,
+    sourceRunId,
+    sourceSessionLifecycleRevision: lifecycleGeneration,
+    audience: followupRun.originatingTo,
+    groupSpace: followupRun.run.groupSpace,
+    threadId: followupRun.originatingThreadId,
   });
 }

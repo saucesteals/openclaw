@@ -1,5 +1,6 @@
 import { ensureSystemPromptCacheBoundary } from "@openclaw/ai/internal/shared";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { isConfiguredCommandOwner } from "../../../auto-reply/command-auth.js";
 import { filterHeartbeatTranscriptArtifacts } from "../../../auto-reply/heartbeat-filter.js";
 import { getRuntimeConfig } from "../../../config/config.js";
 import { createRuntimeConfigReader } from "../../../config/runtime-snapshot.js";
@@ -34,6 +35,7 @@ import {
   appendModelIdentitySystemPrompt,
   buildModelIdentityPromptLine,
 } from "../../system-prompt.js";
+import { buildTaskOriginContext } from "../../task-origin.js";
 import { log } from "../logger.js";
 import { normalizeAssistantReplayContent } from "../replay-history.js";
 import {
@@ -420,6 +422,9 @@ type PromptContextAttempt = Pick<
   | "currentInboundEventKind"
   | "internalEvents"
   | "runtimeContextFragments"
+  | "admittedRunContext"
+  | "inputProvenance"
+  | "trigger"
   | "sessionId"
   | "sessionKey"
   | "suppressNextUserMessagePersistence"
@@ -517,6 +522,20 @@ export async function prepareEmbeddedAttemptPromptContext(input: {
 
   const escapedProjection = !input.isRawModelRun && usesEscapedRuntimeContext(input.sessionVersion);
   const eventFragments: RuntimeContextFragment[] = [
+    {
+      kind: "runtime-instruction",
+      text: buildTaskOriginContext({
+        taskOrigin: attempt.admittedRunContext?.taskOrigin,
+        ownerStatus:
+          attempt.admittedRunContext?.taskOrigin?.status === "known" && attempt.config
+            ? isConfiguredCommandOwner(attempt.config, attempt.admittedRunContext.taskOrigin)
+              ? "configured_owner"
+              : "not_configured_owner"
+            : "unknown",
+        inputProvenance: attempt.inputProvenance,
+        trigger: attempt.trigger,
+      }),
+    },
     ...buildAgentInternalEventContext(attempt.internalEvents),
     ...(attempt.runtimeContextFragments ?? []),
     ...(input.prompt.originContext
