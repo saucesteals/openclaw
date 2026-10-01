@@ -104,21 +104,8 @@ function isFirstFrameImage(input: VideoGenerationSourceAsset): boolean {
   return role === undefined || role === "first_frame";
 }
 
-function validateXaiVideo15Request(req: VideoGenerationRequest): void {
-  if (!isXaiVideo15Model(req.model)) {
-    return;
-  }
-  if ((req.inputVideos?.length ?? 0) > 0) {
-    throw new Error("xAI grok-imagine-video-1.5 does not support video inputs.");
-  }
-  const inputImages = req.inputImages ?? [];
-  const [inputImage, ...additionalImages] = inputImages;
-  if (!inputImage || additionalImages.length > 0) {
-    throw new Error("xAI grok-imagine-video-1.5 requires exactly one first-frame image.");
-  }
-  if (!isFirstFrameImage(inputImage)) {
-    throw new Error("xAI grok-imagine-video-1.5 supports only an ordinary or first_frame image.");
-  }
+function isLastFrameImage(input: VideoGenerationSourceAsset): boolean {
+  return normalizeOptionalString(input.role)?.toLowerCase() === "last_frame";
 }
 
 function resolveInputVideoUrl(input: VideoGenerationSourceAsset | undefined): string | undefined {
@@ -175,18 +162,34 @@ function resolveResolution(
 }
 
 function prepareCreateRequest(req: VideoGenerationRequest) {
-  validateXaiVideo15Request(req);
+  const isVideo15 = isXaiVideo15Model(req.model);
   const inputImages = req.inputImages ?? [];
-  const hasReferenceImages = inputImages.some(isReferenceImage);
-  if (hasReferenceImages && !inputImages.every(isReferenceImage)) {
+  const firstFrames = inputImages.filter(isFirstFrameImage);
+  const lastFrames = inputImages.filter(isLastFrameImage);
+  const referenceImages = inputImages.filter(isReferenceImage);
+  if (isVideo15 && (req.inputVideos?.length ?? 0) > 0) {
+    throw new Error("xAI grok-imagine-video-1.5 does not support video inputs.");
+  }
+  if (firstFrames.length + lastFrames.length + referenceImages.length !== inputImages.length) {
+    throw new Error(
+      "xAI video generation supports only first_frame, last_frame, and reference_image roles.",
+    );
+  }
+  if (!isVideo15 && lastFrames.length > 0) {
+    throw new Error("xAI last_frame inputs require grok-imagine-video-1.5.");
+  }
+  if (!isVideo15 && referenceImages.length > 0 && firstFrames.length > 0) {
     throw new Error(
       "xAI reference-image video generation requires every image role to be reference_image.",
     );
   }
-  if (!hasReferenceImages && inputImages.length > 1) {
+  if (firstFrames.length > 1) {
     throw new Error("xAI image-to-video generation supports at most one first-frame image.");
   }
-  if (hasReferenceImages && inputImages.length > 7) {
+  if (lastFrames.length > 1) {
+    throw new Error("xAI video generation supports at most one last-frame image.");
+  }
+  if (referenceImages.length > 7) {
     throw new Error("xAI reference-image video generation supports at most 7 reference images.");
   }
   if ((req.inputVideos?.length ?? 0) > 1) {
@@ -216,29 +219,33 @@ function prepareCreateRequest(req: VideoGenerationRequest) {
     };
   }
 
-  const inputImage = hasReferenceImages ? undefined : inputImages[0];
-  const imageUrl = inputImage ? resolveImageUrl(inputImage) : undefined;
-  if (hasReferenceImages) {
-    body.reference_images = inputImages.map((image) => ({ url: resolveImageUrl(image) }));
-  } else if (imageUrl) {
+  const referenceMode = referenceImages.length > 0 || lastFrames.length > 0;
+  const imageUrl = firstFrames[0] ? resolveImageUrl(firstFrames[0]) : undefined;
+  if (referenceImages.length > 0) {
+    body.reference_images = referenceImages.map((image) => ({ url: resolveImageUrl(image) }));
+  }
+  if (imageUrl) {
     body.image = { url: imageUrl };
   }
+  if (lastFrames[0]) {
+    body.last_frame = { url: resolveImageUrl(lastFrames[0]) };
+  }
   body.duration =
-    resolveDurationSeconds(req.durationSeconds, 1, hasReferenceImages ? 10 : 15) ??
+    resolveDurationSeconds(req.durationSeconds, 1, referenceMode && !isVideo15 ? 10 : 15) ??
     XAI_VIDEO_DEFAULT_DURATION_SECONDS;
   const aspectRatio = resolveAspectRatio(req.aspectRatio);
-  // Image-to-video inherits the source frame's ratio when callers omit it;
-  // text-to-video retains xAI's 16:9 default.
-  if (aspectRatio || !imageUrl) {
+  // Plain image-to-video inherits the source frame's ratio when callers omit it;
+  // text and reference/last-frame modes retain xAI's 16:9 default.
+  if (aspectRatio || !imageUrl || referenceMode) {
     body.aspect_ratio = aspectRatio ?? XAI_VIDEO_DEFAULT_ASPECT_RATIO;
   }
   body.resolution =
     resolveResolution(req.resolution, {
-      allow1080p: !hasReferenceImages && isXaiVideo15Model(req.model),
+      allow1080p: !referenceMode && isVideo15,
     }) ?? XAI_VIDEO_DEFAULT_RESOLUTION;
   return {
     body,
-    mode: hasReferenceImages ? "referenceToVideo" : "generate",
+    mode: referenceMode ? "referenceToVideo" : "generate",
     endpoint: "/videos/generations",
   };
 }
