@@ -80,6 +80,7 @@ export type GatewayClient = Pick<
     /** Host-owned exact media set for a scoped automatic recovery delivery. */
     internalDeliveryMediaUrls?: string[];
     runtimeContextFragments?: RuntimeContextFragment[];
+    taskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
     internalDeliverySuppressText?: boolean;
     /** Host-owned: deliver only authored output, never runtime error payloads. */
     internalDeliverySuppressErrors?: boolean;

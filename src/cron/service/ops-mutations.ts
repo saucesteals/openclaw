@@ -1,6 +1,7 @@
 import { isDeepStrictEqual } from "node:util";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { AgentDeletionCommitUncertainError } from "../../agents/agent-lifecycle-registry.js";
+import { normalizeTaskOriginSnapshot } from "../../agents/task-origin.js";
 import {
   type CronActiveJobMarker,
   noteActiveCronJobRemoval,
@@ -213,6 +214,7 @@ export async function add(
       toolsAllowExecTarget: opts?.toolsAllowExecTarget,
       configuredChannels,
     });
+    job.taskOrigin = normalizeTaskOriginSnapshot(opts?.taskOrigin);
     if (opts?.createdActor) {
       job.createdActor = structuredClone(opts.createdActor);
     }

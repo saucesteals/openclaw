@@ -372,6 +372,9 @@ export async function executePreparedReplyRun(state: PreparedReplyRunAdmission) 
     InputProvenance: inputProvenance,
   });
   const followupRun = {
+    ...(opts?.inheritedTaskOrigin
+      ? { taskOrigin: opts.inheritedTaskOrigin, disableCollectBatching: true }
+      : {}),
     prompt: queuedBody,
     sourceTurnId: resolveReplySourceTurnId({
       sourceTurnId,

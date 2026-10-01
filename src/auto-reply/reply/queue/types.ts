@@ -105,6 +105,7 @@ type FollowupRunObservers = Pick<
 export type FollowupRun = {
   /** External-turn eligibility; queued execution refreshes the session-selected profile. */
   personalBootstrapEligible?: boolean;
+  taskOrigin?: import("../../../agents/task-origin.js").TaskOriginSnapshot;
   prompt: string;
   /** Original admitted source; queued execution must not replace it with a backend run ID. */
   sourceTurnId?: string;

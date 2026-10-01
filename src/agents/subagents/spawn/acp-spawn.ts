@@ -57,7 +57,9 @@ import {
   type PreparedSpawnThreadBinding,
 } from "../../spawn-plan.js";
 import { resolveSpawnedWorkspaceInheritance } from "../../spawned-context.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import type { PreparedSessionPermissionPolicy } from "../../tool-fs-policy.types.js";
+import { getGatewayToolCallerIdentity } from "../../tools/gateway-caller-context.js";
 import { prepareSubagentSessionListReadCache } from "../registry/subagent-registry-state.js";
 import { countUntrackedActiveAcpRunsForOwner } from "./acp-spawn-admission.js";
 import {
@@ -168,6 +170,7 @@ export async function spawnAcpDirect(
   params: SpawnAcpParams,
   ctx: SpawnAcpContext,
 ): Promise<SpawnAcpResult> {
+  const taskOrigin = normalizeTaskOriginSnapshot(getGatewayToolCallerIdentity()?.taskOrigin);
   const cfg = getRuntimeConfig();
   const runTimeoutSeconds = resolveConfiguredSubagentRunTimeoutSeconds({
     cfg,
@@ -669,6 +672,7 @@ export async function spawnAcpDirect(
       return {
         runId,
         requesterTurnRunId: ctx.requesterTurnRunId,
+        taskOrigin,
         childSessionKey: sessionKey,
         controllerSessionKey,
         sessionEntry: state.initializedSession.sessionEntry,

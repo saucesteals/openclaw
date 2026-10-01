@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import type { AdmittedRunOperatorAuthority } from "../../agents/admitted-run-context.js";
 import { createRestartRecoveryOperatorSource } from "../../agents/operator-run-recovery-source.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../../agents/task-origin.js";
 import {
   buildRestartRecoveryClaimCleanupPatch,
   hasRestartRecoverySourceClaim,
@@ -117,6 +118,7 @@ export function createReplyRestartRecoveryClaimController(params: {
   inputProvenance?: InputProvenance;
   admissionRunId?: unknown;
   executionRunId?: string;
+  resolveTaskOrigin?: (runId: string) => TaskOriginSnapshot;
   lifecycleGeneration: string | undefined;
   getEntry: () => SessionEntry | undefined;
   getSessionId: () => string;
@@ -431,6 +433,9 @@ export function createReplyRestartRecoveryClaimController(params: {
       restartRecoveryDeliveryRequestFingerprint: undefined,
       restartRecoveryDeliveryRunId: hasDeliveryClaim ? recoveryRunId : undefined,
       restartRecoveryOperatorSource: operatorSource,
+      restartRecoveryTaskOrigin: hasDeliveryClaim
+        ? normalizeTaskOriginSnapshot(params.resolveTaskOrigin?.(recoveryRunId))
+        : undefined,
       restartRecoveryDeliverySourceRunId:
         transfersControlUiClaim || operatorSource
           ? recoveryRunId
