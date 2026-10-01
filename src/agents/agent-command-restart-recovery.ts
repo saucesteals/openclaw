@@ -46,10 +46,14 @@ export function resolveCommandRecoveryOptions(params: {
     Array.isArray(entry.restartRecoveryDeliveryMediaUrls)
       ? entry.restartRecoveryDeliveryMediaUrls
       : undefined;
+  const originOptions =
+    entry?.restartRecoveryDeliveryRunId === params.runId
+      ? { ...params.opts, taskOrigin: entry.restartRecoveryTaskOrigin }
+      : params.opts;
   const opts =
     media !== undefined
       ? {
-          ...params.opts,
+          ...originOptions,
           internalDeliveryMediaUrls: [...media],
           internalDeliveryMediaSelected: entry?.restartRecoveryDeliveryMediaSelected === true,
           internalDeliverySuppressText: entry?.restartRecoverySuppressTextDelivery,
@@ -57,7 +61,7 @@ export function resolveCommandRecoveryOptions(params: {
           disableMessageTool: entry?.restartRecoveryDisableMessageTool,
           forceRestartSafeTools: entry?.restartRecoveryForceSafeTools,
         }
-      : params.opts;
+      : originOptions;
   if (
     (opts.internalDeliverySuppressText === true && opts.internalDeliveryMediaUrls === undefined) ||
     ((opts.internalDeliveryMediaUrls !== undefined || opts.internalDeliverySuppressText === true) &&
@@ -365,6 +369,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   disableMessageTool?: boolean;
   entry: SessionEntry;
   forceRestartSafeTools?: boolean;
+  taskOrigin?: SessionEntry["restartRecoveryTaskOrigin"];
   runId: string;
   operatorSource?: SessionEntry["restartRecoveryOperatorSource"];
   sourceIngress?: SessionEntry["restartRecoverySourceIngress"];
@@ -382,6 +387,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   | "restartRecoveryHarnessCompletion"
   | "restartRecoveryForceSafeTools"
   | "restartRecoveryOperatorSource"
+  | "restartRecoveryTaskOrigin"
   | "restartRecoverySourceIngress"
   | "restartRecoverySourceReplyDeliveryMode"
   | "restartRecoverySuppressTextDelivery"
@@ -407,6 +413,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
       restartRecoveryDeliveryRunId: params.runId,
       restartRecoveryDeliverySourceRunId: entry.restartRecoveryDeliverySourceRunId,
       restartRecoveryOperatorSource: entry.restartRecoveryOperatorSource,
+      restartRecoveryTaskOrigin: entry.restartRecoveryTaskOrigin,
       restartRecoverySourceIngress: entry.restartRecoverySourceIngress,
       restartRecoverySourceReplyDeliveryMode: entry.restartRecoverySourceReplyDeliveryMode,
       restartRecoveryForceSafeTools: entry.restartRecoveryForceSafeTools,
@@ -434,6 +441,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
       createsScopedDeliveryClaim && params.suppressTextDelivery === true ? true : undefined,
     restartRecoveryDeliveryRunId: createsScopedDeliveryClaim ? params.runId : undefined,
     restartRecoveryDeliverySourceRunId: params.sourceRunId,
+    restartRecoveryTaskOrigin: params.taskOrigin,
     restartRecoveryOperatorSource: createsScopedDeliveryClaim ? params.operatorSource : undefined,
     restartRecoverySourceIngress: createsScopedDeliveryClaim ? params.sourceIngress : undefined,
     restartRecoverySourceReplyDeliveryMode: params.sourceRunId

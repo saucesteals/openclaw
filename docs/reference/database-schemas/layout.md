@@ -178,6 +178,27 @@ for retention and restoration, and
 [agent schema 20](/reference/database-schemas/agent-schema-history#cold-transcript-storage)
 for the schema and update contract.
 
+### Detached-task original requester
+
+`task_runs.task_origin_json` is a legacy nullable column retained for compatibility
+with existing sauce releases. Current media operations are process-owned;
+durable completion attribution travels in the session-delivery queue rather than
+through task-registry reads and writes of this column.
+
+Original-requester snapshots record the authenticated requester and source
+run/session/audience, not execution permissions or an owner grant. Cron jobs and
+subagent runs retain private snapshots in their existing JSON owners; restart
+claims retain only their exact run's snapshot. Missing attribution remains
+unknown, never reconstructed from the latest participant or optional audit history.
+Normal lifecycle retention deletes snapshots with their owning records.
+
+Stop older writers and take a verified WAL-aware backup before activation.
+Older full-schema validators may reject the additional column even though the
+numeric version is unchanged. Draining jobs alone does not remove this schema
+incompatibility: rollback requires a compatible build or restoring the complete
+pre-upgrade backup with all writers stopped. Do not drop the column on a live
+database or silently discard attribution to make an older release start.
+
 ### Plugin state listing index
 
 Plugin keyed stores use the shared `plugin_state_entries` table. Its listing

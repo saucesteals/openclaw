@@ -326,6 +326,7 @@ export const cronHandlers: GatewayRequestHandlers = {
       result = await context.cron.add(jobCreate, {
         enabledExplicit,
         ...creatorOptions,
+        taskOrigin: callerScope?.taskOrigin,
         commitGuard,
         ...(captureRuntimeAuthority ? { captureRuntimeAuthority } : {}),
         matchesExisting: (job) =>

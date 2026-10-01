@@ -216,6 +216,7 @@ function createCronPromptExecutor(
     const cronAdmission = prepareCronRunAdmission({
       admissionSource: params.admissionSource,
       deliveryAttemptFence: params.deliveryAttemptFence,
+      taskOrigin: params.job.taskOrigin,
       cfg: params.cfgWithAgentDefaults,
       agentId: params.agentId,
       runId,
