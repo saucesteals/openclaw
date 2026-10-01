@@ -528,8 +528,24 @@ export async function deliverQueuedGeneratedMediaAgentTurn(params: {
     result: AgentDeliveryEvidence,
     transcriptRunId: string | null = queuedRunId,
   ): Promise<true> => {
+    // The recovery owner freezes selection before send and carries it into the
+    // terminal record. The queue derives its expectation; it is not a second writer.
+    const latest = loadSessionEntry(entry.sessionKey).entry;
+    const terminalSelection = getRestartRecoveryTerminalDeliveryEvidence(
+      latest,
+      queuedRunId,
+    )?.selectedMediaUrls;
+    const activeSelection =
+      latest?.restartRecoveryDeliverySourceRunId === queuedRunId &&
+      latest.restartRecoveryDeliveryMediaSelected === true
+        ? latest.restartRecoveryDeliveryMediaUrls
+        : undefined;
+    const selectedMediaUrls = terminalSelection ?? activeSelection;
     await evaluateQueuedGeneratedMediaAgentResult({
-      entry,
+      entry:
+        selectedMediaUrls !== undefined
+          ? { ...entry, expectedMediaUrls: selectedMediaUrls }
+          : entry,
       result,
       route,
       queueContext: params.queueContext,

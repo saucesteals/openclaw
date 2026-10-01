@@ -543,6 +543,27 @@ describe("deliverAgentCommandResult payload normalization", () => {
     expectTextPayload(delivered.payloads[0], "[openai/gpt-5.4] Ready.");
   });
 
+  it("freezes normalized media before send and refuses delivery when freezing fails", async () => {
+    createReplyMediaPathNormalizerMock.mockReturnValue(async (payload: ReplyPayload) => ({
+      ...payload,
+      mediaUrls: ["/tmp/agent-workspace/final.gif"],
+    }));
+    const onPreparedMedia = vi.fn(async (mediaUrls: string[]) => {
+      expect(mediaUrls).toEqual(["/tmp/agent-workspace/final.gif"]);
+      expect(deliverOutboundPayloadsMock).not.toHaveBeenCalled();
+      throw new Error("selection owner lost");
+    });
+    await expect(
+      deliverAgentCommandResultForTest({
+        workspace: true,
+        payloads: [{ text: "ready", mediaUrls: ["./final.gif"] }],
+        onPreparedMedia,
+      }),
+    ).rejects.toThrow("selection owner lost");
+    expect(onPreparedMedia).toHaveBeenCalledTimes(1);
+    expect(deliverOutboundPayloadsMock).not.toHaveBeenCalled();
+  });
+
   it("normalizes reply-media paths before outbound delivery", async () => {
     const normalizerFn = vi.fn(async (payload: ReplyPayload): Promise<ReplyPayload> => ({
       ...payload,
