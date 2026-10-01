@@ -1,0 +1,7 @@
+Bottom: aeca0854b11a80d677f5de4cd52302c8f0255589
+Top:    d97fc9c6e0262de25f74a2653961a9fa0b1d6dfe
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-10-01 00:34:48 -0700
+
+fix(reply): preserve channel admission evidence through session copies
+

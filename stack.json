@@ -1,15 +1,19 @@
 {
   "version": 5,
-  "prev": "e0f1c439c7dde371f96d05a0c09457ca11a491f5",
-  "head": "2beca53d94fdf9665150dac079215aca01188fad",
+  "prev": "1a3a7ed4ffc7a96c81ab00c7c4366ef7f322e594",
+  "head": "e74d77988c0f4fcd15a28811cb55100366da9b12",
   "applied": [
-    "feat-exec-session-key"
+    "feat-exec-session-key",
+    "fix-channel-admission-evidence"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
     "feat-exec-session-key": {
       "oid": "2beca53d94fdf9665150dac079215aca01188fad"
+    },
+    "fix-channel-admission-evidence": {
+      "oid": "e74d77988c0f4fcd15a28811cb55100366da9b12"
     }
   }
 }
