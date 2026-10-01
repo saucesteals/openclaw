@@ -283,6 +283,9 @@ function normalizeTerminalDeliveryEvidenceResult(
   }
   return {
     ...(captured ? { captured } : {}),
+    ...(Array.isArray(record.selectedMediaUrls)
+      ? { selectedMediaUrls: normalizePresentStringArray(record.selectedMediaUrls) }
+      : {}),
     ...(payloads?.length ? { payloads } : {}),
     ...(payloadsTruncated ? { payloadsTruncated } : {}),
     ...(deliveryStatus ? { deliveryStatus } : {}),
@@ -405,6 +408,12 @@ export function normalizeRestartRecoveryEntryFields(
     sameOptionalStringArray(entry.restartRecoveryDeliveryMediaUrls, deliveryMediaUrls)
       ? entry.restartRecoveryDeliveryMediaUrls
       : deliveryMediaUrls,
+  );
+  assign(
+    "restartRecoveryDeliveryMediaSelected",
+    entry.restartRecoveryDeliveryMediaSelected === true && deliveryMediaUrls !== undefined
+      ? true
+      : undefined,
   );
   for (const key of [
     "restartRecoveryDisableMessageTool",
@@ -601,6 +610,9 @@ export function buildRestartRecoveryClaimCleanupPatch(params: {
               transcriptRunId:
                 normalizeRunId(params.terminalRunId) ??
                 normalizeRunId(params.entry.restartRecoveryDeliveryRunId),
+              ...(params.entry.restartRecoveryDeliveryMediaSelected === true
+                ? { selectedMediaUrls: params.entry.restartRecoveryDeliveryMediaUrls }
+                : {}),
             },
           ],
         )
@@ -611,6 +623,7 @@ export function buildRestartRecoveryClaimCleanupPatch(params: {
     restartRecoveryDeliveryToolCallId: undefined,
     restartRecoveryDeliveryContext: undefined,
     restartRecoveryDeliveryMediaUrls: undefined,
+    restartRecoveryDeliveryMediaSelected: undefined,
     restartRecoveryDisableMessageTool: undefined,
     restartRecoverySuppressTextDelivery: undefined,
     restartRecoveryDeliveryRequestFingerprint: undefined,

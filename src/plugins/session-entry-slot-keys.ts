@@ -141,6 +141,7 @@ const SESSION_ENTRY_RESERVED_SLOT_KEY_LIST = [
   "pendingDeliveryNotice",
   "restartRecoveryDeliveryContext",
   "restartRecoveryDeliveryMediaUrls",
+  "restartRecoveryDeliveryMediaSelected",
   "restartRecoveryDisableMessageTool",
   "restartRecoverySuppressTextDelivery",
   "restartRecoveryDeliveryRequestFingerprint",
