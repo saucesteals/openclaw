@@ -3,8 +3,8 @@ import { runEmbeddedAgent } from "../../agents/embedded-agent.js";
 import { buildChannelInboundEventContext } from "../../channels/inbound-event/context.js";
 import { createHostChannelInboundEventContextBuilder } from "../../channels/inbound-event/host-context-builder.js";
 import { readChannelContextGatewayContextResolver } from "../../channels/message-access/admission-evidence.js";
-import { registerChannelIngressHostOwner } from "../../channels/message-access/ingress-host-owner.js";
-import { resolveStableChannelMessageIngress } from "../../channels/message-access/runtime.js";
+import type { ChannelIngressHostOwner } from "../../channels/message-access/ingress-host-owner.js";
+import { createHostChannelIngressRuntime } from "../../channels/message-access/runtime.js";
 import { getGatewayContextResolver } from "../../plugins/runtime/gateway-request-scope.js";
 import {
   createOpenClawTestState,
@@ -20,9 +20,7 @@ vi.mock("../../agents/embedded-agent.js", async (importOriginal) => ({
 }));
 
 let state: OpenClawTestState | undefined;
-let disposeOwner: (() => void) | undefined;
 afterEach(async () => {
-  disposeOwner?.();
   await state?.cleanup();
   vi.clearAllMocks();
 });
@@ -51,43 +49,44 @@ it.each(["live", "retired", "replaced", "unbound"])(
     let live = true;
     const owner = {
       channelId: "discord",
-      record: {},
-      epoch: {},
       isLive: () => live,
       resolveGatewayContext: () => (live ? gatewayContext : undefined),
     };
-    disposeOwner = registerChannelIngressHostOwner(owner);
     const sessionKey = "agent:main:discord:direct:person-42";
-    const ingress = await resolveStableChannelMessageIngress({
-      channelId: "discord",
-      accountId: "primary",
-      subject: { stableId: "person-42" },
-      conversation: { kind: "direct", id: "dm-1" },
-      contextBinding: {
-        agentId: "main",
-        sessionKey,
+    const createContext = async (contextOwner: ChannelIngressHostOwner) => {
+      const ingress = await createHostChannelIngressRuntime(contextOwner).resolveStable({
+        channelId: "discord",
+        accountId: "primary",
+        subject: { stableId: "person-42" },
+        conversation: { kind: "direct", id: "dm-1" },
+        contextBinding: {
+          agentId: "main",
+          sessionKey,
+          nativeChannelId: "dm-1",
+          messageId: "msg-1",
+          inboundEventKind: "user_request",
+        },
+        dmPolicy: "allowlist",
+        groupPolicy: "disabled",
+        allowFrom: ["person-42"],
+      });
+      return createHostChannelInboundEventContextBuilder(
+        buildChannelInboundEventContext,
+        contextOwner,
+      )({
+        channel: "discord",
+        accountId: "primary",
         messageId: "msg-1",
-        inboundEventKind: "user_request",
-      },
-      dmPolicy: "allowlist",
-      groupPolicy: "disabled",
-      allowFrom: ["person-42"],
-    });
-    const context = await createHostChannelInboundEventContextBuilder(
-      buildChannelInboundEventContext,
-      owner,
-    )({
-      channel: "discord",
-      accountId: "primary",
-      messageId: "msg-1",
-      from: "discord:user:person-42",
-      sender: { id: "person-42" },
-      conversation: { kind: "direct", id: "dm-1", nativeChannelId: "dm-1" },
-      route: { agentId: "main", routeSessionKey: sessionKey },
-      reply: { to: "channel:dm-1" },
-      message: { rawBody: "hello" },
-      channelIngress: ingress,
-    });
+        from: "discord:user:person-42",
+        sender: { id: "person-42" },
+        conversation: { kind: "direct", id: "dm-1", nativeChannelId: "dm-1" },
+        route: { agentId: "main", routeSessionKey: sessionKey },
+        reply: { to: "channel:dm-1" },
+        message: { rawBody: "hello" },
+        channelIngress: ingress,
+      });
+    };
+    const context = await createContext(owner);
     expect(readChannelContextGatewayContextResolver(context)?.()).toBe(gatewayContext);
     const input = finalizeInboundContext(lifecycle === "unbound" ? { ...context } : context);
     const fast = initFastReplySessionState({
@@ -107,14 +106,17 @@ it.each(["live", "retired", "replaced", "unbound"])(
       if (lifecycle === "retired") {
         live = false;
       } else if (lifecycle === "replaced") {
+        // A replacement gets fresh host-bound ingress; it cannot revive the retired owner.
         live = false;
-        disposeOwner?.();
-        disposeOwner = registerChannelIngressHostOwner({
-          ...owner,
-          record: {},
-          epoch: {},
-          resolveGatewayContext: () => ({ owner: "gateway-b" }) as never,
+        const replacementGatewayContext = { owner: "gateway-b" } as never;
+        const replacement = await createContext({
+          channelId: "discord",
+          isLive: () => true,
+          resolveGatewayContext: () => replacementGatewayContext,
         });
+        expect(readChannelContextGatewayContextResolver(replacement)?.()).toBe(
+          replacementGatewayContext,
+        );
       }
       observedGateway = getGatewayContextResolver(admitted)?.();
       return { payloads: [{ text: "done" }], meta: { durationMs: 1 } };
