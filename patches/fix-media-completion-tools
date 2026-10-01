@@ -1,6 +1,0 @@
-Bottom: 57f03309e1a87a2362fa00844b827c773181a154
-Top:    131e1cc344ead2021a00d25e07ef29405e5b053f
-Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-09-30 19:13:55 -0700
-
-fix(agents): retain tools on initial media completion
