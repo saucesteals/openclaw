@@ -1,0 +1,7 @@
+Bottom: ffd51aa3fd60d0e6c8133afaa74e02f29ad0bb5b
+Top:    db848da0bb53be74b1fd09fe12e0b96be031960b
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-10-01 00:34:48 -0700
+
+fix(xai): support video 1.5 frame and reference inputs
+
