@@ -1,9 +1,10 @@
 {
   "version": 5,
-  "prev": "ffa760debe80d8dc2b8fb9168c357fabbec6143d",
-  "head": "a18944add4215f6e1536a562437d7588928b1b45",
+  "prev": "86a2bc002b99c1b96864b7cccbc572a1b0fd9364",
+  "head": "3e05860a81db0ab38f7f59c561b76d68c0726dc5",
   "applied": [
-    "feat-exec-session-key"
+    "feat-exec-session-key",
+    "refresh-temp"
   ],
   "unapplied": [
     "chore-agents-remove-safety-section",
@@ -61,6 +62,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "1daa7eb0472fb40dd297562d82d7f9e5e4c49191"
+    },
+    "refresh-temp": {
+      "oid": "3e05860a81db0ab38f7f59c561b76d68c0726dc5"
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
