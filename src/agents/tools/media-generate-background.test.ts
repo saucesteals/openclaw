@@ -17,8 +17,6 @@ import {
   MUSIC_GENERATION_TASK_KIND,
   VIDEO_GENERATION_TASK_KIND,
 } from "../media-generation-task-status.js";
-import type { TaskOriginSnapshot } from "../task-origin.js";
-import { withGatewayToolCallerIdentity } from "./gateway-caller-context.js";
 import {
   createMediaCompletionFixture,
   expectFallbackMediaAnnouncement,

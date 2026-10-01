@@ -280,8 +280,6 @@ function validateImageGenerationCount(params: {
   }
 }
 
-type ImageGenerateSandboxConfig = MediaToolSandbox;
-
 const defaultScheduleImageGenerateBackgroundWork = createDefaultMediaGenerateBackgroundScheduler({
   toolName: "image_generate",
   onCrash: (message, meta) => log.error(message, meta),

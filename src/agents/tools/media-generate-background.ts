@@ -285,7 +285,6 @@ export async function runMediaGenerationTask<T extends MediaGenerationExecutionR
       requesterRunSessionKey: params.requesterRunSessionKey,
       requesterAgentId: params.requesterAgentId,
       requesterOrigin: params.requesterOrigin,
-      taskOrigin: params.taskOrigin,
       prompt: params.prompt,
       providerId: params.providerId,
       assertCurrent: assertAdmissionCurrent,

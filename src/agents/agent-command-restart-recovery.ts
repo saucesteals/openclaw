@@ -21,6 +21,7 @@ import {
   hasCommittedOutboundDeliveryEvidence,
   hasUnaccountedMessagingToolAggregateEvidence,
   hasVisibleAgentPayload,
+  hasExplicitlyVisibleAgentPayload,
   hasVisibleCommittedMessagingToolDeliveryEvidence,
   type AgentDeliveryEvidence,
 } from "./embedded-agent-runner/delivery-evidence.js";
@@ -538,6 +539,7 @@ export function bindCommandHarnessCompletionAssertion(params: {
 
 /** Freeze normalized media under the active recovery claim before transport starts. */
 export async function freezeCurrentRunDeliveryMedia(params: {
+  agentId: string;
   sessionStore?: Record<string, SessionEntry>;
   sessionKey?: string;
   storePath: string;
@@ -569,6 +571,7 @@ export async function freezeCurrentRunDeliveryMedia(params: {
   const { persistAgentSession } = await import("./command/attempt-execution.shared.js");
   let authorized = false;
   const persisted = await persistAgentSession({
+    agentId: params.agentId,
     sessionStore,
     sessionKey,
     storePath: params.storePath,

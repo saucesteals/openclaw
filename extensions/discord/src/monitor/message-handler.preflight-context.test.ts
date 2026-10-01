@@ -1,3 +1,7 @@
+import { installDiscordIngressTestRuntime } from "../test-support/ingress-runtime.js";
+
+installDiscordIngressTestRuntime();
+
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";

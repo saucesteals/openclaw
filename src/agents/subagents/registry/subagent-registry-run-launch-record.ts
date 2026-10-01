@@ -4,6 +4,7 @@ import { normalizeSubagentRunState } from "./subagent-delivery-state.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
 
 export type RegisterSubagentRunParams = {
+  taskOrigin?: import("../../task-origin.js").TaskOriginSnapshot;
   runId: string;
   requesterTurnRunId?: string;
   childSessionKey: string;
