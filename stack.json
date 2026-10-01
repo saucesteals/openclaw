@@ -1,15 +1,14 @@
 {
   "version": 5,
-  "prev": "8fe0a8e4f4def3d2a5837b3b262d3eb65945fb3a",
-  "head": "8f13bfd526f21cc5e1c64268198c80c1c5d68609",
+  "prev": "0e079e5ff14d632c5a10bd905729b783c45dc05c",
+  "head": "79d3e7de95b0577e7d7868c80eea1cc2996791a7",
   "applied": [
     "feat-exec-session-key",
     "fix-discord-gateway-delegation",
     "fix-media-completion-tools",
     "fix-media-failure-status",
     "fix-media-selected-delivery",
-    "fix-xai-video15-inputs",
-    "refresh-temp"
+    "fix-xai-video15-inputs"
   ],
   "unapplied": [
     "fix-request-origin-context",
@@ -57,10 +56,7 @@
       "oid": "78d57e3e2c2e03aba268d74b895780eee5234e23"
     },
     "fix-xai-video15-inputs": {
-      "oid": "d4e6b518f2202c6849dde3546acd988797bc92e3"
-    },
-    "refresh-temp": {
-      "oid": "8f13bfd526f21cc5e1c64268198c80c1c5d68609"
+      "oid": "79d3e7de95b0577e7d7868c80eea1cc2996791a7"
     },
     "remove-unscheduled-reminder-note": {
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
