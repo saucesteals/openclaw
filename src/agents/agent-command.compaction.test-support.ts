@@ -254,6 +254,9 @@ vi.mock("../infra/agent-events.js", async () => {
 });
 
 vi.mock("./command/delivery.runtime.js", () => ({
+  normalizeReplyMediaPathsForDelivery: async (params: { payloads: unknown[] }) => ({
+    payloads: params.payloads,
+  }),
   deliverAgentCommandResult: (params: unknown) =>
     compactionTestState.deliverAgentCommandResultMock(params),
 }));
