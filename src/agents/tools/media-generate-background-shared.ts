@@ -44,7 +44,10 @@ import { tryResolveSubagentRequesterAgentId } from "../subagents/announce/subage
 import { resolveAnnounceOrigin } from "../subagents/announce/subagent-announce-origin.js";
 import { resolveRequesterStoreKey } from "../subagents/announce/subagent-requester-store-key.js";
 import { normalizeTaskOriginSnapshot } from "../task-origin.js";
-import { captureGatewayToolCallerAssertion } from "./gateway-caller-context.js";
+import {
+  captureGatewayToolCallerAssertion,
+  getGatewayToolCallerIdentity,
+} from "./gateway-caller-context.js";
 import {
   retainBlockedMediaCompletion,
   retainBlockedMediaReferences,
@@ -99,7 +102,6 @@ type CreateMediaGenerationTaskRunParams = {
   requesterRunSessionKey?: string;
   requesterAgentId?: string;
   requesterOrigin?: DeliveryContext;
-  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   prompt: string;
   providerId?: string;
   assertCurrent?: () => void;
@@ -220,6 +222,7 @@ async function createMediaGenerationTaskRun(
     return null;
   }
   const requesterRunSessionKey = params.requesterRunSessionKey?.trim() || sessionKey;
+  const taskOrigin = normalizeTaskOriginSnapshot(getGatewayToolCallerIdentity()?.taskOrigin);
   const runId = `tool:${params.toolName}:${crypto.randomUUID()}`;
   const assertCurrent = captureMediaGenerationAdmission(params.assertCurrent);
   const env = captureSessionTranscriptStorageEnvironment(process.env);
@@ -302,7 +305,7 @@ async function createMediaGenerationTaskRun(
       detach: Boolean(requesterTranscript) && shouldDetachMediaGenerationTask(sessionKey, entry),
       requesterTranscript,
       taskLabel: params.prompt,
-      taskOrigin: normalizeTaskOriginSnapshot(params.taskOrigin),
+      taskOrigin,
     };
     touchMediaGenerationTaskRunContext(handle);
     return handle;
