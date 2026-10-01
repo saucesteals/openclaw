@@ -1,0 +1,7 @@
+Bottom: 3109c5e60030bf9bc0dc79cc104ee839ea608775
+Top:    28820e821104c5faa9543a9ace77112f1ba0d847
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-10-01 00:34:49 -0700
+
+custom(reply): omit the automatic unscheduled reminder disclaimer
+

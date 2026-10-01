@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "8e8850726fe5e80be6b508db05f504ce7d23531f",
-  "head": "05d4e95617ea666bc6ba8b4571b880b97e76cf91",
+  "prev": "d62b6f4ad9211555bb9f7018297290ccd4f305b0",
+  "head": "beeec214959ff1d1146c0f7f71cf33ca9dbe1932",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -10,13 +10,17 @@
     "fix-media-selected-delivery",
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
-    "custom-discord-bot-reply-text"
+    "custom-discord-bot-reply-text",
+    "custom-remove-reminder"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-discord-bot-reply-text": {
       "oid": "05d4e95617ea666bc6ba8b4571b880b97e76cf91"
+    },
+    "custom-remove-reminder": {
+      "oid": "beeec214959ff1d1146c0f7f71cf33ca9dbe1932"
     },
     "feat-exec-session-key": {
       "oid": "2beca53d94fdf9665150dac079215aca01188fad"
