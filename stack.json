@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "80c21521afb80ca00a803b01ab5973cea468d3de",
-  "head": "f8a2a10eaee9a817d421c8e053ec9508623e8eb0",
+  "prev": "8ec34a9a59e98b6e849911314157922079eb0fd1",
+  "head": "038ceefb4fe82291d4abf8cd54fdeb9cc14ddfbe",
   "applied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
@@ -16,11 +16,10 @@
     "fix-codex-historical-image-input",
     "remove-unscheduled-reminder-note",
     "fix-progress-error-rollout",
-    "fix-codex-managed-runtime"
-  ],
-  "unapplied": [
+    "fix-codex-managed-runtime",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "chore-agents-remove-safety-section": {
@@ -66,7 +65,7 @@
       "oid": "768f6ad79996b8fecb16871d9693495610560117"
     },
     "version-bump": {
-      "oid": "02b6150c6970b8e429a1d728f59bab426a0bce19"
+      "oid": "038ceefb4fe82291d4abf8cd54fdeb9cc14ddfbe"
     }
   }
 }
