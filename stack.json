@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "94e7b2646d31369b2f386342bc9a9bff1394d234",
-  "head": "368da56409cc7d413adbc1e04c57e48b59f0f057",
+  "prev": "516a14e31343330ff1b49e517b2c535e02fe5885",
+  "head": "217ef71c41cce4e42b6e109d5f8b800c322e1373",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -14,17 +14,16 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "version-bump",
-    "refresh-temp"
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-discord-bot-reply-text": {
-      "oid": "05d4e95617ea666bc6ba8b4571b880b97e76cf91"
+      "oid": "0cfb30d1e3e7720aa266e9c471c64d7ef4f53180"
     },
     "custom-no-reminder-disclaimer": {
-      "oid": "beeec214959ff1d1146c0f7f71cf33ca9dbe1932"
+      "oid": "30b224d5b5a96af3fef56a4e5874e7b271349aca"
     },
     "feat-exec-session-key": {
       "oid": "2beca53d94fdf9665150dac079215aca01188fad"
@@ -33,7 +32,7 @@
       "oid": "e74d77988c0f4fcd15a28811cb55100366da9b12"
     },
     "fix-codex-installer-alias": {
-      "oid": "b8ca858d06e66ab2aac5dc94eb1f7c66a6801c17"
+      "oid": "d8f9745b0716155d23c3fc248e04eae6da5bc692"
     },
     "fix-media-completion-tools": {
       "oid": "6e2fe1f53575d0b0bd7c542d1c1e29bae2897180"
@@ -45,19 +44,16 @@
       "oid": "18cd3ed23a5fd91294d47dd9b69321758bd42325"
     },
     "fix-progress-error-rollout": {
-      "oid": "d3abc798e602c928d23cabe1c51f272b610fad2d"
+      "oid": "646c08b38dd7bab5ce3e960c58943598bb49d7de"
     },
     "fix-request-origin-context": {
-      "oid": "41b6d66374b8a807d8d20895cc73ae5b2c3db6fc"
+      "oid": "d57d4b05498d9fe55349409e539b704673bbe5da"
     },
     "fix-xai-video15-inputs": {
       "oid": "8a80fc9db8914bf8b3597989407000b0caf13b6c"
     },
-    "refresh-temp": {
-      "oid": "368da56409cc7d413adbc1e04c57e48b59f0f057"
-    },
     "version-bump": {
-      "oid": "8112a5b4bdabdee6bcd51d5bbf90c38ba59091f1"
+      "oid": "217ef71c41cce4e42b6e109d5f8b800c322e1373"
     }
   }
 }
