@@ -602,7 +602,7 @@ export async function deliverQueuedGeneratedMediaAgentTurn(params: {
         inputProvenance: entry.inputProvenance,
         sourceReplyDeliveryMode,
         disableMessageTool: true,
-        forceRestartSafeTools: true,
+        forceRestartSafeTools: (entry.agentRunAttempt ?? 0) > 0,
         idempotencyKey: queuedRunId,
       },
       {
