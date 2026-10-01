@@ -30,7 +30,6 @@ import {
 import {
   getProgressDraftLineText,
   isChannelProgressAttentionLine,
-  isChannelProgressPriorityLine,
   type ChannelProgressDraftLine,
 } from "./progress-draft-lines.js";
 import {

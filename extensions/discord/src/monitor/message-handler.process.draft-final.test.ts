@@ -271,7 +271,7 @@ describe("processDiscordMessage draft streaming final delivery", () => {
   });
 
   it.each([false, true])(
-    "shows failed item progress with toolProgress=%s",
+    "respects toolProgress=%s for failed item progress",
     async (toolProgress) => {
       const draftStream = createMockDraftStreamForTest();
       let callbackResult: boolean | void = undefined;
@@ -297,32 +297,40 @@ describe("processDiscordMessage draft streaming final delivery", () => {
 
       await runProcessDiscordMessage(ctx);
 
-      expect(callbackResult).toBe(true);
-      expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("failed"), {
-        complete: true,
-      });
+      expect(callbackResult).toBe(toolProgress);
+      if (toolProgress) {
+        expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("failed"), {
+          complete: true,
+        });
+      } else {
+        expect(draftStream.update).not.toHaveBeenCalled();
+      }
     },
   );
 
   it.each([false, true])(
-    "shows failed command output with toolProgress=%s",
+    "rolls completed command failures out with toolProgress=%s",
     async (toolProgress) => {
       const draftStream = createMockDraftStreamForTest();
       let callbackResult: boolean | void = undefined;
 
       dispatchInboundMessage.mockImplementationOnce(async (params?: DispatchInboundParams) => {
-        callbackResult = await params?.replyOptions?.onCommandOutput?.({
+        callbackResult = await params?.replyOptions?.onItemEvent?.({
+          itemId: "failed-command",
+          kind: "tool",
           phase: "end",
-          title: "Exec",
           name: "exec",
-          status: "error",
-          exitCode: 1,
+          status: "failed",
+          progressText: "Exec exit 1",
         });
         for (let index = 0; index < 12; index++) {
-          await params?.replyOptions?.onCommandOutput?.({
+          await params?.replyOptions?.onItemEvent?.({
+            itemId: `failed-${index}`,
+            kind: "tool",
             phase: "end",
-            toolCallId: `failed-${index}`,
-            exitCode: 1,
+            name: "exec",
+            status: "failed",
+            progressText: "Exec exit 1",
           });
         }
         await params?.replyOptions?.onItemEvent?.({
@@ -342,32 +350,19 @@ describe("processDiscordMessage draft streaming final delivery", () => {
 
       await runProcessDiscordMessage(ctx);
 
-      expect(callbackResult).toBe(true);
+      expect(callbackResult).toBe(toolProgress);
       expect(draftStream.update.mock.lastCall?.[0]).toContain("💬 Recovered; verifying the result");
-      expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("exit 1"), {
-        complete: true,
-      });
+      if (toolProgress) {
+        expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("Exec: failed"), {
+          complete: true,
+        });
+      } else {
+        expect(draftStream.update.mock.calls.some(([text]) => text.includes("Exec: failed"))).toBe(
+          false,
+        );
+      }
     },
   );
-
-  it("suppresses terminal progress callbacks without their terminal phase", async () => {
-    const draftStream = createMockDraftStreamForTest();
-
-    dispatchInboundMessage.mockImplementationOnce(async (params?: DispatchInboundParams) => {
-      await params?.replyOptions?.onApprovalEvent?.({ command: "must stay hidden" });
-      await params?.replyOptions?.onCommandOutput?.({ title: "must stay hidden", exitCode: 0 });
-      await params?.replyOptions?.onPatchSummary?.({ summary: "must stay hidden" });
-      return createNoQueuedDispatchResult();
-    });
-
-    const ctx = await createAutomaticDraftContext({
-      discordConfig: { streaming: { mode: "progress", progress: { toolProgress: true } } },
-    });
-
-    await runProcessDiscordMessage(ctx);
-
-    expect(draftStream.update).not.toHaveBeenCalled();
-  });
 
   it("retires coding-profile guild progress only after a confirmed message-tool reply", async () => {
     const elapseProgressDraftStartDelay = useProgressDraftStartDelay();

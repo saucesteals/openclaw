@@ -17,7 +17,6 @@ import {
   constrainRestartRecoveryDeliveryPayloads,
   freezeCurrentRunDeliveryMedia,
   shouldPersistCurrentRunSessionCleanup,
-  shouldPersistRestartRecoveryCleanup,
 } from "../agent-command-restart-recovery.js";
 import { normalizeAgentRunTerminalDeliverySnapshot } from "../agent-run-terminal-delivery.js";
 import {
@@ -55,54 +54,6 @@ import type { AgentCommandOpts } from "./types.js";
 type EmbeddedAgentAttempt = Awaited<ReturnType<typeof runEmbeddedAgentAttempt>>;
 
 const log = createSubsystemLogger("agents/agent-command");
-
-export async function clearCommandRecoveryClaim(params: {
-  prepared: PreparedAgentCommandExecution;
-  sessionEntry?: SessionEntry;
-  runOwnedSessionId: string;
-  sessionReboundDuringRun: boolean;
-  trackedRestartRecoveryDeliveryClaim: boolean;
-  terminalDeliveryEvidence?: RestartRecoveryTerminalDeliveryEvidenceResult;
-}): Promise<void> {
-  const { sessionStore, sessionKey, storePath, runId } = params.prepared;
-  if (
-    params.sessionReboundDuringRun ||
-    !params.trackedRestartRecoveryDeliveryClaim ||
-    !sessionStore ||
-    !sessionKey
-  ) {
-    return;
-  }
-  try {
-    const entry = sessionStore[sessionKey] ?? params.sessionEntry;
-    if (entry?.restartRecoveryDeliveryRunId === runId) {
-      await persistAgentSession({
-        agentId: params.prepared.sessionAgentId,
-        sessionStore,
-        sessionKey,
-        storePath,
-        initialEntry: entry,
-        entry: {
-          ...entry,
-          ...buildRestartRecoveryClaimCleanupPatch({
-            entry,
-            recordTerminalSource: true,
-            terminalRunId: runId,
-            terminalDeliveryEvidence: params.terminalDeliveryEvidence,
-          }),
-          ...buildMainSessionRecoveryClearPatch(entry),
-          updatedAt: Date.now(),
-        },
-        shouldPersist: (current) =>
-          shouldPersistRestartRecoveryCleanup(current, params.runOwnedSessionId, runId),
-      });
-    }
-  } catch (error) {
-    log.warn(
-      `failed to clear restart recovery delivery context for ${sessionKey}: ${coerceErrorMessage(error)}`,
-    );
-  }
-}
 
 export function createCompactionSessionIdReporter(
   sessionId: string,
@@ -232,6 +183,7 @@ export async function finalizeEmbeddedAgentCommand(params: {
 
   const freezeDeliveryMedia = async (mediaUrls: string[]) => {
     sessionEntry = await freezeCurrentRunDeliveryMedia({
+      agentId: sessionAgentId,
       sessionStore,
       sessionKey,
       storePath,

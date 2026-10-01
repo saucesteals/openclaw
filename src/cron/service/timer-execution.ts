@@ -15,7 +15,6 @@ import { resolveCronToolsAllowExecTargetRecoveryError } from "../scheduled-tool-
 import { cronScriptFailureMetadata } from "../script-failure.js";
 import { appendCronPayloadText, cronStreamScheduleKey } from "../stream-schedule.js";
 import type {
-  CronJob,
   CronStoredJob,
   CronNextCheckProposal,
   CronRunOutcome,

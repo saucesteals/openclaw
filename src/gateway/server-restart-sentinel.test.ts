@@ -1918,6 +1918,7 @@ describe("scheduleRestartSentinelWake", () => {
         expect(mocks.advanceSessionDeliveryAgentRun).toHaveBeenCalledWith(
           "selected-delivery",
           expect.objectContaining({ expectedMediaUrls: ["/tmp/final.gif"] }),
+          expect.objectContaining({ admission: expect.any(Object) }),
         );
       }
     },

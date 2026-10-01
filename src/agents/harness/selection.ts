@@ -2,7 +2,6 @@
  * Selects and invokes native agent harnesses for embedded run attempts.
  */
 import { isConfiguredCommandOwner } from "../../auto-reply/command-auth.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { prepareActiveNodeContext } from "../../infra/active-node-context.js";
 import {
   createChildDiagnosticTraceContext,

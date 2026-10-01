@@ -17,7 +17,7 @@ function createTestProgressDraftCompositor(
 }
 
 describe("createChannelProgressDraftCompositor quiet drafts", () => {
-  it("lets named failed tool items scroll out while retaining the plan and blocked states", async () => {
+  it("lets failed and blocked tool items scroll out while retaining the plan", async () => {
     const update = vi.fn();
     const progress = createTestProgressDraftCompositor({
       entry: {
@@ -81,9 +81,9 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
       ).toBe(false);
       expect(
         snapshot.lines.some((line) => typeof line === "object" && line.id === "blocked-read"),
-      ).toBe(true);
+      ).toBe(false);
       expect(update.mock.lastCall?.[0]).toContain("Repair");
-      expect(update.mock.lastCall?.[0]).toContain("Read blocked");
+      expect(update.mock.lastCall?.[0]).not.toContain("Read blocked");
     } finally {
       progress.cancel();
     }
@@ -401,8 +401,17 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
           status,
           progressText: "Check access",
         });
-        expect(update.mock.lastCall?.[0]).toContain("Check access");
-        expect(update.mock.lastCall?.[1]).toMatchObject({ flush: true });
+        if (toolProgress) {
+          expect(update.mock.lastCall?.[0]).toContain("Check access");
+          expect(update.mock.lastCall?.[1]).toMatchObject({ flush: true });
+        } else {
+          expect(update.mock.lastCall?.[0]).not.toContain("Check access");
+          expect(
+            progress
+              .getSnapshot()
+              .lines.some((line) => typeof line === "object" && line.kind === "tool"),
+          ).toBe(false);
+        }
         for (let index = 0; index < 5; index++) {
           await progress.pushToolEvent({
             name: "read",
@@ -458,7 +467,12 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
             exitCode: index,
           });
         }
-        expect(update.mock.lastCall?.[0]).toContain("exit 12");
+        if (toolProgress) {
+          expect(update.mock.lastCall?.[0]).toContain("exit 12");
+        } else {
+          expect(update.mock.lastCall?.[0] ?? "").not.toContain("exit 12");
+          expect(progress.getSnapshot().lines).toEqual([]);
+        }
         await progress.pushCommentaryProgress("Recovered; checking the result", {
           itemId: "latest",
         });
@@ -470,7 +484,9 @@ describe("createChannelProgressDraftCompositor quiet drafts", () => {
             expect(update.mock.lastCall?.[0]).toContain(step);
           }
         }
-        expect(progress.getSnapshot().lines).toHaveLength(maxLines);
+        expect(progress.getSnapshot().lines).toHaveLength(
+          toolProgress ? maxLines : Math.min(maxLines, 2),
+        );
         expect(update.mock.lastCall?.[0].split("\n").filter(Boolean).length).toBeLessThanOrEqual(
           maxLines,
         );

@@ -1,7 +1,15 @@
+import { coerceErrorMessage } from "@openclaw/normalization-core/error-coercion";
+import { buildRestartRecoveryClaimCleanupPatch } from "../../config/sessions/restart-recovery-state.js";
+import type { RestartRecoveryTerminalDeliveryEvidenceResult } from "../../config/sessions/restart-recovery-types.js";
+import type { SessionEntry } from "../../config/sessions/types.js";
 import { clearAgentRunContext } from "../../infra/agent-run-registry.js";
+import { createSubsystemLogger } from "../../logging/subsystem.js";
 import type { SessionWorkAdmissionLease } from "../../sessions/session-lifecycle-admission.js";
 import type { prepareAgentCommandExecutionIdentity } from "../agent-command-execution-identity.js";
-import { clearCommandRecoveryClaim } from "./post-run.js";
+import { shouldPersistRestartRecoveryCleanup } from "../agent-command-restart-recovery.js";
+import { buildMainSessionRecoveryClearPatch } from "../main-session-recovery/main-session-recovery-clear.js";
+import { persistAgentSession } from "./attempt-execution.shared.js";
+import type { PreparedAgentCommandExecution } from "./prepare.js";
 import type { AgentCommandOpts } from "./types.js";
 
 /** Finishes durable cleanup before releasing the command's transient run owners. */
@@ -30,5 +38,55 @@ export async function finishAgentCommandCleanup(
       params.sessionWorkAdmission?.release();
       params.releaseForeground?.();
     }
+  }
+}
+
+const log = createSubsystemLogger("agents/agent-command");
+
+async function clearCommandRecoveryClaim(params: {
+  prepared: PreparedAgentCommandExecution;
+  sessionEntry?: SessionEntry;
+  runOwnedSessionId: string;
+  sessionReboundDuringRun: boolean;
+  trackedRestartRecoveryDeliveryClaim: boolean;
+  terminalDeliveryEvidence?: RestartRecoveryTerminalDeliveryEvidenceResult;
+}): Promise<void> {
+  const { sessionStore, sessionKey, storePath, runId } = params.prepared;
+  if (
+    params.sessionReboundDuringRun ||
+    !params.trackedRestartRecoveryDeliveryClaim ||
+    !sessionStore ||
+    !sessionKey
+  ) {
+    return;
+  }
+  try {
+    const entry = sessionStore[sessionKey] ?? params.sessionEntry;
+    if (entry?.restartRecoveryDeliveryRunId === runId) {
+      await persistAgentSession({
+        agentId: params.prepared.sessionAgentId,
+        sessionStore,
+        sessionKey,
+        storePath,
+        initialEntry: entry,
+        entry: {
+          ...entry,
+          ...buildRestartRecoveryClaimCleanupPatch({
+            entry,
+            recordTerminalSource: true,
+            terminalRunId: runId,
+            terminalDeliveryEvidence: params.terminalDeliveryEvidence,
+          }),
+          ...buildMainSessionRecoveryClearPatch(entry),
+          updatedAt: Date.now(),
+        },
+        shouldPersist: (current) =>
+          shouldPersistRestartRecoveryCleanup(current, params.runOwnedSessionId, runId),
+      });
+    }
+  } catch (error) {
+    log.warn(
+      `failed to clear restart recovery delivery context for ${sessionKey}: ${coerceErrorMessage(error)}`,
+    );
   }
 }

@@ -210,6 +210,18 @@ async function listPackageFiles(params: {
         await visit(entryPath, depth + 1);
         continue;
       }
+      // The standalone installer creates this exact root compatibility alias.
+      // Its regular target is hashed below; never admit arbitrary package links.
+      if (
+        entry.isSymbolicLink() &&
+        directory === params.rootPath &&
+        entry.name === "codex" &&
+        (await fs.readlink(entryPath)) === "bin/codex" &&
+        (await fs.lstat(path.join(params.rootPath, "bin"))).isDirectory() &&
+        (await fs.lstat(path.join(params.rootPath, "bin", "codex"))).isFile()
+      ) {
+        continue;
+      }
       if (!entry.isFile()) {
         throw new Error(`Codex runtime artifact contains an unsupported entry: ${entryPath}`);
       }

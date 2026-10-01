@@ -104,7 +104,7 @@ function isFirstFrameImage(input: VideoGenerationSourceAsset): boolean {
   return role === undefined || role === "first_frame";
 }
 
-function isLastFrameImage(input: VideoGenerationSourceInput): boolean {
+function isLastFrameImage(input: VideoGenerationSourceAsset): boolean {
   return normalizeOptionalString(input.role)?.toLowerCase() === "last_frame";
 }
 
@@ -231,7 +231,7 @@ function buildCreateBody(req: VideoGenerationRequest): Record<string, unknown> {
   };
 
   if (mode === "generate") {
-    const imageUrl = resolveImageUrl(firstFrames[0]);
+    const imageUrl = firstFrames[0] ? resolveImageUrl(firstFrames[0]) : undefined;
     if (imageUrl) {
       body.image = { url: imageUrl };
     }
@@ -255,14 +255,14 @@ function buildCreateBody(req: VideoGenerationRequest): Record<string, unknown> {
   if (mode === "referenceToVideo") {
     if (referenceImages.length > 0) {
       body.reference_images = referenceImages.map((image) => ({
-        url: resolveRequiredImageUrl(image),
+        url: resolveImageUrl(image),
       }));
     }
     if (firstFrames[0]) {
-      body.image = { url: resolveRequiredImageUrl(firstFrames[0]) };
+      body.image = { url: resolveImageUrl(firstFrames[0]) };
     }
     if (lastFrames[0]) {
-      body.last_frame = { url: resolveRequiredImageUrl(lastFrames[0]) };
+      body.last_frame = { url: resolveImageUrl(lastFrames[0]) };
     }
     body.duration =
       resolveDurationSeconds({
