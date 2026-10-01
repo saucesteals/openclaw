@@ -37,6 +37,7 @@ import {
   attachInternalToolExecutionPreparer,
   getInternalToolExecutionPreparer,
 } from "../runtime/internal-hooks.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../task-origin.js";
 import { readToolStringParam, type AnyAgentTool } from "./common.js";
 import type { GatewayToolCallerReceiptAdmission } from "./gateway-caller-receipt.types.js";
 
@@ -45,6 +46,7 @@ type GatewayToolCallerIdentity = {
   personalToolUser?: string;
   personalToolIdentityScoped?: true;
   personalToolSelection?: GatewayToolOperatorSelection;
+  taskOrigin?: TaskOriginSnapshot;
   agentId: string;
   sessionKey: string;
   gatewayUiCommandTarget?: GatewayUiCommandTarget;
@@ -208,6 +210,7 @@ export function createAdmittedGatewayToolCallerIdentity(
     agentId,
     sessionKey,
     operationalRunInstance: params.admittedRunContext.operationalRunInstance,
+    taskOrigin: normalizeTaskOriginSnapshot(params.admittedRunContext.taskOrigin),
     ...(delegatedAuthority ? { approvalAuthority: delegatedAuthority } : {}),
     ...(operatorAuthority ? { operatorAuthority } : {}),
     ...(params.receiptAuthority ? { approvalAuthorityCheck: params.receiptAuthority } : {}),
@@ -546,6 +549,7 @@ export async function withGatewayToolCallerIdentity<T>(
         inheritedOwner?.personalToolSelection ?? identity.personalToolSelection,
       ...(fullPermission !== undefined ? { fullPermission } : {}),
       ...(operationalRunInstance ? { operationalRunInstance } : {}),
+      taskOrigin: normalizeTaskOriginSnapshot(inheritedOwner?.taskOrigin ?? identity.taskOrigin),
       ...(embeddedRunToolAuthorityBinding ? { embeddedRunToolAuthorityBinding } : {}),
       ...(approvalAuthority ? { approvalAuthority } : {}),
       ...(operatorAuthority ? { operatorAuthority } : {}),

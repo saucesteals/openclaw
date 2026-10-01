@@ -200,6 +200,7 @@ export function createGatewayInstanceRuntime(
         dispatchOptions.allowSyntheticCronRunContinuation === true ||
         dispatchOptions.internalDeliveryMediaUrls ||
         dispatchOptions.runtimeContextFragments ||
+        dispatchOptions.taskOrigin ||
         dispatchOptions.internalDeliverySuppressText === true ||
         dispatchOptions.internalDeliverySuppressErrors === true ||
         delegatedToolPolicyHandoffId ||
@@ -216,6 +217,7 @@ export function createGatewayInstanceRuntime(
               cronRunContinuation: dispatchOptions.allowSyntheticCronRunContinuation === true,
               internalDeliveryMediaUrls: dispatchOptions.internalDeliveryMediaUrls,
               runtimeContextFragments: dispatchOptions.runtimeContextFragments,
+              taskOrigin: dispatchOptions.taskOrigin,
               internalDeliverySuppressText: dispatchOptions.internalDeliverySuppressText,
               internalDeliverySuppressErrors: dispatchOptions.internalDeliverySuppressErrors,
               delegatedToolPolicyHandoffId,
