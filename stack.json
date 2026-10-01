@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "1eb69f8259e96367577339a72cb8564368b90b37",
+  "prev": "9baf6973a2de97fe4a9900803218193d798e2f68",
   "head": "7961465e7ed97353f5872151b012e0a9db314d51",
   "applied": [
     "feat-exec-session-key",
@@ -16,16 +16,12 @@
     "fix-progress-error-rollout"
   ],
   "unapplied": [
-    "fix-codex-managed-runtime",
     "version-bump"
   ],
   "hidden": [],
   "patches": {
     "feat-exec-session-key": {
       "oid": "31083bdbf89df037f97e99f6010e8627bd56005e"
-    },
-    "fix-codex-managed-runtime": {
-      "oid": "f8a2a10eaee9a817d421c8e053ec9508623e8eb0"
     },
     "fix-discord-gateway-delegation": {
       "oid": "8db813e355bbc64ba3eabfa7fb9ef8acf6a7659f"
