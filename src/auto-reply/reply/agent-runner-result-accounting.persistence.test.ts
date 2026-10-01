@@ -120,7 +120,7 @@ it("publishes a prepared final only after its worker patch commits without host 
         kind: "continue",
         activeSessionEntry: accounting.activeSessionEntry,
         completedSourceReplyDelivery: false,
-        guardedReplyPayloads: [payload],
+        replyPayloads: [payload],
         responseUsageLine: undefined,
       },
     });
