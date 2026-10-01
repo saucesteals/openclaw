@@ -1080,7 +1080,7 @@ export function mergeChannelProgressDraftLine<TLine extends string | ChannelProg
 
 export function mergeChannelProgressDraftLineForStreaming<
   TLine extends string | ChannelProgressDraftLine,
->(lines: TLine[], line: TLine, params: { maxLines: number; toolProgress?: boolean }): TLine[] {
+>(lines: TLine[], line: TLine, params: { maxLines: number }): TLine[] {
   return mergeProgressDraftLine(lines, line, params.maxLines, isPendingProgressApproval, true);
 }
 
