@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "de6690f371ee4b637301690cf743536675522fb6",
+  "prev": "297fd1abdb57aa8d11972d54c4385da1640c1622",
   "head": "8112a5b4bdabdee6bcd51d5bbf90c38ba59091f1",
   "applied": [
     "feat-exec-session-key",
@@ -11,7 +11,7 @@
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
     "custom-discord-bot-reply-text",
-    "custom-remove-reminder",
+    "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
     "version-bump"
@@ -22,7 +22,7 @@
     "custom-discord-bot-reply-text": {
       "oid": "05d4e95617ea666bc6ba8b4571b880b97e76cf91"
     },
-    "custom-remove-reminder": {
+    "custom-no-reminder-disclaimer": {
       "oid": "beeec214959ff1d1146c0f7f71cf33ca9dbe1932"
     },
     "feat-exec-session-key": {
