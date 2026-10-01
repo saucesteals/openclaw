@@ -77,9 +77,10 @@ response remains authoritative even if it contains no visible models; HTTP
 `401` and `403` return an empty catalog rather than exposing fallback models.
 
 <Note>
-The current bundled harness is `@openai/codex` `0.153.4`. A live `model/list`
-probe against the official `0.153.4` app-server, using an isolated,
-unauthenticated Codex home and `includeHidden: true`, returned this public
+The current bundled harness is `@openai/codex` `0.159.3`. Its model catalog is
+resolved at runtime; run `/codex models` after upgrading. The following historical
+`model/list` snapshot from the official `0.153.4` app-server, using an isolated,
+unauthenticated Codex home and `includeHidden: true`, shows this public
 subset of catalog metadata:
 
 | Model id        | Input modalities | Reasoning efforts                    |
