@@ -1,10 +1,9 @@
 {
   "version": 5,
-  "prev": "71a694714201c7c725d49102a9f7a7ec5afa46fc",
-  "head": "9d8afaa6d35b40569194d16163abf0de40d6a472",
+  "prev": "07a8218599925c270851bf60dc984c3d3e9718de",
+  "head": "31083bdbf89df037f97e99f6010e8627bd56005e",
   "applied": [
-    "feat-exec-session-key",
-    "chore-agents-remove-safety-section"
+    "feat-exec-session-key"
   ],
   "unapplied": [
     "fix-discord-gateway-delegation",
@@ -23,9 +22,6 @@
   ],
   "hidden": [],
   "patches": {
-    "chore-agents-remove-safety-section": {
-      "oid": "9d8afaa6d35b40569194d16163abf0de40d6a472"
-    },
     "feat-exec-session-key": {
       "oid": "31083bdbf89df037f97e99f6010e8627bd56005e"
     },
