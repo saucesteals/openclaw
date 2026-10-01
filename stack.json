@@ -1,11 +1,12 @@
 {
   "version": 5,
-  "prev": "4e075de2b4889ef73f6ab94ae324f11a0fb6704e",
-  "head": "6e2fe1f53575d0b0bd7c542d1c1e29bae2897180",
+  "prev": "e3697bdadf641921f11f7a797797cb0343bab6f7",
+  "head": "6c7dbe0777a05a4958be284cf0f1a9048a4353d7",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
-    "fix-media-completion-tools"
+    "fix-media-completion-tools",
+    "fix-media-failure-status"
   ],
   "unapplied": [],
   "hidden": [],
@@ -18,6 +19,9 @@
     },
     "fix-media-completion-tools": {
       "oid": "6e2fe1f53575d0b0bd7c542d1c1e29bae2897180"
+    },
+    "fix-media-failure-status": {
+      "oid": "6c7dbe0777a05a4958be284cf0f1a9048a4353d7"
     }
   }
 }
