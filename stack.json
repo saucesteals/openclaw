@@ -1,8 +1,9 @@
 {
   "version": 5,
-  "prev": "f723916fca6168f61508c0cc3df811f5086c832b",
-  "head": "f8a2a10eaee9a817d421c8e053ec9508623e8eb0",
-  "applied": [
+  "prev": "8aacdcfc0be4ca7c578e1347d8e6dd738b84d4e7",
+  "head": "3a9d69db306cd7f081e06254cb89c4bcc14a7107",
+  "applied": [],
+  "unapplied": [
     "feat-exec-session-key",
     "chore-agents-remove-safety-section",
     "fix-discord-gateway-delegation",
@@ -16,9 +17,7 @@
     "fix-codex-historical-image-input",
     "remove-unscheduled-reminder-note",
     "fix-progress-error-rollout",
-    "fix-codex-managed-runtime"
-  ],
-  "unapplied": [
+    "fix-codex-managed-runtime",
     "version-bump"
   ],
   "hidden": [],
