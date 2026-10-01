@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "9baf6973a2de97fe4a9900803218193d798e2f68",
-  "head": "7961465e7ed97353f5872151b012e0a9db314d51",
+  "prev": "13c0823cd267011f03914f1dd38a5084d543fe04",
+  "head": "03bd22f7b04cc5834f58c282d1b0de4df28d4691",
   "applied": [
     "feat-exec-session-key",
     "fix-discord-gateway-delegation",
@@ -13,11 +13,10 @@
     "fix-request-origin-lifecycle",
     "fix-discord-reply-quote",
     "remove-unscheduled-reminder-note",
-    "fix-progress-error-rollout"
-  ],
-  "unapplied": [
+    "fix-progress-error-rollout",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "feat-exec-session-key": {
@@ -54,7 +53,7 @@
       "oid": "a8af78fd54536ded1cc9758abcfa5c4658d73a35"
     },
     "version-bump": {
-      "oid": "1ff9d119f125631e3565a964ffe418a928a3a059"
+      "oid": "03bd22f7b04cc5834f58c282d1b0de4df28d4691"
     }
   }
 }
