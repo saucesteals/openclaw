@@ -2025,10 +2025,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     mockReminderReply("I'll remind you tomorrow morning.");
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll remind you tomorrow morning.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
   it("does not append a reminder note to a plain memory promise", async () => {
@@ -2045,7 +2042,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
-  it("suppresses guard note when session already has an active cron job", async () => {
+  it("keeps reply unchanged when session already has an active cron job", async () => {
     mockCronJob();
 
     mockReminderReply("I'll ping you when it's done.");
@@ -2054,52 +2051,40 @@ describe("runReplyAgent reminder commitment guard", () => {
     expectReplyText(result, "I'll ping you when it's done.");
   });
 
-  it("still appends guard note when cron jobs exist but not for the current session", async () => {
+  it("keeps reply unchanged when cron jobs exist but not for the current session", async () => {
     mockCronJob({ id: "unrelated-job", name: "daily-news", sessionKey: "other-session" });
 
     mockReminderReply("I'll remind you tomorrow morning.");
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll remind you tomorrow morning.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
-  it("still appends guard note when cron jobs for session exist but are disabled", async () => {
+  it("keeps reply unchanged when cron jobs for session exist but are disabled", async () => {
     mockCronJob({ id: "disabled-job", name: "old-monitor", enabled: false });
 
     mockReminderReply("I'll check back in an hour.");
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll check back in an hour.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll check back in an hour.");
   });
 
-  it("still appends guard note when sessionKey is missing", async () => {
+  it("keeps reply unchanged when sessionKey is missing", async () => {
     mockCronJob();
 
     mockReminderReply("I'll ping you later.");
 
     const result = await createRun({ omitSessionKey: true });
-    expectReplyText(
-      result,
-      "I'll ping you later.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll ping you later.");
   });
 
-  it("still appends guard note when cron store read fails", async () => {
+  it("keeps reply unchanged when cron store read fails", async () => {
     loadCronStoreMock.mockRejectedValueOnce(new Error("store read failed"));
 
     mockReminderReply("I'll remind you after lunch.");
 
     const result = await createRun({ sessionKey: "main" });
-    expectReplyText(
-      result,
-      "I'll remind you after lunch.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you after lunch.");
   });
 });
 
