@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "72efe0b95af177954223904efb91895ceaee71aa",
-  "head": "8aa1f0c4865a6113f5a95a346ea6468d2153cc22",
+  "prev": "c66036f459d0a5114d191b7a1e9ed2e249e529a1",
+  "head": "74cfc0121c491a2a65ee146d51c3bf5c0c8cce29",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -13,8 +13,7 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "fix-child-completion-origin-schema",
-    "refresh-temp"
+    "fix-child-completion-origin-schema"
   ],
   "unapplied": [
     "version-bump"
@@ -31,7 +30,7 @@
       "oid": "c29f573f32b677ebb1e5621ab271f675d359777c"
     },
     "fix-child-completion-origin-schema": {
-      "oid": "59fa83b20f5bd0ff48618dc2081f6d468eb46e01"
+      "oid": "74cfc0121c491a2a65ee146d51c3bf5c0c8cce29"
     },
     "fix-codex-installer-alias": {
       "oid": "16ef608522f304defba2962e1014afba8ac10013"
@@ -53,9 +52,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "2f437c2517fd4c795b3edd376414616ab15fa969"
-    },
-    "refresh-temp": {
-      "oid": "8aa1f0c4865a6113f5a95a346ea6468d2153cc22"
     },
     "version-bump": {
       "oid": "81809da0c1844e1ec32faab755ad5579e6851857"
