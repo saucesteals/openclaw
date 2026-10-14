@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "33b11db3ac26cc7937e67dd6130ada6688c0d952",
+  "prev": "609f69e0586ee47f7e509250828e54579c5069dc",
   "head": "74cfc0121c491a2a65ee146d51c3bf5c0c8cce29",
   "applied": [
     "feat-exec-session-key",
@@ -15,9 +15,7 @@
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -52,9 +50,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "2f437c2517fd4c795b3edd376414616ab15fa969"
-    },
-    "version-bump": {
-      "oid": "64b93b24b0358155c9acc02581e75969c5ede72d"
     }
   }
 }
