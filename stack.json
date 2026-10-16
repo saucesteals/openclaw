@@ -1,8 +1,9 @@
 {
   "version": 5,
-  "prev": "a7f451fe609b1473bc5c43f0efda7aac69cc5f81",
-  "head": "74cfc0121c491a2a65ee146d51c3bf5c0c8cce29",
-  "applied": [
+  "prev": "d3364a45be7f54787372efca324ffe4a86372025",
+  "head": "c074824a27c96d3983043f9eeb33823cd1772d8c",
+  "applied": [],
+  "unapplied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
     "fix-media-completion-tools",
@@ -13,9 +14,7 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "fix-child-completion-origin-schema"
-  ],
-  "unapplied": [
+    "fix-child-completion-origin-schema",
     "version-bump"
   ],
   "hidden": [],
