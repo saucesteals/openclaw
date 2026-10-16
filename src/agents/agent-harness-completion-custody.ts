@@ -6,6 +6,7 @@ import {
   withPluginRuntimeGatewayContextResolver,
 } from "../plugins/runtime/gateway-request-scope.js";
 import { retainGatewayRootWorkAdmissionContinuationScope } from "../process/gateway-work-admission.js";
+import { runOutsideAsyncWorkScope } from "../shared/async-work-scope.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import {
   assertAgentHarnessCompletionScope,
@@ -153,9 +154,10 @@ async function captureAgentHarnessCompletionCustodyOwner(
       scope,
       run(run) {
         assertCurrent();
-        return !executionSettled && root
-          ? root.runSync(() => captured.run(run))
-          : captured.run(run);
+        // Retained completion owns its work independently of the settled foreground scope.
+        return runOutsideAsyncWorkScope(() =>
+          !executionSettled && root ? root.runSync(() => captured.run(run)) : captured.run(run),
+        );
       },
       emit(run) {
         assertCurrent();
