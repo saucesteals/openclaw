@@ -60,7 +60,10 @@ import {
 import { dispatchAgentRunWithCommentaryMedia } from "./agent-run-commentary-media.js";
 import { createAgentRunDiagnostics } from "./agent-run-diagnostics.js";
 import { withAgentRunDispatchExecutionIdentity } from "./agent-run-dispatch-execution-identity.js";
-import { resolveExecutionIdentitySpawnFacts } from "./agent-run-execution-lineage.js";
+import {
+  resolveAgentRunTaskOrigin,
+  resolveExecutionIdentitySpawnFacts,
+} from "./agent-run-execution-lineage.js";
 import type { StartAgentRunExecutionParams } from "./agent-run-execution-types.js";
 import { settleUnstartedGatewayFollowup } from "./agent-run-subagent.js";
 import {
@@ -534,13 +537,7 @@ async function executeAgentRun(params: StartAgentRunExecutionParams): Promise<vo
                 acpTurnSource: params.request.acpTurnSource,
                 internalEvents: params.request.internalEvents,
                 runtimeContextFragments: params.client?.internal?.runtimeContextFragments,
-                taskOrigin:
-                  params.client?.internal?.taskOrigin ??
-                  (agentRuntimeIdentity &&
-                  params.context.validateAgentRuntimeApprovalAuthority?.(agentRuntimeIdentity) ===
-                    true
-                    ? agentRuntimeIdentity.taskOrigin
-                    : undefined),
+                taskOrigin: resolveAgentRunTaskOrigin(params, agentRuntimeIdentity),
                 inputProvenance: params.inputProvenance,
                 privateCompletion: prepared.userTurn.privateCompletion,
                 senderIsOwner,
