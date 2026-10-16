@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "a444bdf2738123924db1885719cc456df5731a7e",
-  "head": "7270c99584403bd51f7bb942adedcd7ff3964ec6",
+  "prev": "5033e350a2786dafac7dcc09edaed36da0f81ffd",
+  "head": "4599cd8b50ed44e80e2c7f7ff441af39a10a5a52",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -13,10 +13,11 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "fix-child-completion-origin-schema",
+    "fix-child-completion-origin-schema"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
