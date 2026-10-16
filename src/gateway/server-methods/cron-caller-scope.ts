@@ -1,3 +1,4 @@
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../../agents/task-origin.js";
 import {
   resolveCronJobEffectiveAgentId,
   tryResolveCronJobEffectiveAgentId,
@@ -143,6 +144,7 @@ export function resolveCronMutationCommitGuard(
 
 export type CronCallerScope = {
   kind: "agentTool";
+  taskOrigin?: TaskOriginSnapshot;
   agentId: string;
   sessionKey?: string;
   accountId: string;
@@ -218,6 +220,7 @@ export function readCronCallerScope(
     : authenticatedRequesterProvenance;
   return {
     kind: "agentTool",
+    taskOrigin: normalizeTaskOriginSnapshot(identity.taskOrigin),
     agentId: normalizeAgentId(identity.agentId),
     sessionKey: identity.sessionKey?.trim() || undefined,
     accountId: normalizeAccountId(identity.turnSourceAccountId),

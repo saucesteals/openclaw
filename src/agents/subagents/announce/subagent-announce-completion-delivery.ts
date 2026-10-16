@@ -50,6 +50,7 @@ import { inferDeliveryTargetChatType } from "./subagent-announce-origin.js";
 import { dispatchGatewayMethodInProcess } from "./subagent-announce.runtime.js";
 
 export async function runAnnounceAgentCall(params: {
+  taskOrigin?: import("../../task-origin.js").TaskOriginSnapshot;
   agentParams: Record<string, unknown>;
   privateCompletion?: true;
   typing?: Omit<GatewayRecoveryTypingParams, "isCurrent">;
@@ -92,6 +93,7 @@ export async function runAnnounceAgentCall(params: {
     signal.throwIfAborted();
     const dispatch = dispatchGatewayMethodInProcess("agent", params.agentParams, {
       cancelOnDeadline: true,
+      taskOrigin: params.taskOrigin,
       privateCompletion: params.privateCompletion,
       settleWakeReplay: params.settleWakeSourceSessionKeys
         ? {
