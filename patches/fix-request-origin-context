@@ -1,7 +1,7 @@
-Bottom: fa34080f1dae88abe5e5e1fb21e52b4c3e7fce2a
-Top:    213400c4cd353a3bd0a824faa04d0d9398415db7
+Bottom: 5afeff6f8f4bb0c70439527048b65db41a3e4bf3
+Top:    5afeff6f8f4bb0c70439527048b65db41a3e4bf3
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-01 01:18:51 -0700
+Date:   2026-10-15 18:47:37 -0700
 
 fix(agents): preserve original requester across detached work
 
