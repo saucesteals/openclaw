@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "ceed9124e3041d637f100a1d3fcd8b9ce5ec142a",
-  "head": "65d7a6e1a6e285c5520ef74a87df804af36cab55",
+  "prev": "e6ef92599eb9d229e8a3e3f82dde102e692e5b62",
+  "head": "8b58800c77d2f97166d0831a62768b98a3d78c50",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -13,8 +13,7 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "fix-child-completion-origin-schema",
-    "refresh-temp"
+    "fix-child-completion-origin-schema"
   ],
   "unapplied": [
     "version-bump"
@@ -22,7 +21,7 @@
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
-      "oid": "04110629f89b397b10fd5d804b656de598fea97c"
+      "oid": "0a3499282bfaa366799c9ba9f8c28644d7d95890"
     },
     "feat-exec-session-key": {
       "oid": "d41ea38d0c2121a5a8b222945547406ff4b9f2aa"
@@ -31,10 +30,10 @@
       "oid": "f85824e159e5c7fe081fbc22517eaac1d285e5a6"
     },
     "fix-child-completion-origin-schema": {
-      "oid": "174e48c753f608b6b78714f24c6dfc03242b3da5"
+      "oid": "8b58800c77d2f97166d0831a62768b98a3d78c50"
     },
     "fix-codex-installer-alias": {
-      "oid": "3f213a89abc108ee244eeb8a196c20c79be66c9b"
+      "oid": "2f52980fbad12210362df84887336d179a4e5b0b"
     },
     "fix-media-completion-tools": {
       "oid": "a3c1fd74fa2e115eae48083ad78b82e06e213223"
@@ -46,16 +45,13 @@
       "oid": "a70eb3b2d50a7c937c34bc87bd2b75c457d27725"
     },
     "fix-progress-error-rollout": {
-      "oid": "13f4fba3c43ebfd7b8d72b5a178070fdef5c6261"
+      "oid": "dfb40c017e129a7d3b05fbbbbab387ad8ca8f1ec"
     },
     "fix-request-origin-context": {
       "oid": "c0352e8013ee89aa5748d328c414ba7a69cf36f3"
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
-    },
-    "refresh-temp": {
-      "oid": "65d7a6e1a6e285c5520ef74a87df804af36cab55"
     },
     "version-bump": {
       "oid": "dcf0fa81fbe248ceae772a2174400546d5e8d0db"

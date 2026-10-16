@@ -1,7 +1,7 @@
-Bottom: 9590e5b7ea22252d511d908b3da93cf12e0c5ed8
-Top:    3fc78c2c304fd8b364de731af812c7a48e5c0298
+Bottom: 6ea2284e1f6b44c02e79a03ba13702a1fd648d85
+Top:    fa8c4efa3755aa5e2fec07aee3ec836f04390e75
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-15 18:50:55 -0700
+Date:   2026-10-15 18:52:38 -0700
 
 fix(codex): accept the official standalone installer alias
 
