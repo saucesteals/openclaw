@@ -486,18 +486,17 @@ describe("admitted task origin", () => {
       sourceRunId: "source-run",
       audience: "room",
     });
-    const { runtime, ...admissionFacts } = facts;
     const admission = prepareAgentRunAdmission({
       cfg: {},
-      facts: admissionFacts,
+      facts,
       taskOrigin: origin,
       operationalRunInstance: createOperationalRunInstanceRef(facts.runId),
     });
-    const first = await admission.admit(runtime.kind);
+    const first = await admission.admit("embedded");
     expect(first.executionIdentityToken).toBeUndefined();
     expect(first.taskOrigin).toEqual(origin);
     expect(Object.isFrozen(first.taskOrigin)).toBe(true);
-    expect(await admission.admit(runtime.kind)).toBe(first);
+    expect(await admission.admit("embedded")).toBe(first);
     const nested = captureTaskOrigin({
       inherited: first.taskOrigin,
       external: false,
