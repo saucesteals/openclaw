@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "af6ef9e934737564e8d8c5713fc7d1b1a7ac1c24",
-  "head": "82e680793824fef41fa833968bb85389e9ea6ac9",
+  "prev": "5f67d1276f720d87be570bf348281aa51240734f",
+  "head": "ecf19e03a4f365288336eaddd18c350d78bd151f",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -11,7 +11,8 @@
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
     "custom-no-reminder-disclaimer",
-    "fix-progress-error-rollout"
+    "fix-progress-error-rollout",
+    "refresh-temp"
   ],
   "unapplied": [
     "fix-codex-installer-alias",
@@ -52,6 +53,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
+    },
+    "refresh-temp": {
+      "oid": "ecf19e03a4f365288336eaddd18c350d78bd151f"
     },
     "version-bump": {
       "oid": "dcf0fa81fbe248ceae772a2174400546d5e8d0db"
