@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "2d4b66d9f356b5dbcd98aab6b3770e638f83149a",
-  "head": "79249818591722f8a8d35f1c52fcf4af618bc338",
+  "prev": "9a1dfddd52b7ffb3d834178a91c2024d811e8006",
+  "head": "d733b2cb11551fe017a719332def3dc3f948cc6d",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -9,7 +9,8 @@
     "fix-media-failure-status",
     "fix-media-selected-delivery",
     "fix-xai-video15-inputs",
-    "fix-request-origin-context"
+    "fix-request-origin-context",
+    "refresh-temp"
   ],
   "unapplied": [
     "custom-no-reminder-disclaimer",
@@ -52,6 +53,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
+    },
+    "refresh-temp": {
+      "oid": "d733b2cb11551fe017a719332def3dc3f948cc6d"
     },
     "version-bump": {
       "oid": "dcf0fa81fbe248ceae772a2174400546d5e8d0db"
