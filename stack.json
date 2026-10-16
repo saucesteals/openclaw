@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "ad4240603dafc17fa97059e9c7981e83c906dccc",
-  "head": "843de7c69d6cedd378964b2e4cb3eab108a70096",
+  "prev": "6ef28c852fb64c15b24a2f57f092632a50349ed3",
+  "head": "4599cd8b50ed44e80e2c7f7ff441af39a10a5a52",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -13,8 +13,7 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "fix-child-completion-origin-schema",
-    "refresh-temp"
+    "fix-child-completion-origin-schema"
   ],
   "unapplied": [
     "version-bump"
@@ -22,7 +21,7 @@
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
-      "oid": "d97d4373833a48930c80f3795d9d2b9f76b54a9b"
+      "oid": "617778e1310e7b0d4189ef202aaecb14bb38dc71"
     },
     "feat-exec-session-key": {
       "oid": "d41ea38d0c2121a5a8b222945547406ff4b9f2aa"
@@ -31,10 +30,10 @@
       "oid": "f85824e159e5c7fe081fbc22517eaac1d285e5a6"
     },
     "fix-child-completion-origin-schema": {
-      "oid": "460fd805423ca5623a4e9f1246c34bde84f43e14"
+      "oid": "4599cd8b50ed44e80e2c7f7ff441af39a10a5a52"
     },
     "fix-codex-installer-alias": {
-      "oid": "3d7f85b3ace8e5475b874466a76054b308cdd218"
+      "oid": "860415d626181fbf67dbd06e041239cbfa1499da"
     },
     "fix-media-completion-tools": {
       "oid": "a3c1fd74fa2e115eae48083ad78b82e06e213223"
@@ -46,16 +45,13 @@
       "oid": "a70eb3b2d50a7c937c34bc87bd2b75c457d27725"
     },
     "fix-progress-error-rollout": {
-      "oid": "1da54135b70ffacc95c81e3ad21760f3b9aac0ce"
+      "oid": "af9f09fb5cc6f4d4fbd3e88e3cd0dd81a629a503"
     },
     "fix-request-origin-context": {
-      "oid": "479f87578516e9f38b665314dc72a29870a4a2ae"
+      "oid": "e0fbd5f356cf18d00bf5a519876e18e131623964"
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
-    },
-    "refresh-temp": {
-      "oid": "843de7c69d6cedd378964b2e4cb3eab108a70096"
     },
     "version-bump": {
       "oid": "dcf0fa81fbe248ceae772a2174400546d5e8d0db"
