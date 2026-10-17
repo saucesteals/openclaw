@@ -150,7 +150,14 @@ export function registerSharedClientLifetimeTests(
   it.each([true, false])(
     "preserves binding cleanup ownership (caller retains client: %s)",
     async (callerRetains) => {
-      const harness = createClientHarness();
+      const harness = createClientHarness({
+        onWrite: (line, send) => {
+          const request = JSON.parse(line) as { id: number; method: string };
+          if (request.method === "thread/unsubscribe") {
+            send({ id: request.id, result: { status: "unsubscribed" } });
+          }
+        },
+      });
       vi.spyOn(CodexAppServerClient, "start").mockResolvedValue(harness.client);
       const acquiring = getLeasedSharedCodexAppServerClient({ timeoutMs: 1_000 });
       await sendInitializeResult(harness, "openclaw/0.151.0 (Linux; test)");
@@ -179,9 +186,13 @@ export function registerSharedClientLifetimeTests(
         unsubscribe.resolve();
         // All fixture release work is promise-based; yield past its microtask continuations.
         await setImmediate();
-        expect(settled, "only the caller-held client lease may bypass graceful retirement").toBe(
+        expect(settled, "cross-client cleanup must wait for exact-thread teardown").toBe(
           callerRetains,
         );
+        expect(client.getCloseError()).toBeUndefined();
+        harness.send({ method: "thread/closed", params: { threadId: "previous-thread" } });
+        await releasing;
+        expect(settled).toBe(true);
         expect(client.getCloseError()).toBeUndefined();
       } finally {
         unsubscribe.resolve();
@@ -324,6 +335,56 @@ export function registerSharedClientLifetimeTests(
       await expect(waitForCodexAppServerClientExit(client)).resolves.toBeUndefined();
     },
   );
+
+  it("hands off an unloaded thread while a retired client still has a sibling lease", async () => {
+    const harness = createClientHarness({
+      autoEmitExit: false,
+      onWrite: (line, send) => {
+        const request = JSON.parse(line) as { id: number; method: string };
+        if (request.method === "thread/unsubscribe") {
+          send({ id: request.id, result: { status: "notLoaded" } });
+        }
+      },
+    });
+    const successor = createClientHarness();
+    vi.spyOn(CodexAppServerClient, "start").mockResolvedValue(harness.client);
+    const acquire = getLeasedSharedCodexAppServerClient({ timeoutMs: 1_000 });
+    await sendInitializeResult(harness, "openclaw/0.151.0 (Linux; test)");
+    const retired = await acquire;
+    const releaseSibling = retainSharedCodexAppServerClientIfCurrent(retired)!;
+    releaseLeasedSharedCodexAppServerClient(retired);
+    retireSharedCodexAppServerClientIfCurrent(retired);
+    const abort = new AbortController();
+    let outcome: unknown = "pending";
+    const handoff = releaseCodexBoundLiveThread({
+      client: successor.client,
+      clientId: successor.client.getInstanceId(),
+      ownerClientId: retired.getInstanceId(),
+      lifecycleTiming: createCodexThreadLifecycleTimingTracker(),
+      threadId: "thread",
+      signal: abort.signal,
+    }).then(
+      () => {
+        outcome = "resolved";
+      },
+      (error: unknown) => {
+        outcome = error;
+      },
+    );
+    try {
+      // Drain the in-memory transport and its promise continuations, without advancing a timeout.
+      await setImmediate();
+      expect(outcome).toBe("resolved");
+      expect(harness.stdinDestroyed).toBe(false);
+      expect(harness.process.killed).toBe(false);
+    } finally {
+      abort.abort(new Error("fixture cleanup"));
+      releaseSibling();
+      harness.emitExit();
+      await handoff;
+      successor.client.close();
+    }
+  });
 
   it("lets cancellation end a writer handoff to a retired owner that other leases keep alive", async () => {
     const harness = createClientHarness({ autoEmitExit: false });

@@ -348,12 +348,10 @@ export async function retainSharedCodexAppServerClientByInstanceId(clientId: str
     const release = retainSharedClientEntry(entry);
     return {
       client,
-      // Only writer handoffs should wait for a still-usable retired owner.
-      release: (waitForRetirement = false) => {
+      // Releasing accounting never waits on a healthy sibling lease.
+      release: () => {
         release();
-        return client.getCloseError() || (waitForRetirement && entry.closeWhenIdle)
-          ? waitForCodexAppServerClientExit(client)
-          : undefined;
+        return client.getCloseError() ? waitForCodexAppServerClientExit(client) : undefined;
       },
     };
   }

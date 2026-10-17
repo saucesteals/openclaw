@@ -492,6 +492,13 @@ Retirement revokes captured requester authority immediately, then joins accepted
 native submission and assignment writes before releasing child subscriptions.
 Client disposal joins those writes before releasing retained owners.
 
+When a conversation moves to another app-server process, OpenClaw waits for the
+previous process to confirm that the specific thread has unloaded. An unsubscribe
+acknowledgment alone does not prove that its writer has stopped. Other conversations
+may keep the previous process alive without blocking this handoff. Cancellation
+preserves the conversation and prevents a replacement writer from starting before
+teardown is confirmed.
+
 An approval or input request shows what needs attention. A native mailbox wait
 shows that the agent is waiting for messages; it does not invent a list of child
 dependencies. Idle, interrupted, or unloaded native threads do not prove that
