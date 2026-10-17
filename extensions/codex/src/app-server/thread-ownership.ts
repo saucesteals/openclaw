@@ -7,7 +7,9 @@ import {
   unsubscribeCodexThreadBestEffort,
 } from "./attempt-client-cleanup.js";
 import {
+  hasCodexAppServerLiveThread,
   isCodexAppServerLiveThreadClaimed,
+  isCodexAppServerLiveThreadProtected,
   releaseCodexAppServerLiveThread,
   retainCodexAppServerLiveThread,
 } from "./client-runtime.js";
@@ -20,6 +22,7 @@ import type {
 } from "./session-binding.js";
 import { retainSharedCodexAppServerClientByInstanceId } from "./shared-client.js";
 import { withCodexAppServerThreadMutation } from "./thread-ownership-queue.js";
+import { waitForCodexThreadUnload } from "./thread-unload.js";
 
 /** Queued cancellation settles the caller without letting successors overtake its lane. */
 export async function withCodexAppServerThreadMutationHold<T>(
@@ -167,44 +170,61 @@ export async function releaseCodexAppServerBindingSubscription(
   }
   try {
     if (
-      await releaseCodexAppServerLiveThread(
-        clientLease.client,
-        binding.threadId,
-        options.assertCurrent,
-        options.withCurrent,
-      )
+      isCodexAppServerLiveThreadClaimed(clientLease.client, binding.threadId) ||
+      isCodexAppServerLiveThreadProtected(clientLease.client, binding.threadId)
     ) {
-      return;
-    }
-    options.assertCurrent?.();
-    // Evicted idle owners also disappear from the registry. Only an explicit
-    // claimed generation proves an active turn still owns its subscription.
-    if (isCodexAppServerLiveThreadClaimed(clientLease.client, binding.threadId)) {
       throw new Error(
         `Codex thread ${binding.threadId} has an active run; stop it before changing its owner.`,
       );
     }
-    if (!options.allowUntracked) {
+    if (
+      !options.allowUntracked &&
+      !hasCodexAppServerLiveThread(clientLease.client, binding.threadId)
+    ) {
       return;
     }
-    const unsubscribed = await unsubscribeCodexThreadBestEffort(clientLease.client, {
-      threadId: binding.threadId,
-      timeoutMs: CODEX_APP_SERVER_UNSUBSCRIBE_TIMEOUT_MS,
-      assertCurrent: options.assertCurrent,
-      withCurrent: options.withCurrent,
-    });
-    if (!unsubscribed) {
-      await closeCodexStartupClientBestEffort(clientLease.client);
-      throw new CodexAppServerUnsafeSubscriptionError(
-        `Codex retired thread subscription could not be released: ${binding.threadId}`,
-      );
+    const release = async () => {
+      if (
+        await releaseCodexAppServerLiveThread(
+          clientLease.client,
+          binding.threadId,
+          options.assertCurrent,
+          options.withCurrent,
+        )
+      ) {
+        return;
+      }
+      options.assertCurrent?.();
+      if (!options.allowUntracked) {
+        return;
+      }
+      const unsubscribed = await unsubscribeCodexThreadBestEffort(clientLease.client, {
+        threadId: binding.threadId,
+        timeoutMs: CODEX_APP_SERVER_UNSUBSCRIBE_TIMEOUT_MS,
+        assertCurrent: options.assertCurrent,
+        withCurrent: options.withCurrent,
+      });
+      if (!unsubscribed) {
+        await closeCodexStartupClientBestEffort(clientLease.client);
+        throw new CodexAppServerUnsafeSubscriptionError(
+          `Codex retired thread subscription could not be released: ${binding.threadId}`,
+        );
+      }
+    };
+    if (binding.clientId !== options.retainedClientId) {
+      await waitForCodexThreadUnload({
+        client: clientLease.client,
+        threadId: binding.threadId,
+        assertCurrent: options.assertCurrent,
+        withCurrent: options.withCurrent,
+        release,
+      });
+    } else {
+      await release();
     }
   } finally {
-    // A same-client caller releases its outer lease only after this cleanup returns.
-    await clientLease.release(
-      binding.clientId !== options.retainedClientId &&
-        !isCodexAppServerLiveThreadClaimed(clientLease.client, binding.threadId),
-    );
+    // Teardown of this thread is sufficient even when siblings retain the process.
+    void clientLease.release();
   }
 }
 

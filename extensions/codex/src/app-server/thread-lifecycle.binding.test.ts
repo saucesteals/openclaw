@@ -394,6 +394,7 @@ async function createManualResumeFixture(
     omitCatalog?: boolean;
     competingLease?: "read" | "release" | "resume";
     wireClient?: boolean;
+    unloadOnUnsubscribe?: boolean;
     parentControlledAfterAttach?: boolean;
   } = {},
 ) {
@@ -457,6 +458,9 @@ async function createManualResumeFixture(
     if (method === "thread/unsubscribe") {
       if (options.competingLease === "release") {
         compete();
+      }
+      if (options.unloadOnUnsubscribe) {
+        await harness.notify({ method: "thread/closed", params: { threadId } });
       }
       return { status: "unsubscribed" };
     }
@@ -1453,7 +1457,10 @@ describe("Codex app-server thread lifecycle bindings", () => {
   it.each(["attach", "release", "reset"] as const)(
     "queues same-thread %s behind ordinary preparation without blocking siblings",
     async (operation) => {
-      const fixture = await createManualResumeFixture({ wireClient: true });
+      const fixture = await createManualResumeFixture({
+        wireClient: true,
+        unloadOnUnsubscribe: true,
+      });
       await fixture.start();
       fixture.wire!.writes.length = 0;
       const entered = createDeferred<void>();
