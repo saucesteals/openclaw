@@ -31,6 +31,7 @@ const mixedArgs = [
   "--disable",
   "fast_mode",
   "app-server",
+  "--config=thread_unload_delay_secs=1800",
   "-c=model_reasoning_effort=high",
   "--config",
   'cli_auth_credentials_store="file"',
@@ -41,6 +42,7 @@ const expectedConfig = {
   openai_base_url: baseUrl,
   model_reasoning_effort: "high",
   cli_auth_credentials_store: "ephemeral",
+  thread_unload_delay_secs: 1,
 };
 const expectedMixedConfig = {
   ...expectedConfig,
