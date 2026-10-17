@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "5bbcfc202aa77e3dd1a0f5fe7678ef329603e744",
-  "head": "d093e1429e951065850dcc5f70eab0fd4abda3e6",
+  "prev": "b9d2bbaeec84888bbc7c87f2f35e8aee36593ad0",
+  "head": "ec523c7a01cdcb3c4907bbf0e721c806d197fb35",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -15,11 +15,10 @@
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
-    "fix-codex-thread-handoff"
-  ],
-  "unapplied": [
+    "fix-codex-thread-handoff",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -62,7 +61,7 @@
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
     },
     "version-bump": {
-      "oid": "c67e1d9d392560b864c3fd73e4185aa6ffb07d56"
+      "oid": "ec523c7a01cdcb3c4907bbf0e721c806d197fb35"
     }
   }
 }
