@@ -310,6 +310,7 @@ it.each([
     const ownerClaimed = subscription === "claimed";
     const ownerWrites = subscription === "untracked" ? [0, 0] : [0, 0, 0];
     let ownerExited = false;
+    const unsubscribeObserved = createDeferred<void>();
     const resumes: number[] = [];
     const compactStarted = createDeferred<{
       id: number;
@@ -341,6 +342,11 @@ it.each([
         }
         if (request.method === "thread/compact/start") {
           compactStarted.resolve({ id: request.id, send });
+          return;
+        }
+        if (request.method === "thread/unsubscribe") {
+          send({ id: request.id, result: { status: "unsubscribed" } });
+          unsubscribeObserved.resolve();
           return;
         }
         send({
@@ -432,8 +438,8 @@ it.each([
         acquired = true;
         if (lease) {
           const release = lease.release;
-          vi.spyOn(lease, "release").mockImplementation((wait) => {
-            const exit = release(wait);
+          vi.spyOn(lease, "release").mockImplementation(() => {
+            const exit = release();
             released.resolve();
             return exit;
           });
@@ -463,7 +469,7 @@ it.each([
         await Promise.resolve();
         expect(acquired).toBe(lateRelease === "during-resume");
         if (lateRelease === "during-resume") {
-          await released.promise;
+          await (ownerClaimed ? released.promise : unsubscribeObserved.promise);
           await setImmediate();
           if (ownerClaimed) {
             expect(
@@ -481,7 +487,7 @@ it.each([
             });
           }
           releaseRetirementLease?.();
-          expect(harness?.stdinDestroyed).toBe(true);
+          expect(harness?.stdinDestroyed).toBe(ownerClaimed);
         }
       } else {
         await delay(20);
