@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "fcf70617bb4f87086bdae03370cb93025aa0a3c2",
-  "head": "4eb9c2fc6e863eee9531df8e83cc248c17c370eb",
+  "prev": "1b3c7f0f696f3c9f8e66da523374038216f05756",
+  "head": "6953c7def66020c0e990bf1575b52605b9e3f919",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -15,10 +15,11 @@
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
-    "fix-native-completion-parent-pin",
+    "fix-native-completion-parent-pin"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
