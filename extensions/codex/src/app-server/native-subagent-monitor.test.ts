@@ -757,6 +757,11 @@ describe("CodexNativeSubagentMonitor", () => {
     const releaseClient = vi.fn();
     const releaseParentThread = vi.fn();
     const retainParentThread = vi.fn(() => releaseParentThread);
+    const pinStateAtDelivery: number[] = [];
+    runtime.deliverAgentHarnessCompletion.mockImplementation(async () => {
+      pinStateAtDelivery.push(releaseParentThread.mock.calls.length);
+      return { delivered: true, path: "direct" };
+    });
     const monitor = new CodexNativeSubagentMonitor(client as never, runtime, {
       retainClient: () => releaseClient,
       retainParentThread,
@@ -772,6 +777,8 @@ describe("CodexNativeSubagentMonitor", () => {
     expect(releaseClient).not.toHaveBeenCalled();
     expect(releaseParentThread).not.toHaveBeenCalled();
     await client.notify(nativeCompletionNotification({ agentPath: "child-b" }));
+    // A terminal result must not pin the parent while its delivery resumes it.
+    expect(pinStateAtDelivery).toEqual([0, 1]);
     expect(releaseClient).toHaveBeenCalledTimes(1);
     expect(releaseParentThread).toHaveBeenCalledOnce();
     await monitor.dispose();
