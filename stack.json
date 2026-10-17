@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "28ead1fe6b62107aa1e9fa0fd2975a5041c8fa6c",
-  "head": "f7bde0b83550964fd3643ae84ef6eac86292fc2d",
+  "prev": "a167c365269fdc428b36df5a89d467a8ea8c0f0a",
+  "head": "6953c7def66020c0e990bf1575b52605b9e3f919",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -15,8 +15,7 @@
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
-    "fix-native-completion-parent-pin",
-    "refresh-temp"
+    "fix-native-completion-parent-pin"
   ],
   "unapplied": [
     "version-bump"
@@ -48,7 +47,7 @@
       "oid": "a70eb3b2d50a7c937c34bc87bd2b75c457d27725"
     },
     "fix-native-completion-parent-pin": {
-      "oid": "93fafafeb4f7fc7736a3ed41787dcae5375f4628"
+      "oid": "6953c7def66020c0e990bf1575b52605b9e3f919"
     },
     "fix-native-completion-work-scope": {
       "oid": "b43d5753ffef677639ba966ab49d7b1a47360721"
@@ -61,9 +60,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
-    },
-    "refresh-temp": {
-      "oid": "f7bde0b83550964fd3643ae84ef6eac86292fc2d"
     },
     "version-bump": {
       "oid": "d743ca50b41a9abfc7402f90f8f3de07f13502a4"
