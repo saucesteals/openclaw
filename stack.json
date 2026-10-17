@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "1b3c7f0f696f3c9f8e66da523374038216f05756",
+  "prev": "cdffa960c0d8dc7d60791c2b87a4c0e492d591e5",
   "head": "6953c7def66020c0e990bf1575b52605b9e3f919",
   "applied": [
     "feat-exec-session-key",
@@ -17,9 +17,7 @@
     "fix-native-completion-work-scope",
     "fix-native-completion-parent-pin"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -60,9 +58,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
-    },
-    "version-bump": {
-      "oid": "4eb9c2fc6e863eee9531df8e83cc248c17c370eb"
     }
   }
 }
