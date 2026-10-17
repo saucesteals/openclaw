@@ -107,7 +107,7 @@ describe("native completion settlement", () => {
         await parent.unregister();
         completion = client.notify(completedChild());
         await entered.promise;
-        expect(releasePin).not.toHaveBeenCalled();
+        expect(releasePin).toHaveBeenCalledOnce();
         const canAdmit =
           runtime.deliverAgentHarnessCompletion.mock.calls[0]?.[0].isSourceSessionAdmissionAllowed;
         expect(canAdmit?.()).toBe(true);
@@ -123,15 +123,16 @@ describe("native completion settlement", () => {
               result,
             }),
           );
-          // A receipt cannot release custody still owned by the accepted delivery.
-          expect(releasePin).not.toHaveBeenCalled();
+          // Execution protection is already released; receipt handling must not
+          // release it again or discard the accepted delivery custody.
+          expect(releasePin).toHaveBeenCalledOnce();
         }
         delivery.resolve({ delivered: false, path: "none" });
         await completion;
         await retirement;
         expect(runtime.deliverAgentHarnessCompletion).toHaveBeenCalledOnce();
         if (change === "retired-turn-receipt") {
-          expect(releasePin).not.toHaveBeenCalled();
+          expect(releasePin).toHaveBeenCalledOnce();
           expect(vi.getTimerCount()).toBe(1);
           await observer?.unregister();
           await vi.advanceTimersByTimeAsync(10);
