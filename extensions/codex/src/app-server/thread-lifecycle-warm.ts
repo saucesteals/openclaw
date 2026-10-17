@@ -1,6 +1,5 @@
 import { AgentHarnessPreflightError } from "openclaw/plugin-sdk/agent-harness-runtime";
 import { isIncognitoSessionKey } from "openclaw/plugin-sdk/session-key-runtime";
-import { racePromiseWithAbortSignal } from "openclaw/plugin-sdk/time-runtime";
 import {
   CODEX_APP_SERVER_UNSUBSCRIBE_TIMEOUT_MS,
   closeCodexStartupClientBestEffort,
@@ -50,6 +49,7 @@ import {
   refreshCodexThreadInstructions,
 } from "./thread-policy.js";
 import { buildThreadResumeParams } from "./thread-requests.js";
+import { waitForCodexThreadUnload } from "./thread-unload.js";
 
 type CodexWarmThreadReuseParams = CodexThreadRequestContext & {
   params: CodexStartOrResumeThreadParams;
@@ -172,32 +172,30 @@ export async function releaseCodexBoundLiveThread(
     ) {
       throw new Error(`Codex thread ${options.threadId} is claimed by active work; stop it first.`);
     }
-    return await releaseCodexRetainedLiveThread({
-      ...options,
-      client,
-      abandonClient: previous ? undefined : options.abandonClient,
-      assertCurrent: options.assertCurrent
-        ? () => {
-            options.assertCurrent?.();
-            const closed = previous?.client.getCloseError();
-            if (closed) {
-              throw closed;
+    const release = () =>
+      releaseCodexRetainedLiveThread({
+        ...options,
+        client,
+        abandonClient: previous ? undefined : options.abandonClient,
+        assertCurrent: options.assertCurrent
+          ? () => {
+              options.assertCurrent?.();
+              const closed = previous?.client.getCloseError();
+              if (closed) {
+                throw closed;
+              }
             }
-          }
-        : undefined,
-    });
+          : undefined,
+      });
+    return previous
+      ? await options.lifecycleTiming.measure("previous-thread-unload", () =>
+          waitForCodexThreadUnload({ ...options, client, release }),
+        )
+      : await release();
   } finally {
-    // Rejection must free the lane so the claimed run can still be stopped.
-    const retiredExit = previous?.release(
-      !isCodexAppServerLiveThreadClaimed(client, options.threadId) &&
-        !isCodexAppServerLiveThreadProtected(client, options.threadId),
-    );
-    // Writer handoff waits for the retired owner to exit, but other leases can
-    // keep it alive indefinitely. This runs under the thread queue and binding
-    // lease, so cancellation must end the wait without proceeding to a write.
-    if (retiredExit) {
-      await racePromiseWithAbortSignal(retiredExit, options.signal, codexThreadLifecycleAbortError);
-    }
+    // Exact-thread teardown owns writer safety; sibling leases do not block handoff.
+    // Rejection also frees this lease without waiting for unrelated work to finish.
+    void previous?.release();
   }
 }
 

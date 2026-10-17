@@ -1165,6 +1165,9 @@ class Monitor {
     this.recovery.markTerminalRevision(childState.childThreadId);
     releaseNativeDirectChild(childState);
     this.recovery.clearRecoveryTimers(childState);
+    // Delivery may need to cold-resume the parent. Terminal results retain
+    // delivery custody, not an execution pin that would prevent that resume.
+    this.releaseParentThreadIfChildrenTerminal(childState.parentThreadId);
     this.applyNativeReceipts(
       state,
       childState.deliveryReceipts.record(
@@ -1803,6 +1806,19 @@ class Monitor {
     );
   }
 
+  private releaseParentThreadIfChildrenTerminal(parentThreadId: string): void {
+    if (
+      [...this.childStates.values()].some(
+        (child) => child.parentThreadId === parentThreadId && !child.terminal,
+      )
+    ) {
+      return;
+    }
+    const releaseParentThread = this.parentThreadRetentions.get(parentThreadId);
+    this.parentThreadRetentions.delete(parentThreadId);
+    releaseParentThread?.();
+  }
+
   private unregisterChild(
     childState: ChildState,
     options: { retainSubscription?: boolean } = {},
@@ -1827,15 +1843,7 @@ class Monitor {
     if (this.childStates.get(childState.runId) === childState) {
       this.childStates.delete(childState.runId);
     }
-    if (
-      ![...this.childStates.values()].some(
-        (remainingChild) => remainingChild.parentThreadId === childState.parentThreadId,
-      )
-    ) {
-      const releaseParentThread = this.parentThreadRetentions.get(childState.parentThreadId);
-      this.parentThreadRetentions.delete(childState.parentThreadId);
-      releaseParentThread?.();
-    }
+    this.releaseParentThreadIfChildrenTerminal(childState.parentThreadId);
     this.recovery.collectThreadStatusRevision(childState.childThreadId);
     this.releaseClientRetentionIfIdle();
     const state = this.parentStates.get(childState.parentThreadId);
