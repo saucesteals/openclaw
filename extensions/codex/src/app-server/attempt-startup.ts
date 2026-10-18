@@ -100,6 +100,7 @@ export async function startCodexAttemptThread(params: {
   startupAuthProfileId: string | null | undefined;
   startupAuthRequirement?: CodexAppServerClientOptions["authRequirement"];
   startupAuthBindingFingerprint: string | undefined;
+  boundThread?: CodexAppServerClientOptions["boundThread"];
   runtimeArtifactRequest?: Readonly<{
     expected?: AgentHarnessRuntimeArtifactBinding;
   }>;
@@ -223,6 +224,7 @@ export async function startCodexAttemptThread(params: {
                 params.assertCurrent?.();
                 params.authority?.assertLegacyCurrent();
               },
+              boundThread: params.boundThread,
               startOptions: params.appServer.start,
               pluginConfig: params.pluginConfig,
               ...(params.startupPreparedAuth

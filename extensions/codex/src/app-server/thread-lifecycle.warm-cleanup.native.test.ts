@@ -20,7 +20,12 @@ import {
 import { isJsonObject, type JsonObject, type JsonValue } from "./protocol.js";
 import * as sessionBinding from "./session-binding.js";
 import { createCodexSqliteTestBindingStateStore } from "./session-binding.sqlite.test-helpers.js";
-import { createIsolatedCodexAppServerClient } from "./shared-client.js";
+import {
+  createIsolatedCodexAppServerClient,
+  getLeasedSharedCodexAppServerClient,
+  releaseLeasedSharedCodexAppServerClient,
+  retireSharedCodexAppServerClientIfCurrent,
+} from "./shared-client.js";
 import { startOrResumeThread } from "./thread-lifecycle-run.js";
 import {
   createAppServerOptions,
@@ -39,12 +44,19 @@ afterEach(() => {
 // The loopback provider chooses deterministic actions; the pinned native binary
 // owns threads, subscriptions, shell execution, inventory, and notifications.
 describe.skipIf(process.platform === "win32")("native Codex warm cleanup", () => {
-  it.for(["publication failure", "protected rotation", "protected publication failure"] as const)(
+  it.for([
+    "publication failure",
+    "protected rotation",
+    "protected publication failure",
+    "retired owner",
+  ] as const)(
     "%s permits continuation without disturbing sibling ownership",
     { timeout: 90_000 },
     async (scenario, context) => {
       const backgroundWork = scenario !== "publication failure";
-      const publicationFailure = scenario !== "protected rotation";
+      const publicationFailure =
+        scenario === "publication failure" || scenario === "protected publication failure";
+      const retiredOwner = scenario === "retired owner";
       const tempDirs = useAutoCleanupTempDirTracker((cleanup) =>
         context.onTestFinished(async () => {
           await closeOpenClawStateDatabaseAsync();
@@ -197,14 +209,22 @@ describe.skipIf(process.platform === "win32")("native Codex warm cleanup", () =>
         },
       };
       const agentDir = path.join(root, "agent");
-      const client = await createIsolatedCodexAppServerClient({
+      const clientOptions = {
         startOptions: appServer.start,
         agentDir,
         authProfileId: null,
         config: {},
         timeoutMs: 20_000,
-      });
+      };
+      const client = await (
+        retiredOwner ? getLeasedSharedCodexAppServerClient : createIsolatedCodexAppServerClient
+      )(clientOptions);
+      let ownsSharedLease = retiredOwner;
       context.onTestFinished(async () => {
+        if (ownsSharedLease) {
+          releaseLeasedSharedCodexAppServerClient(client);
+          ownsSharedLease = false;
+        }
         const outcome = await client.closeAndWait();
         record("native-process-exit", { exited: outcome.exited });
         expect(outcome.exited).toBe(true);
@@ -413,10 +433,28 @@ describe.skipIf(process.platform === "win32")("native Codex warm cleanup", () =>
         }
         publicationClaimed = isCodexAppServerLiveThreadClaimed(client, first.threadId);
         record("failed-publication-claim-state", { claimed: publicationClaimed });
+      } else if (retiredOwner) {
+        releaseLeasedSharedCodexAppServerClient(client);
+        ownsSharedLease = false;
+        const retired = retireSharedCodexAppServerClientIfCurrent(client);
+        expect(retired?.closed).toBe(false);
+        const selected = await getLeasedSharedCodexAppServerClient({
+          ...clientOptions,
+          boundThread: { clientId: client.getInstanceId(), threadId: first.threadId },
+        });
+        ownsSharedLease = selected === client;
+        if (selected !== client) {
+          context.onTestFinished(async () => {
+            releaseLeasedSharedCodexAppServerClient(selected);
+            await selected.closeAndWait();
+          });
+        }
+        expect(selected).toBe(client);
+        record("retired-owner-requalified", { threadId: first.threadId });
       } else {
         pluginFingerprint = "changed-policy";
         await expect(startOrResumeThread(common)).rejects.toThrow(
-          `Codex thread ${first.threadId} is claimed by active work; stop it first.`,
+          "1 retained native command(s): terminal",
         );
         record("protected-rotation-refused", { threadId: first.threadId });
         expect(bindingStore.read(sessionBinding.sessionBindingIdentity(params))).toEqual(saved);
