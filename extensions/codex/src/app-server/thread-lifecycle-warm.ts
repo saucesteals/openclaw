@@ -18,6 +18,7 @@ import {
   getCodexInferenceThread,
   getCodexInferenceThreadQualification,
 } from "./inference-routing.js";
+import { readCodexRetainedNativeCommands } from "./native-process-authority.js";
 import { attestCodexThreadToolSurface } from "./plugin-thread-attestation.js";
 import {
   buildCodexPluginAppsConfigPatchFromPolicyContext,
@@ -165,11 +166,20 @@ export async function releaseCodexBoundLiveThread(
   }
   const client = previous?.client ?? options.client;
   try {
-    if (
-      isCodexAppServerLiveThreadClaimed(client, options.threadId) ||
-      isCodexAppServerLiveThreadProtected(client, options.threadId)
-    ) {
+    if (isCodexAppServerLiveThreadClaimed(client, options.threadId)) {
       throw new Error(`Codex thread ${options.threadId} is claimed by active work; stop it first.`);
+    }
+    if (isCodexAppServerLiveThreadProtected(client, options.threadId)) {
+      const inventory = readCodexRetainedNativeCommands(client, options.threadId);
+      const holders = inventory.commands.map(({ itemId, processId }) =>
+        processId ? `terminal ${processId} (item ${itemId})` : `native command ${itemId}`,
+      );
+      const detail = inventory.total
+        ? `${inventory.total} retained native command(s): ${holders.join(", ")}${inventory.total > holders.length ? ", …" : ""}`
+        : "retained background work";
+      throw new AgentHarnessPreflightError(
+        `Codex thread ${options.threadId} cannot move to a replacement client or configuration while ${detail} holds its subscription. This guard reports retained work, not an active agent turn. Inspect and settle the retained work on its owning client before retrying; no work was stopped.`,
+      );
     }
     const release = () =>
       releaseCodexRetainedLiveThread({

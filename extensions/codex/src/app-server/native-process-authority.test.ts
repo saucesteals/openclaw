@@ -3,6 +3,7 @@ import { createCodexTestHostCapabilities } from "./host-capability.test-support.
 import {
   CodexNativeProcessAuthority,
   getCodexNativeProcessClient,
+  readCodexRetainedNativeCommands,
 } from "./native-process-authority.js";
 import { createClientHarness } from "./test-support.js";
 
@@ -28,6 +29,40 @@ const assertActive = () => {};
 const metadata = { threadId: command.threadId, toolCallId: command.itemId };
 
 describe("native process custody", () => {
+  it("bounds identity-only diagnostics and removes settled command holders", () => {
+    const client = createClientHarness();
+    const origin = source();
+    origin.owner.bindTurn(client.client, command.threadId, command.turnId);
+    const commands = new Map(
+      Array.from({ length: 12 }, (_, index) => [`item-${index}`, `${index}`]),
+    );
+    const confirm = origin.owner.prepareBackgroundCommands(client.client, command, commands);
+    confirm(commands);
+    origin.owner.release();
+    try {
+      const inventory = readCodexRetainedNativeCommands(client.client, command.threadId);
+      expect(inventory.total).toBe(12);
+      expect(inventory.commands).toHaveLength(10);
+      expect(inventory.commands[0]).toEqual({
+        itemId: "item-0",
+        turnId: command.turnId,
+        processId: "0",
+      });
+      expect(readCodexRetainedNativeCommands(client.client, "other-thread")).toEqual({
+        total: 0,
+        commands: [],
+      });
+      client.send({ method: "thread/closed", params: { threadId: command.threadId } });
+      expect(readCodexRetainedNativeCommands(client.client, command.threadId)).toEqual({
+        total: 0,
+        commands: [],
+      });
+    } finally {
+      origin.owner.cancelClient(getCodexNativeProcessClient(client.client));
+      client.client.close();
+    }
+  });
+
   it("rechecks foreground permission before a pending spawn without closing background custody", () => {
     const client = createClientHarness();
     const origin = source();

@@ -6,6 +6,10 @@ import {
   protectCodexAppServerLiveThread,
   retainCodexAppServerLiveThread,
 } from "./client-runtime.js";
+import {
+  CodexNativeProcessAuthority,
+  getCodexNativeProcessClient,
+} from "./native-process-authority.js";
 import type { CodexDynamicToolFunctionSpec } from "./protocol.js";
 import {
   createParams as createRunAttemptParams,
@@ -270,12 +274,30 @@ describe("Codex warm subscription cleanup", () => {
     const bindingBefore = await readCodexAppServerBinding(sessionFile);
     // Native commands keep the original physical subscription protected after
     // its foreground turn finishes; policy refusal must not steal its idle owner.
-    const releaseProtection = protectCodexAppServerLiveThread(fixture.client, threadId);
+    const processAuthority = new CodexNativeProcessAuthority(params.hostCapabilities, () => {});
+    processAuthority.bindTurn(fixture.client, threadId, "prior-turn");
+    const confirm = processAuthority.prepareBackgroundCommands(
+      fixture.client,
+      { threadId, turnId: "prior-turn" },
+      new Map([
+        ["backend-item", "19049"],
+        ["frontend-item", "69898"],
+        ["probe-item", "90637"],
+      ]),
+    );
+    confirm(
+      new Map([
+        ["backend-item", "19049"],
+        ["frontend-item", "69898"],
+        ["probe-item", "90637"],
+      ]),
+    );
+    processAuthority.release();
     fixture.request.mockClear();
     try {
       pluginFingerprint = "changed-plugin-policy";
       await expect(startOrResumeThread(common)).rejects.toThrow(
-        `Codex thread ${threadId} is claimed by active work; stop it first.`,
+        "3 retained native command(s): terminal 19049 (item backend-item), terminal 69898 (item frontend-item), terminal 90637 (item probe-item)",
       );
       await expect(readCodexAppServerBinding(sessionFile)).resolves.toEqual(bindingBefore);
       expect(
@@ -296,7 +318,7 @@ describe("Codex warm subscription cleanup", () => {
       ).toBe(false);
       expect(fixture.client.getCloseError()).toBeUndefined();
     } finally {
-      releaseProtection();
+      processAuthority.cancelClient(getCodexNativeProcessClient(fixture.client));
     }
   });
 });
