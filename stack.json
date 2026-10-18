@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "7269734fa72da765d8eb3f127c5230d753a0690e",
-  "head": "d6682464500115e3c9868236a06bb4b8010d441a",
+  "prev": "b5888402d55f2200ca65d3f6c4fc80c7b508f084",
+  "head": "c680bd5596ded4a3c9a41a9722941ebea9a78a7c",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -16,10 +16,11 @@
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
-    "fix-retained-thread-client-affinity",
+    "fix-retained-thread-client-affinity"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
