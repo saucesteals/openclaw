@@ -83,6 +83,14 @@ export async function startCodexAttemptRuntime(resources: CodexAttemptResources)
       authority: connection.authority,
       attemptClientFactory,
       bindingStore,
+      ...(connection.mutable.startupBinding?.clientId
+        ? {
+            boundThread: {
+              clientId: connection.mutable.startupBinding.clientId,
+              threadId: connection.mutable.startupBinding.threadId,
+            },
+          }
+        : {}),
       runtime: connection.options.runtime,
       appServer: pluginAppServer,
       pluginConfig,
