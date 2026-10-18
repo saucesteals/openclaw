@@ -33,6 +33,9 @@ import { resolveCodexAppServerUserHomeDir } from "./auth-start-options.js";
 import type * as codexAuth from "./auth-types.js";
 import {
   ensureCodexAppServerClientRuntime,
+  hasCodexAppServerLiveThread,
+  isCodexAppServerLiveThreadClaimed,
+  isCodexAppServerLiveThreadProtected,
   recordCodexAppServerAuthHandoff,
 } from "./client-runtime.js";
 import {
@@ -286,6 +289,8 @@ export type CodexAppServerClientOptions = {
   authProfileId?: string | null;
   authProfileStore?: AuthProfileStore;
   authBindingFingerprint?: string;
+  /** Continue a bound warm thread on its physical owner, never a new thread. */
+  boundThread?: { clientId: string; threadId: string };
   /** Setup-only generation whose exact local runtime bytes are captured. */
   runtimeArtifactMode?: "capture";
   /** Previously minted exact runtime required before the process may start. */
@@ -641,6 +646,84 @@ async function acquireSharedCodexAppServerClient(
   const key = runtimeArtifactMode
     ? `${baseKey}\0runtime-artifact:capture-v1:${expectedRuntimeArtifactKey}`
     : baseKey;
+  // Retirement removes a client from the general pool, but concrete background
+  // work can still own its native thread. Continue that exact warm subscription
+  // instead of trying to unload a process whose terminals are still running.
+  // Current auth/start identity and the ordinary warm-thread admission remain
+  // mandatory; this lease never republishes the retired client in the pool.
+  const boundThread = options?.boundThread;
+  if (leased && boundThread) {
+    const owner = [...state.liveClients].find(
+      (candidate) => candidate.getInstanceId() === boundThread.clientId,
+    );
+    const ownedEntry = owner ? state.entriesByClient.get(owner) : undefined;
+    if (
+      owner &&
+      ownedEntry &&
+      ownedEntry.client === owner &&
+      state.clients.get(key) !== ownedEntry &&
+      ownedEntry.key === key &&
+      !ownedEntry.closeError &&
+      !owner.getCloseError() &&
+      hasCodexAppServerLiveThread(owner, boundThread.threadId) &&
+      !isCodexAppServerLiveThreadClaimed(owner, boundThread.threadId) &&
+      isCodexAppServerLiveThreadProtected(owner, boundThread.threadId)
+    ) {
+      assertCodexAppServerClientStartSelectionCurrent({ client: owner });
+      const release = retainSharedClientEntry(ownedEntry);
+      let qualifying = true;
+      try {
+        const assertOwner = () => {
+          assertCurrent();
+          options?.assertCurrent?.();
+          if (!qualifying) {
+            throw new Error("Codex bound conversation acquisition ended");
+          }
+          assertCodexAppServerClientStartSelectionCurrent({ client: owner });
+          if (
+            ownedEntry.client !== owner ||
+            ownedEntry.closeError ||
+            owner.getCloseError() ||
+            !hasCodexAppServerLiveThread(owner, boundThread.threadId) ||
+            isCodexAppServerLiveThreadClaimed(owner, boundThread.threadId) ||
+            !isCodexAppServerLiveThreadProtected(owner, boundThread.threadId)
+          ) {
+            throw new Error("Codex bound conversation client closed during acquisition");
+          }
+        };
+        // Retirement can follow an auth refresh failure. Requalify with the
+        // current prepared account rather than trusting the old startup receipt.
+        const authHandoff = await withCodexAppServerAcquireDeadline(
+          remainingTimeoutMs,
+          applyCodexAppServerAuthProfile({
+            client: owner,
+            agentDir,
+            authProfileId:
+              usesNativeAuth || preparedAuth?.kind === "api-key" ? null : authProfileId,
+            preparedAuth,
+            authRequirement,
+            startOptions,
+            config: options?.config,
+            ...(authProfileStore ? { authProfileStore } : {}),
+            assertCurrent: assertOwner,
+          }),
+          abandonSignal,
+          "codex app-server bound conversation authentication timed out",
+        );
+        assertOwner();
+        recordCodexAppServerAuthHandoff(owner, authHandoff);
+        ensureCodexAppServerClientRuntime(owner, { config: options?.config });
+        options?.onStartedClient?.(owner);
+        assertOwner();
+        ownedEntry.anonymousLeases += 1;
+        ownedEntry.activeLeases += 1;
+        return owner;
+      } finally {
+        qualifying = false;
+        release();
+      }
+    }
+  }
   let entry = getOrCreateSharedClientEntry(state, key);
   const existingClient = entry.client;
   const existingGeneration = existingClient

@@ -15,6 +15,15 @@ native compaction, and app-server execution. OpenClaw still owns chat
 channels, session files, model selection, OpenClaw dynamic tools, approvals,
 media delivery, and the visible transcript mirror.
 
+Background terminals can retain a native thread after its agent turn finishes.
+If its app-server client leaves the general pool, an existing bound conversation
+can continue on that exact client after current startup identity, authentication,
+ownership, and warm-thread policy checks pass. This does not return the retired
+client to the general pool or permit unrelated threads to reuse it. Incompatible
+configuration changes still refuse to unload a protected thread; diagnostics
+distinguish retained work from an active agent turn and identify known terminal
+handles without exposing command contents.
+
 ## Shared output projection
 
 Codex uses the shared native harness projection owners for bounded tool output,
