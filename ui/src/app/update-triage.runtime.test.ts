@@ -12,8 +12,8 @@ import { createStorageMock } from "../test-helpers/storage.ts";
 import { createUpdateRunFixture } from "../test-helpers/update-run.ts";
 import type { ApplicationGatewaySnapshot } from "./gateway.ts";
 import { createApplicationOverlays } from "./overlays.ts";
-import { projectUpdateRunFailure } from "./update-overlay-helpers.ts";
 import type { UpdateFailureTriage, UpdateTriageAdmission } from "./update-overlay-helpers.ts";
+import { projectUpdateRunFailure } from "./update-run-failure.runtime.ts";
 import { presentUpdateFailureTriage } from "./update-triage.runtime.ts";
 
 const FAILURE: UpdateFailureTriage = {
