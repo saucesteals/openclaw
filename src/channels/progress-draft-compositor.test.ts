@@ -1,39 +1,13 @@
-import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDeferred } from "../../test/helpers/promise.js";
-import type { ChannelStreamingProgressConfig } from "../config/types.base.js";
 import { projectAgentToolActivity } from "../infra/agent-activity-events.js";
 import {
-  createChannelProgressDraftCompositor,
   createChannelProgressWorkCounter,
   PROGRESS_STATUS_PREAMBLE_FRESH_MS,
 } from "./progress-draft-compositor.js";
-import type { ChannelProgressDraftCompositorParams } from "./progress-draft-compositor.types.js";
+import { createProgress, plan } from "./progress-draft-compositor.test-support.js";
 import { buildChannelProgressDraftLine } from "./streaming.js";
 
-function createProgress(
-  config: ChannelStreamingProgressConfig = { label: "Shelling", toolProgress: true },
-  overrides: Partial<ChannelProgressDraftCompositorParams> = {},
-) {
-  const update = vi.fn<NonNullable<ChannelProgressDraftCompositorParams["update"]>>();
-  const progress = createChannelProgressDraftCompositor({
-    active: true,
-    mode: "progress",
-    seed: "test",
-    entry: { streaming: { mode: overrides.mode ?? "progress", progress: config } },
-    update,
-    ...overrides,
-  });
-  onTestFinished(() => progress.cancel());
-  return { progress, update };
-}
-
-const plan = [
-  { step: "Inspect", status: "completed" },
-  { step: "Repair", status: "in_progress" },
-  { step: "Verify", status: "pending" },
-] satisfies Parameters<
-  ReturnType<typeof createChannelProgressDraftCompositor>["pushPlanProgress"]
->[0];
 const INITIAL_DELAY_MS = 1_500;
 
 describe("channel progress draft compositor", () => {
