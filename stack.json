@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "feb101876e8e380dc6fa9fe62e8d754d0b615328",
-  "head": "72330ded6f387dd54df085b3f946938bc92f3835",
+  "prev": "ae36dc24bbb4aa87e46f2d43d5a7af2b060aedd5",
+  "head": "00dd826eb71ee7a50920bd829865ef1602e4b35d",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -17,32 +17,31 @@
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
-    "fix-browser-security-component-updates",
-    "refresh-temp"
+    "fix-browser-security-component-updates"
   ],
   "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
-      "oid": "26461508953dc81dfd990711d8b4ab76da94f364"
+      "oid": "a215297b804f9f9cc357d2cfda42f81cb238e491"
     },
     "feat-exec-session-key": {
       "oid": "f0650d0ca5f1c3a32dbf09eaa0b0a23f99903265"
     },
     "fix-browser-security-component-updates": {
-      "oid": "34ab43f36ad4edcf9292fd93c1e29d26f6bcfe01"
+      "oid": "00dd826eb71ee7a50920bd829865ef1602e4b35d"
     },
     "fix-channel-admission-evidence": {
       "oid": "27a530013652cb00180c06b0c416c09a081141d8"
     },
     "fix-child-completion-origin-schema": {
-      "oid": "2e1de909a0e224d7213d07f89d042a84e9ce30a7"
+      "oid": "95048854b2cfa0ca2efb39f8d963c3f89e99a109"
     },
     "fix-codex-installer-alias": {
-      "oid": "83a5315af26146b87d038dd6f72e2d04bb210b78"
+      "oid": "a4467db9ae273b4f2ea69b7ed9b787084a6dc62c"
     },
     "fix-codex-thread-handoff": {
-      "oid": "0bf8c62c2f91e8afa7ca22702cbbd7a9f4ef96a3"
+      "oid": "6c2e28dee604e859e83059f19b107e2de3195805"
     },
     "fix-media-completion-tools": {
       "oid": "1480f8f9ea93b10e5d53eed20d1ab20dbf5ab433"
@@ -51,25 +50,22 @@
       "oid": "31a0d426c3000ec7a1765eec8e109a785f773763"
     },
     "fix-media-selected-delivery": {
-      "oid": "779279ddc492ad24c8d6d888c759451812f344c9"
+      "oid": "f6d4fa55053c286a8216f5cd728eb4c4c7926be7"
     },
     "fix-native-completion-work-scope": {
-      "oid": "a501ae7d3e2ae1b5642ac1a8843f3b254af010c0"
+      "oid": "eea49ab06dccfa9c0a095809a4ba9c4f3f173bc6"
     },
     "fix-progress-error-rollout": {
-      "oid": "6d5c953809585c00c8c600729444799b5904007b"
+      "oid": "ce6d0db14e74fb579a3d26dfa098f8440ebae219"
     },
     "fix-request-origin-context": {
-      "oid": "872f65f7e245dd906c07a3a43a98e2c3db889518"
+      "oid": "51b354519d6330f9e907fbc7b81525c8d9a21616"
     },
     "fix-retained-thread-client-affinity": {
-      "oid": "f87f90a7e7ebcc8f87d099c1dde6b8d79816806e"
+      "oid": "95d3f30bd099a37e6df1a0c83d4a981694415844"
     },
     "fix-xai-video15-inputs": {
-      "oid": "e0ec51dfb334d518c84a701b123cc52ba94e2f14"
-    },
-    "refresh-temp": {
-      "oid": "72330ded6f387dd54df085b3f946938bc92f3835"
+      "oid": "26c6dc7ae4539a3974c257c86af34e9e4ef96d52"
     }
   }
 }

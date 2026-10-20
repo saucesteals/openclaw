@@ -1,6 +1,6 @@
-Bottom: c53a6d8aaa761f12ef434d7a44b7ee80c1e8b23a
-Top:    ba71f915dccbdb4ecfa1087a008c8cfa13c86e92
+Bottom: d2f0853aaa6e933a8002dca29abee678f1c622fb
+Top:    1e716e8eb6656b863579cca6f51317a054fcb637
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:31:38 -0700
+Date:   2026-10-20 16:56:56 -0700
 
 fix(browser): allow certificate security component updates
