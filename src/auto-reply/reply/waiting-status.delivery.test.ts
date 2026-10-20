@@ -101,7 +101,7 @@ async function prepare(lane: "ordinary" | "queued", context: FinalizeReplyAgentR
   if (lane === "ordinary") {
     const prepared = await prepareReplyAgentPayloads({ context, accounting });
     return prepared.kind === "continue"
-      ? prepared.guardedReplyPayloads
+      ? prepared.replyPayloads
       : prepared.value
         ? [prepared.value]
         : [];
