@@ -128,6 +128,8 @@ export function client(request: RequestFn): GatewayBrowserClient {
 }
 
 export async function flushMicrotasks() {
+  // Update failure reports load on demand before their snapshot is admitted.
+  await vi.dynamicImportSettled();
   await Promise.resolve();
   await Promise.resolve();
   await Promise.resolve();
