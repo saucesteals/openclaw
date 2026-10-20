@@ -9,6 +9,7 @@ import {
 import { CodexAppServerClient } from "./client.js";
 import type { CodexAppServerStartOptions } from "./config.js";
 import { codexNativeSubagentMonitorRuntime } from "./native-subagent-monitor.js";
+import { registerSharedClientAffinityTests } from "./shared-client-affinity.test-support.js";
 import { registerSharedClientAuthRefreshTests } from "./shared-client-auth-refresh.test-support.js";
 import { waitForCodexAppServerClientExit } from "./shared-client-lifecycle.js";
 import {
@@ -38,6 +39,8 @@ export function registerSharedClientLifetimeTests(
   rejectAuth: (error: Error) => void,
 ) {
   registerSharedClientAuthRefreshTests();
+
+  registerSharedClientAffinityTests(rejectAuth, sendInitializeResult);
 
   it.each(["shared", "isolated"] as const)(
     "joins %s transport startup and closes a client returned after its deadline",
