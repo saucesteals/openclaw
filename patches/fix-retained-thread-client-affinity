@@ -1,6 +1,6 @@
-Bottom: 60a0dd867b504210cf2cfa3464f315985edd15f7
-Top:    bfd03d9ada003a5a9a39c1da9168013a0162bc3e
+Bottom: 0709f16613715b508f7281fae30776a72aaf23a9
+Top:    6ac789703ab404d7721eece82f75cc1ed35d231a
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:56:59 -0700
+Date:   2026-10-20 16:57:01 -0700
 
 fix(codex): preserve validated retained thread ownership across client retirement

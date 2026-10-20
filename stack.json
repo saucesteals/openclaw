@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "fceefeca77ef8e2bbd889585703bd267f48c04e3",
-  "head": "9fc3f7dbc182bb30117f484a899257ac5feaa431",
+  "prev": "c687f0b23cf901e8b3b3e500d467cf8a30768ff7",
+  "head": "a673f77ae098bd8b95a3d1a75c38f8408e8ef11e",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -17,8 +17,7 @@
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
-    "fix-browser-security-component-updates",
-    "refresh-temp"
+    "fix-browser-security-component-updates"
   ],
   "unapplied": [],
   "hidden": [],
@@ -30,19 +29,19 @@
       "oid": "f0650d0ca5f1c3a32dbf09eaa0b0a23f99903265"
     },
     "fix-browser-security-component-updates": {
-      "oid": "6bc2fe8cdcdb0adefccb5bfb08538ce225cafae2"
+      "oid": "a673f77ae098bd8b95a3d1a75c38f8408e8ef11e"
     },
     "fix-channel-admission-evidence": {
       "oid": "27a530013652cb00180c06b0c416c09a081141d8"
     },
     "fix-child-completion-origin-schema": {
-      "oid": "7280c258919245818f361c51916137f63b8b3f6f"
+      "oid": "6a078df604a6c0252b9293ab41fa3d9b86156f83"
     },
     "fix-codex-installer-alias": {
-      "oid": "a8ddfb23f4d4220231368e84f99c079eca0fc6ed"
+      "oid": "9472f251253e70af9b15d16f332d71f5c3f0ebe5"
     },
     "fix-codex-thread-handoff": {
-      "oid": "b0b669d577b8e7520796645284bee20c9ecb808d"
+      "oid": "03759c804fa45b28de97d696207d89cf1c30ab48"
     },
     "fix-media-completion-tools": {
       "oid": "1480f8f9ea93b10e5d53eed20d1ab20dbf5ab433"
@@ -54,22 +53,19 @@
       "oid": "f6d4fa55053c286a8216f5cd728eb4c4c7926be7"
     },
     "fix-native-completion-work-scope": {
-      "oid": "17b1f716439955713c8374e1a6dd1b15800fe2fe"
+      "oid": "8e203a805ee0e65c38316c4f8e17c1c1b6a1d0ca"
     },
     "fix-progress-error-rollout": {
-      "oid": "3d617d0c2338296ad256bf2d263cd780ae04103a"
+      "oid": "788eda19c8c135919af256dc68e14fc4fd0b6bef"
     },
     "fix-request-origin-context": {
       "oid": "b859e48baac6bf657e0f535a245c2ec03fbe437d"
     },
     "fix-retained-thread-client-affinity": {
-      "oid": "e88434ec304ce839ce2fd08b21fc1c190c8ffe93"
+      "oid": "e203069c28c21bdf5c66ec8d65d74cbce9cc0a57"
     },
     "fix-xai-video15-inputs": {
       "oid": "26c6dc7ae4539a3974c257c86af34e9e4ef96d52"
-    },
-    "refresh-temp": {
-      "oid": "9fc3f7dbc182bb30117f484a899257ac5feaa431"
     }
   }
 }
