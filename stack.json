@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "3c0cd62d0233b26a69c2c83484d6ba024bcb5a82",
+  "prev": "3aae50fab4378a0f00092a6649bb1a35e0e32c7d",
   "head": "296bb730ab7a5999bc17390d755b2a1477e388e0",
   "applied": [
     "feat-exec-session-key",
@@ -18,9 +18,7 @@
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -64,9 +62,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "e0ec51dfb334d518c84a701b123cc52ba94e2f14"
-    },
-    "version-bump": {
-      "oid": "e1bc1519f4b3d63130097ee7a30d29aa96a57036"
     }
   }
 }
