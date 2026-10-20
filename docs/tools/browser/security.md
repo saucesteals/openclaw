@@ -31,3 +31,16 @@ Remote CDP tips:
 - Avoid embedding long-lived tokens directly in config files.
 - Keep the Gateway and any node hosts on a private network (Tailscale); avoid public exposure.
 - Treat remote CDP URLs/tokens as secrets; prefer env vars or a secrets manager.
+
+## Browser security updates
+
+Managed browser profiles allow background networking and component updates so
+Chrome can refresh certificate-revocation data such as CRLSets. Keep the browser
+binary updated too; a new executable alone does not prove a profile has current
+revocation data. Do not add `--disable-component-update` or
+`--disable-background-networking` to `browser.extraArgs` for persistent browsing.
+
+After upgrading from a release that disabled these updates, restart the managed
+browser while preserving its profile. Inspect CRLSet in `chrome://components`
+and verify affected sites fail with certificate errors, not unrelated network
+failures. This does not change the browser's certificate-validation policy.
