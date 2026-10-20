@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "47fd32ada31c9b5c8b50ade47a4e687a9e99e485",
-  "head": "45adaf8c3e79217ab480b2807fb5a108a90a135b",
+  "prev": "597f6ecf9c3837516d12906f61b24d26b8873112",
+  "head": "ff6cdf2dfaca57d51daa5b8054f5638d088741aa",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -11,8 +11,7 @@
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
     "custom-no-reminder-disclaimer",
-    "fix-progress-error-rollout",
-    "refresh-temp"
+    "fix-progress-error-rollout"
   ],
   "unapplied": [
     "fix-codex-installer-alias",
@@ -55,7 +54,7 @@
       "oid": "b43d5753ffef677639ba966ab49d7b1a47360721"
     },
     "fix-progress-error-rollout": {
-      "oid": "ab822de2b06355de35e0f8050d2bbbb1b3b27cd7"
+      "oid": "ff6cdf2dfaca57d51daa5b8054f5638d088741aa"
     },
     "fix-request-origin-context": {
       "oid": "b7b5217486d15f2807f9d9546ebbff13b09f0929"
@@ -65,9 +64,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "e0ec51dfb334d518c84a701b123cc52ba94e2f14"
-    },
-    "refresh-temp": {
-      "oid": "45adaf8c3e79217ab480b2807fb5a108a90a135b"
     },
     "version-bump": {
       "oid": "3c4374bcb126146ef3bec657261c65a6f40ad073"
