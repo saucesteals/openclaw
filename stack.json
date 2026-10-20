@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "19951dd08d2df8de42e5ad227fb345af87606ff3",
-  "head": "18fbab9e789334cf12e8b6185c1bcda0887b0068",
+  "prev": "212bb1f731bb66ee76fb2f4b2579c2108c919653",
+  "head": "296bb730ab7a5999bc17390d755b2a1477e388e0",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -16,8 +16,7 @@
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
-    "fix-retained-thread-client-affinity",
-    "refresh-temp"
+    "fix-retained-thread-client-affinity"
   ],
   "unapplied": [
     "version-bump"
@@ -61,13 +60,10 @@
       "oid": "b7b5217486d15f2807f9d9546ebbff13b09f0929"
     },
     "fix-retained-thread-client-affinity": {
-      "oid": "9fcbf865f79240c30c033c2881e7f3eb56810dfd"
+      "oid": "296bb730ab7a5999bc17390d755b2a1477e388e0"
     },
     "fix-xai-video15-inputs": {
       "oid": "e0ec51dfb334d518c84a701b123cc52ba94e2f14"
-    },
-    "refresh-temp": {
-      "oid": "18fbab9e789334cf12e8b6185c1bcda0887b0068"
     },
     "version-bump": {
       "oid": "3c4374bcb126146ef3bec657261c65a6f40ad073"
