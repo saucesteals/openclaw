@@ -47,7 +47,7 @@ describe("createStdioTransport", () => {
     );
     expect(spawnMock).toHaveBeenCalledWith(
       process.execPath,
-      [command, "app-server", "--listen", "stdio://"],
+      [command, "-c", "thread_unload_delay_secs=1", "app-server", "--listen", "stdio://"],
       expect.any(Object),
     );
   });
@@ -116,7 +116,7 @@ describe("createStdioTransport", () => {
 
       expect(spawnMock).toHaveBeenCalledWith(
         "codex",
-        ["app-server", "--listen", "stdio://"],
+        ["-c", "thread_unload_delay_secs=1", "app-server", "--listen", "stdio://"],
         expect.objectContaining({
           cwd: "/srv/codex-project",
           detached: process.platform !== "win32" && detached,
@@ -147,6 +147,8 @@ describe("createStdioTransport", () => {
         "--profile",
         "app-server",
         "--config=model_reasoning_effort=high",
+        "-c",
+        "thread_unload_delay_secs=1",
         "app-server",
         "--listen",
         "stdio://",
@@ -156,13 +158,17 @@ describe("createStdioTransport", () => {
     expect(args[1]).toBe("-c");
   });
 
-  it("does not reinterpret a wrapper's positional arguments after --", async () => {
+  it("preserves a wrapper prefix while adding the native unload policy", async () => {
     const args = ["/wrapper.js", "--", "-c", "opaque", "app-server"];
     await createStdioTransport({ ...startOptions("node"), args });
-    expect(spawnMock).toHaveBeenCalledWith("node", args, expect.any(Object));
+    expect(spawnMock).toHaveBeenCalledWith(
+      "node",
+      ["/wrapper.js", "--", "-c", "opaque", "-c", "thread_unload_delay_secs=1", "app-server"],
+      expect.any(Object),
+    );
   });
 
-  it("preserves a subcommand-shaped socket value", async () => {
+  it("preserves proxy unload policy and a subcommand-shaped socket value", async () => {
     await createStdioTransport({
       ...startOptions("codex"),
       args: ["app-server", "proxy", "--sock", "app-server", "-c", "model_reasoning_effort=high"],

@@ -11,7 +11,7 @@ import {
   type WindowsSpawnInvocation,
 } from "openclaw/plugin-sdk/windows-spawn";
 import type { CodexAppServerStartOptions } from "./config.js";
-import { normalizeCodexAppServerArgs } from "./launch-args.js";
+import { isCodexAppServerProxyLaunch, normalizeCodexAppServerArgs } from "./launch-args.js";
 import { resolveManagedCodexNativeCommand } from "./managed-binary.js";
 import { observeManagedCodexLauncherFailure } from "./managed-launcher-failure.js";
 import { getCodexAppServerSpawnFailure, recordCodexAppServerSpawnFailure } from "./spawn-error.js";
@@ -41,7 +41,13 @@ export function resolveCodexAppServerSpawnInvocation(
     execPath: process.execPath,
     packageName: "@openai/codex",
   });
-  const args = normalizeCodexAppServerArgs(options.args);
+  // Native's default idle unload delay can exceed an entire OpenClaw turn budget.
+  // Keep a short reconnect grace period; subscriptions and active turns still
+  // protect live work. A proxy does not own the external server's unload policy.
+  const args = normalizeCodexAppServerArgs(
+    options.args,
+    isCodexAppServerProxyLaunch(options.args) ? undefined : "thread_unload_delay_secs=1",
+  );
   const resolved = materializeWindowsSpawnProgram(program, args);
   if (
     options.commandSource === "resolved-managed" &&
