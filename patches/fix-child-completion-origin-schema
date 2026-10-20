@@ -1,6 +1,6 @@
-Bottom: 994d7cce8a5704db389b558af6f8b0f357d94f7a
-Top:    e6caaca3381cead8564250544e058813c1b0c6c1
+Bottom: 3db0147b48b95e8bc7f503098a5a7adf2bb17c8c
+Top:    6293f727d22099c4728cf213811ef30853ef4e16
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:56:56 -0700
+Date:   2026-10-20 16:56:59 -0700
 
 fix(gateway): accept bounded task origin on child completion
