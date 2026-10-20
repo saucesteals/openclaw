@@ -393,15 +393,12 @@ export function resolveGatewayPersonalToolParticipant(
   }
   if (runtimeIdentity) {
     const registered = captureActiveEmbeddedRunPersonalToolParticipants(runtimeIdentity, options);
-    if (!registered) {
-      return undefined;
-    }
-    const participant = registered.participants?.resolve(undefined, options);
+    const participant = registered?.participants?.resolve(undefined, options);
     return (
       participant && {
         ...participant,
         assertCurrent: composeSessionSourceAssertion([
-          registered.assertCurrent,
+          registered?.assertCurrent,
           participant.assertCurrent,
         ]),
       }
