@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "e4e80139b6d31d15909e6472348f52fc596bed84",
-  "head": "a98ea5d07221ff5f9b7e721d11f7ce895d68afcd",
+  "prev": "355f6c17c9f0c02af3627faa0f81f44d60ece3fc",
+  "head": "71c90fa60dce30096f127d6506dd179197fff032",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -15,7 +15,8 @@
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
-    "fix-codex-thread-handoff"
+    "fix-codex-thread-handoff",
+    "refresh-temp"
   ],
   "unapplied": [
     "fix-retained-thread-client-affinity",
@@ -64,6 +65,9 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "e0ec51dfb334d518c84a701b123cc52ba94e2f14"
+    },
+    "refresh-temp": {
+      "oid": "71c90fa60dce30096f127d6506dd179197fff032"
     },
     "version-bump": {
       "oid": "3c4374bcb126146ef3bec657261c65a6f40ad073"
