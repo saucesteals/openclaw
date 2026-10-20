@@ -1,17 +1,17 @@
 {
   "version": 5,
-  "prev": "ae3c7c037437956316bb9dfd5ec07ee19476aac1",
-  "head": "e0ec51dfb334d518c84a701b123cc52ba94e2f14",
+  "prev": "f81d0ab0c30d9a07a8b2b23daaa977196f0e9cf1",
+  "head": "f1b75292ef18c1a04d27511b712c0578674b16b8",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
     "fix-media-completion-tools",
     "fix-media-failure-status",
     "fix-media-selected-delivery",
-    "fix-xai-video15-inputs"
+    "fix-xai-video15-inputs",
+    "fix-request-origin-context"
   ],
   "unapplied": [
-    "fix-request-origin-context",
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
@@ -57,7 +57,7 @@
       "oid": "af9f09fb5cc6f4d4fbd3e88e3cd0dd81a629a503"
     },
     "fix-request-origin-context": {
-      "oid": "e0fbd5f356cf18d00bf5a519876e18e131623964"
+      "oid": "f1b75292ef18c1a04d27511b712c0578674b16b8"
     },
     "fix-retained-thread-client-affinity": {
       "oid": "c680bd5596ded4a3c9a41a9722941ebea9a78a7c"
