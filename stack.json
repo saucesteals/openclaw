@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "c687f0b23cf901e8b3b3e500d467cf8a30768ff7",
-  "head": "a673f77ae098bd8b95a3d1a75c38f8408e8ef11e",
+  "prev": "93a5adfa2cc3b29fc120b2d7ee01e6bb79aef6bd",
+  "head": "e8aa24ec580220476f6dc41d3956b29c32708bc4",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -17,7 +17,8 @@
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
-    "fix-browser-security-component-updates"
+    "fix-browser-security-component-updates",
+    "fix-ui-lazy-update-failure-report"
   ],
   "unapplied": [],
   "hidden": [],
@@ -63,6 +64,9 @@
     },
     "fix-retained-thread-client-affinity": {
       "oid": "e203069c28c21bdf5c66ec8d65d74cbce9cc0a57"
+    },
+    "fix-ui-lazy-update-failure-report": {
+      "oid": "e8aa24ec580220476f6dc41d3956b29c32708bc4"
     },
     "fix-xai-video15-inputs": {
       "oid": "26c6dc7ae4539a3974c257c86af34e9e4ef96d52"
