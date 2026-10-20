@@ -1,15 +1,11 @@
 import { coerceErrorMessage } from "@openclaw/normalization-core/error-coercion";
 import { getReplyPayloadMetadata } from "../../auto-reply/reply-payload.js";
 import { recordAgentRunTerminalOutcome } from "../../channels/turn/agent-run-terminal-outcome.js";
-import type { CliDeps } from "../../cli/deps.types.js";
-import type { RestartRecoveryTerminalDeliveryEvidenceResult } from "../../config/sessions/restart-recovery-types.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
 import { assertAgentRunLifecycleGenerationCurrent } from "../../infra/agent-events.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { isSubagentSessionKey } from "../../routing/session-key.js";
-import type { RuntimeEnv } from "../../runtime.js";
-import type { DeliveryContext } from "../../utils/delivery-context.shared.js";
 import { isInternalMessageChannel } from "../../utils/message-channel.js";
 import {
   buildRestartRecoveryTerminalDeliveryEvidence,
@@ -32,7 +28,6 @@ import { collectDeliveredMediaUrls } from "../embedded-agent-runner/delivery-evi
 import { buildMainSessionRecoverySettlementPatch } from "../main-session-recovery/main-session-recovery-clear.js";
 import { inspectMainSessionRecoveryLifecycleEvent } from "../main-session-recovery/main-session-recovery-lifecycle.js";
 import { persistPendingFinalDeliveryMarker } from "../pending-final-delivery-marker.js";
-import type { AgentRunSessionTarget } from "../run-session-target.types.js";
 import {
   createAgentRunRestartAbortError,
   throwAgentRunRestartAbortReason,
@@ -46,18 +41,14 @@ import {
 } from "./delivery-result.js";
 import { createCommandBudget } from "./maintenance-budget.js";
 import { createCommandMaintenanceFollowup } from "./maintenance.js";
-import type { PreparedAgentCommandExecution } from "./prepare.js";
-import type { runEmbeddedAgentAttempt } from "./run-embedded-attempt.js";
+import type { FinalizeEmbeddedAgentCommandParams } from "./post-run.types.js";
 import {
   loadCliCompactionRuntime,
   loadDeliveryRuntime,
   loadSessionStoreRuntime,
 } from "./runtime-loaders.js";
 import { clearPendingFinalDelivery } from "./session-helpers.js";
-import type { EmbeddedSessionState } from "./session-preparation.js";
 import type { AgentCommandOpts } from "./types.js";
-
-type EmbeddedAgentAttempt = Awaited<ReturnType<typeof runEmbeddedAgentAttempt>>;
 
 const log = createSubsystemLogger("agents/agent-command");
 
@@ -96,30 +87,7 @@ export function createCompactionSessionIdReporter(
   };
 }
 
-export async function finalizeEmbeddedAgentCommand(params: {
-  prepared: PreparedAgentCommandExecution;
-  opts: AgentCommandOpts;
-  deps: CliDeps;
-  runtime: RuntimeEnv;
-  sessionEntry?: SessionEntry;
-  attempt: EmbeddedAgentAttempt;
-  embeddedSessionState: EmbeddedSessionState;
-  suppressVisibleSessionEffects: boolean;
-  preserveUserFacingSessionModelState: boolean;
-  currentRunDeliveryContext?: DeliveryContext;
-  sessionOwnership: {
-    runOwnedSessionId: string;
-    sessionReboundDuringRun: boolean;
-  };
-  trackInternalModelRunTarget: (target: AgentRunSessionTarget | undefined) => void;
-  onSessionOwnershipChanged: (
-    ownership: { runOwnedSessionId: string; sessionReboundDuringRun: boolean },
-    committedCompactionSessionId?: string,
-  ) => void;
-  onTerminalDeliveryEvidenceChanged: (
-    evidence: RestartRecoveryTerminalDeliveryEvidenceResult,
-  ) => void;
-}) {
+export async function finalizeEmbeddedAgentCommand(params: FinalizeEmbeddedAgentCommandParams) {
   const operatorAuthority = params.opts.operatorAuthority;
   const assertSourceCurrent = params.opts.assertSourceCurrent;
   const {
