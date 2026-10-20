@@ -1,11 +1,10 @@
 {
   "version": 5,
-  "prev": "1c8388e256e2c031738b5546da0968a4d0896182",
-  "head": "74a9f97d447e5373513aedecf6186a21bb9ca33a",
+  "prev": "37fa6de08313a583c59254c5125675289e97558e",
+  "head": "27a530013652cb00180c06b0c416c09a081141d8",
   "applied": [
     "feat-exec-session-key",
-    "fix-channel-admission-evidence",
-    "refresh-temp"
+    "fix-channel-admission-evidence"
   ],
   "unapplied": [
     "fix-media-completion-tools",
@@ -31,7 +30,7 @@
       "oid": "f0650d0ca5f1c3a32dbf09eaa0b0a23f99903265"
     },
     "fix-channel-admission-evidence": {
-      "oid": "ad788dce2536f17c53e731da71c40bf7990f32bc"
+      "oid": "27a530013652cb00180c06b0c416c09a081141d8"
     },
     "fix-child-completion-origin-schema": {
       "oid": "4599cd8b50ed44e80e2c7f7ff441af39a10a5a52"
@@ -65,9 +64,6 @@
     },
     "fix-xai-video15-inputs": {
       "oid": "5aade69dabb87773b5deae599528d77e3a1c4399"
-    },
-    "refresh-temp": {
-      "oid": "74a9f97d447e5373513aedecf6186a21bb9ca33a"
     },
     "version-bump": {
       "oid": "3c4374bcb126146ef3bec657261c65a6f40ad073"
