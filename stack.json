@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "3aae50fab4378a0f00092a6649bb1a35e0e32c7d",
-  "head": "296bb730ab7a5999bc17390d755b2a1477e388e0",
+  "prev": "9975ac185ee700cf6234066c6c2a81794b0a50b7",
+  "head": "e6349c9d42155f1842e1f0cb7a9ad39d960c66eb",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -16,7 +16,8 @@
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
-    "fix-retained-thread-client-affinity"
+    "fix-retained-thread-client-affinity",
+    "fix-browser-security-component-updates"
   ],
   "unapplied": [],
   "hidden": [],
@@ -26,6 +27,9 @@
     },
     "feat-exec-session-key": {
       "oid": "f0650d0ca5f1c3a32dbf09eaa0b0a23f99903265"
+    },
+    "fix-browser-security-component-updates": {
+      "oid": "e6349c9d42155f1842e1f0cb7a9ad39d960c66eb"
     },
     "fix-channel-admission-evidence": {
       "oid": "27a530013652cb00180c06b0c416c09a081141d8"

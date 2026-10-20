@@ -1,0 +1,6 @@
+Bottom: cce11270d964d1729e55c39bae2b68dcd43c9ec7
+Top:    cce11270d964d1729e55c39bae2b68dcd43c9ec7
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-10-20 16:27:54 -0700
+
+fix(browser): allow certificate security component updates
