@@ -180,19 +180,17 @@ for the schema and update contract.
 
 ### Detached-task original requester
 
-`task_runs.task_origin_json` is an optional, bounded JSON snapshot owned by the
-existing task registry. It records the original authenticated requester and
-source run/session/audience, not execution permissions or an owner grant. The
-snapshot is immutable after task admission. Existing rows remain `NULL` and are
-read as unknown; readers never reconstruct identity from the latest session
-participant or optional audit history.
+`task_runs.task_origin_json` is a legacy nullable column retained for compatibility
+with existing sauce releases. Current media operations are process-owned;
+durable completion attribution travels in the session-delivery queue rather than
+through task-registry reads and writes of this column.
 
-Writable schema repair adds this nullable column atomically through the existing
-additive-column migration, without a new table or numeric schema-version bump.
-Read-only preflight reports a missing column as requiring migration. Cron jobs
-and subagent runs retain equivalent private snapshots in their existing JSON
-owners; restart claims retain only their exact run's snapshot. Normal lifecycle
-retention deletes these snapshots with their owning records.
+Original-requester snapshots record the authenticated requester and source
+run/session/audience, not execution permissions or an owner grant. Cron jobs and
+subagent runs retain private snapshots in their existing JSON owners; restart
+claims retain only their exact run's snapshot. Missing attribution remains
+unknown, never reconstructed from the latest participant or optional audit history.
+Normal lifecycle retention deletes snapshots with their owning records.
 
 Stop older writers and take a verified WAL-aware backup before activation.
 Older full-schema validators may reject the additional column even though the
