@@ -182,6 +182,8 @@ export type AgentCommandOpts = {
   codeModeOverride?: boolean | "auto";
   /** Host-owned exact media set for a scoped automatic recovery delivery. */
   internalDeliveryMediaUrls?: string[];
+  /** Internal restored claim: never reselect media during recovery. */
+  internalDeliveryMediaSelected?: boolean;
   internalDeliverySuppressText?: boolean;
   /** Host-owned: deliver only authored output; runtime error payloads stay out of the chat. */
   internalDeliverySuppressErrors?: boolean;
