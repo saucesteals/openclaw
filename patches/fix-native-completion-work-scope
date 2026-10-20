@@ -1,6 +1,6 @@
-Bottom: ff967c012ca7818f6d9e4e75f355b7c0cde7dfd3
-Top:    5008ce80ba71cf8af931fb1e0abd619e663e4f47
+Bottom: 943cea4933d2673b0028c06454a24b8b10f07825
+Top:    8144622cf18ec3ad254d9b48f4f923af7aae53f9
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-15 23:18:26 -0700
+Date:   2026-10-20 16:26:52 -0700
 
 fix(agents): detach retained completion from settled caller work

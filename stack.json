@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "597f6ecf9c3837516d12906f61b24d26b8873112",
-  "head": "ff6cdf2dfaca57d51daa5b8054f5638d088741aa",
+  "prev": "e4e80139b6d31d15909e6472348f52fc596bed84",
+  "head": "a98ea5d07221ff5f9b7e721d11f7ce895d68afcd",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -11,13 +11,13 @@
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
     "custom-no-reminder-disclaimer",
-    "fix-progress-error-rollout"
-  ],
-  "unapplied": [
+    "fix-progress-error-rollout",
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
-    "fix-codex-thread-handoff",
+    "fix-codex-thread-handoff"
+  ],
+  "unapplied": [
     "fix-retained-thread-client-affinity",
     "version-bump"
   ],
@@ -33,13 +33,13 @@
       "oid": "27a530013652cb00180c06b0c416c09a081141d8"
     },
     "fix-child-completion-origin-schema": {
-      "oid": "4599cd8b50ed44e80e2c7f7ff441af39a10a5a52"
+      "oid": "cca1233340b5c48abcd42a3a3e8ac07a5e0a3d3a"
     },
     "fix-codex-installer-alias": {
-      "oid": "860415d626181fbf67dbd06e041239cbfa1499da"
+      "oid": "2766702cd867cc7e3d718f67143cb032cd1f6a84"
     },
     "fix-codex-thread-handoff": {
-      "oid": "cb44f0d21335404e99130fc0942429b310c54b14"
+      "oid": "a98ea5d07221ff5f9b7e721d11f7ce895d68afcd"
     },
     "fix-media-completion-tools": {
       "oid": "1480f8f9ea93b10e5d53eed20d1ab20dbf5ab433"
@@ -51,7 +51,7 @@
       "oid": "779279ddc492ad24c8d6d888c759451812f344c9"
     },
     "fix-native-completion-work-scope": {
-      "oid": "b43d5753ffef677639ba966ab49d7b1a47360721"
+      "oid": "febdcabb34846c1b359d5e4615cc0ff2b45a3d97"
     },
     "fix-progress-error-rollout": {
       "oid": "ff6cdf2dfaca57d51daa5b8054f5638d088741aa"
