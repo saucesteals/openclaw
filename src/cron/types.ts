@@ -8,6 +8,7 @@ import type {
 import type { EmbeddedAgentExecutionPhase } from "../agents/embedded-agent-runner/execution-phase.js";
 /** Cron scheduling, delivery, diagnostics, and store data contracts. */
 import type { FailoverReason } from "../agents/failover/signal.js";
+import type { TaskOriginSnapshot } from "../agents/task-origin.js";
 import type { NormalizeReplySkipReason } from "../auto-reply/reply/normalize-reply-skip-reason.js";
 import type { ChannelId } from "../channels/plugins/types.public.js";
 import type { SessionCreatedActor } from "../config/sessions/session-entry-provenance.js";
@@ -382,6 +383,8 @@ export type CronStoredJob = CronJob & {
     sessionId: string;
     lifecycleRevision?: string;
   };
+  /** Immutable attribution captured from the admitted creator, not execution authority. */
+  taskOrigin?: TaskOriginSnapshot;
   /** Immutable revisions inherited from the authorized creator session, never human mutation authority. */
   skillLibrarySelections?: SessionEntry["skillLibrarySelections"];
   /** Immutable creator provenance stamped by the trusted cron creation seam. */

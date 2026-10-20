@@ -29,6 +29,7 @@ import {
   formatAgentInternalEventsForPrompt,
   type AgentInternalEvent,
 } from "../../internal-events.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import {
   SUBAGENT_COMPLETION_OUTCOME_INSTRUCTION,
   SUBAGENT_PRIVATE_COMPLETION_INSTRUCTION,
@@ -42,6 +43,7 @@ import {
   resolveRequesterForChildSession,
   shouldIgnorePostCompletionAnnounceForSession,
 } from "../registry/subagent-registry-read.js";
+import { getSubagentRunByRunId } from "../registry/subagent-registry.js";
 import { deleteSubagentSessionForCleanup } from "../registry/subagent-session-cleanup.js";
 import { getSubagentDepthFromSessionStore } from "../spawn/subagent-depth.js";
 import type { SpawnSubagentMode } from "../spawn/subagent-spawn.types.js";
@@ -565,6 +567,9 @@ async function runSubagentAnnounceFlowBound(
         type: "task_completion",
         source: "subagent",
         announceType: "subagent task",
+        taskOrigin: normalizeTaskOriginSnapshot(
+          getSubagentRunByRunId(params.childRunId)?.taskOrigin,
+        ),
         childSessionKey: params.childSessionKey,
         childSessionId: announceSessionId,
         taskLabel,

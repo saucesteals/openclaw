@@ -537,6 +537,7 @@ export function buildGatewayCronService(params: {
           {
             sessionKey,
             contextKey: opts?.contextKey,
+            taskOrigin: opts?.taskOrigin,
             deliveryContext: opts?.deliveryContext,
           },
           agentId,

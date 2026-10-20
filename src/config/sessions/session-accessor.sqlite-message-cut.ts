@@ -557,6 +557,7 @@ export function mutateSqliteSessionAtMessageInTransaction(
     systemPromptReport: undefined,
     restartRecoveryRuns: undefined,
     restartRecoveryForceSafeTools: undefined,
+    restartRecoveryTaskOrigin: undefined,
     abortCutoffMessageSid: undefined,
     abortCutoffTimestamp: undefined,
     usageFamilyKey: forked ? undefined : currentEntry.usageFamilyKey,
