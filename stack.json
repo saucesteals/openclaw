@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "9ecbfe4627abe3492e06e37057ce5973936cccab",
+  "prev": "93b4bab99fdb80aa7942b2316408443d04352fcb",
   "head": "c6cc5bf4798678ecfbe96e5a68feea9dd376e797",
   "applied": [
     "feat-exec-session-key",
@@ -21,9 +21,7 @@
     "fix-ui-lazy-update-failure-report",
     "raise-image-pixel-limit"
   ],
-  "unapplied": [
-    "version-bump"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -76,9 +74,6 @@
     },
     "raise-image-pixel-limit": {
       "oid": "c6cc5bf4798678ecfbe96e5a68feea9dd376e797"
-    },
-    "version-bump": {
-      "oid": "3aa88944978070b6e763a42f2cdf0be7f776bd35"
     }
   }
 }
