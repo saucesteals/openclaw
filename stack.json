@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "93b4bab99fdb80aa7942b2316408443d04352fcb",
-  "head": "c6cc5bf4798678ecfbe96e5a68feea9dd376e797",
+  "prev": "1da36ff572882a0c737a8eee85718e22ef7a30c7",
+  "head": "f8ebbdb080e529feb6c9b6c40f4909f8cad18cdb",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -19,7 +19,8 @@
     "fix-retained-thread-client-affinity",
     "fix-browser-security-component-updates",
     "fix-ui-lazy-update-failure-report",
-    "raise-image-pixel-limit"
+    "raise-image-pixel-limit",
+    "version-bump"
   ],
   "unapplied": [],
   "hidden": [],
@@ -74,6 +75,9 @@
     },
     "raise-image-pixel-limit": {
       "oid": "c6cc5bf4798678ecfbe96e5a68feea9dd376e797"
+    },
+    "version-bump": {
+      "oid": "f8ebbdb080e529feb6c9b6c40f4909f8cad18cdb"
     }
   }
 }
