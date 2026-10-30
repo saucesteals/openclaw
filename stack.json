@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "bea4b2c60b99091ae9992d94c35710cc3d83cb24",
-  "head": "72992a9095ef334beae771c6d9237a4e1fbc062d",
+  "prev": "bdb83da43f1f3add3283d825d1b9aebe35cd4bfd",
+  "head": "bf5845952ef63e3a00674eca398f610e33e51df7",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -18,10 +18,11 @@
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
     "fix-browser-security-component-updates",
-    "fix-ui-lazy-update-failure-report",
+    "fix-ui-lazy-update-failure-report"
+  ],
+  "unapplied": [
     "version-bump"
   ],
-  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
