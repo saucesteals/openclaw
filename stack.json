@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "2959777ae9bbecd5dfb36a5e90a325ae62b23372",
-  "head": "c6cc5bf4798678ecfbe96e5a68feea9dd376e797",
+  "prev": "a793f57b4e352c237204b9a1d69b00606bfdf251",
+  "head": "3aa88944978070b6e763a42f2cdf0be7f776bd35",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -19,11 +19,10 @@
     "fix-retained-thread-client-affinity",
     "fix-browser-security-component-updates",
     "fix-ui-lazy-update-failure-report",
-    "raise-image-pixel-limit"
-  ],
-  "unapplied": [
+    "raise-image-pixel-limit",
     "version-bump"
   ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -78,7 +77,7 @@
       "oid": "c6cc5bf4798678ecfbe96e5a68feea9dd376e797"
     },
     "version-bump": {
-      "oid": "72992a9095ef334beae771c6d9237a4e1fbc062d"
+      "oid": "3aa88944978070b6e763a42f2cdf0be7f776bd35"
     }
   }
 }
