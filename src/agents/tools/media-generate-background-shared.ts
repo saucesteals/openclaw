@@ -131,6 +131,7 @@ type CompleteMediaGenerationTaskRunParams = {
 type FailMediaGenerationTaskRunParams = {
   handle: MediaGenerationTaskHandle | null;
   error: unknown;
+  deferCleanup?: boolean;
 };
 
 type WakeMediaGenerationTaskCompletionParams = Omit<
@@ -424,6 +425,16 @@ export function scheduleMediaGenerationTaskCompletion(params: {
         return;
       }
       try {
+        // Publish failure before the wake; keep its context alive until delivery settles.
+        try {
+          params.lifecycle.failTaskRun({ handle: params.handle, error, deferCleanup: true });
+        } catch (stateError) {
+          params.onWakeFailure(`${params.toolName} failure state update failed`, {
+            taskId: params.handle?.taskId,
+            runId: params.handle?.runId,
+            error: stateError,
+          });
+        }
         const wakeOutcome = await wakeMediaGenerationTaskCompletionWithRetry({
           handle: params.handle,
           wake: async () =>
@@ -439,8 +450,9 @@ export function scheduleMediaGenerationTaskCompletion(params: {
         }
       } catch (wakeError) {
         reportFailure(`${params.toolName} failure wake failed`, { error: wakeError });
+      } finally {
+        clearMediaGenerationTaskRunContext(params.handle);
       }
-      params.lifecycle.failTaskRun({ handle: params.handle, error });
       return;
     }
 
@@ -584,7 +596,9 @@ export function createMediaGenerationTaskLifecycle(kind: "image" | "music" | "vi
           terminalSummary: errorText,
         });
       } finally {
-        clearMediaGenerationTaskRunContext(params.handle);
+        if (!params.deferCleanup) {
+          clearMediaGenerationTaskRunContext(params.handle);
+        }
       }
     },
 
