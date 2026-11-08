@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "5e7d1ffe16af8a416aeac563e7b58c65017d70e6",
+  "prev": "522d297ee5257918cd718b15c4ac92829d1c8254",
   "head": "f78a8982d2755b39741cb7fa46a9ed67d4b4bb53",
   "applied": [
     "feat-exec-session-key",
@@ -21,13 +21,7 @@
     "fix-ui-lazy-update-failure",
     "raise-image-pixel-limit"
   ],
-  "unapplied": [
-    "fix-child-completion-origin-schema",
-    "fix-native-completion-work-scope",
-    "fix-retained-thread-client-affinity",
-    "fix-browser-security-component-updates",
-    "fix-ui-lazy-update-failure-report"
-  ],
+  "unapplied": [],
   "hidden": [],
   "patches": {
     "custom-no-reminder-disclaimer": {
@@ -39,17 +33,11 @@
     "fix-browser-security-component": {
       "oid": "7b546e6d030fcc9b554d5696a0fe558142f17a4b"
     },
-    "fix-browser-security-component-updates": {
-      "oid": "a673f77ae098bd8b95a3d1a75c38f8408e8ef11e"
-    },
     "fix-channel-admission-evidence": {
       "oid": "86f6ff87d1e06457e362e53ac781da90e63bf3eb"
     },
     "fix-child-completion-origin": {
       "oid": "3195c43c2ba55994c21a0e4143d45b1b459f2e32"
-    },
-    "fix-child-completion-origin-schema": {
-      "oid": "6a078df604a6c0252b9293ab41fa3d9b86156f83"
     },
     "fix-codex-installer-alias": {
       "oid": "06eecb363cf93cbcfc5ddf14739b26cb41892355"
@@ -69,9 +57,6 @@
     "fix-native-completion-work": {
       "oid": "e0ba840c53e5803dbfa9545cac9f3cd0476add6e"
     },
-    "fix-native-completion-work-scope": {
-      "oid": "8e203a805ee0e65c38316c4f8e17c1c1b6a1d0ca"
-    },
     "fix-progress-error-rollout": {
       "oid": "1e13b2479fd0b942e0a2f346ada2d8f62b76040b"
     },
@@ -81,14 +66,8 @@
     "fix-retained-thread-client": {
       "oid": "2e345f48a00563973fe9f52b8764c9e176bd1ded"
     },
-    "fix-retained-thread-client-affinity": {
-      "oid": "e203069c28c21bdf5c66ec8d65d74cbce9cc0a57"
-    },
     "fix-ui-lazy-update-failure": {
       "oid": "56d4fa9fc0c291be9b6a80ca04fb07ddd647290b"
-    },
-    "fix-ui-lazy-update-failure-report": {
-      "oid": "bf5845952ef63e3a00674eca398f610e33e51df7"
     },
     "fix-xai-video15-inputs": {
       "oid": "d1769162bf66ba9964ef7f660dc9f14037d2607e"
