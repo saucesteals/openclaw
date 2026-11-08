@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "0632f32b97f002b67e232984fd1e1b5c274ab58c",
-  "head": "7b546e6d030fcc9b554d5696a0fe558142f17a4b",
+  "prev": "8a9b9781ad7c03c7fad742100a934f566cbb44f6",
+  "head": "56d4fa9fc0c291be9b6a80ca04fb07ddd647290b",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -17,7 +17,8 @@
     "fix-native-completion-work",
     "fix-codex-thread-handoff",
     "fix-retained-thread-client",
-    "fix-browser-security-component"
+    "fix-browser-security-component",
+    "fix-ui-lazy-update-failure"
   ],
   "unapplied": [
     "fix-child-completion-origin-schema",
@@ -83,6 +84,9 @@
     },
     "fix-retained-thread-client-affinity": {
       "oid": "e203069c28c21bdf5c66ec8d65d74cbce9cc0a57"
+    },
+    "fix-ui-lazy-update-failure": {
+      "oid": "56d4fa9fc0c291be9b6a80ca04fb07ddd647290b"
     },
     "fix-ui-lazy-update-failure-report": {
       "oid": "bf5845952ef63e3a00674eca398f610e33e51df7"

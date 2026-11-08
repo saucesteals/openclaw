@@ -1,0 +1,7 @@
+Bottom: 6babbaae4dfa464bacce063b023d0b179c539bfd
+Top:    b9dabc001cadbaa436ab7b6615938a9b1f9b8d6b
+Author: Jarvis <jarvis@sauce.sh>
+Date:   2026-11-08 02:30:20 -0800
+
+fix(ui): load update failure reports on demand
+
