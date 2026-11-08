@@ -1,7 +1,7 @@
-Bottom: 2067eb50f080c20152be63de22393e705cb9f366
-Top:    c4dfa4293c075d315b17b3757df47ed73f88aea3
+Bottom: be34184189b5991d9b2d2243c3af155a166e23f3
+Top:    cf3e70efc992fc298e7d905c6fbc4c6f641fddda
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:21:14 -0700
+Date:   2026-11-08 02:30:20 -0800
 
 fix(agents): retain tools on initial media completion
 
