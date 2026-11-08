@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "b254ea30bff39a2f6c6d7eb75463f3474ce506ce",
+  "prev": "c18eb3de6d10e380986574c5e54b8a36139758bc",
   "head": "f78a8982d2755b39741cb7fa46a9ed67d4b4bb53",
   "applied": [
     "feat-exec-session-key",
@@ -18,7 +18,7 @@
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
     "fix-browser-security-component-updates",
-    "fix-ui-lazy-update-failure",
+    "fix-ui-lazy-update-failure-report",
     "raise-image-pixel-limit"
   ],
   "unapplied": [],
@@ -66,7 +66,7 @@
     "fix-retained-thread-client-affinity": {
       "oid": "2e345f48a00563973fe9f52b8764c9e176bd1ded"
     },
-    "fix-ui-lazy-update-failure": {
+    "fix-ui-lazy-update-failure-report": {
       "oid": "56d4fa9fc0c291be9b6a80ca04fb07ddd647290b"
     },
     "fix-xai-video15-inputs": {
