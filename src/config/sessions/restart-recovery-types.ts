@@ -28,6 +28,8 @@ export type RestartRecoveryTerminalDeliveryEvidenceResult = {
   captured?: true;
   payloads?: Array<{ mediaUrls?: string[]; visible?: boolean }>;
   payloadsTruncated?: true;
+  /** Frozen pre-send selection; independent of delivery success evidence. */
+  selectedMediaUrls?: string[];
   /** Classification facts only; raw terminal text and errors are never retained here. */
   meta?: {
     terminalReply?: { disposition: "silent" };
@@ -90,6 +92,8 @@ export type SessionRestartRecoveryState = {
   restartRecoveryDeliveryContext?: DeliveryContext;
   /** Exact host-owned media allowlist for a generated-media recovery run. */
   restartRecoveryDeliveryMediaUrls?: string[];
+  /** Set only after the selected paths pass normal delivery normalization. */
+  restartRecoveryDeliveryMediaSelected?: true;
   /** Keeps the message tool absent while a generated-media recovery run is resumed. */
   restartRecoveryDisableMessageTool?: true;
   /** Suppresses visible text when a recovery attempt repairs only missing media. */

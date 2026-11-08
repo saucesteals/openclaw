@@ -94,6 +94,8 @@ type DeliverAgentCommandResultParams = {
   payloads: ReplyPayload[] | undefined;
   /** Channel plugin already selected and bootstrapped by the caller. */
   preparedPlugin?: ChannelPlugin;
+  /** Required durable selection boundary after normal path checks, before transport. */
+  onPreparedMedia?: (mediaUrls: string[]) => Promise<void>;
   assertDeliveryCurrent?: SessionSourceAssertion;
   onDeliveryResult?: (result: AgentCommandDeliveryResult, payloads: ReplyPayload[]) => void;
 } & FreshSessionDeliveryRefreshParams;
@@ -106,7 +108,7 @@ function isFreshDeliverySessionMatch(
   return Boolean(normalizedExpected && freshSessionEntry.sessionId === normalizedExpected);
 }
 
-async function normalizeReplyMediaPathsForDelivery(params: {
+export async function normalizeReplyMediaPathsForDelivery(params: {
   cfg: OpenClawConfig;
   payloads: ReplyPayload[];
   sessionKey?: string;
@@ -678,6 +680,10 @@ export async function deliverAgentCommandResult(
   }
   if (deliveryChannel && !isInternalMessageChannel(deliveryChannel)) {
     if (deliveryTarget && !deliveryStatus) {
+      params.assertDeliveryCurrent?.();
+      await params.onPreparedMedia?.(
+        Array.from(new Set(deliveryPayloads.flatMap((payload) => payload.mediaUrls ?? []))),
+      );
       params.assertDeliveryCurrent?.();
       // The outbound projection contains transport data, not private payload metadata.
       const completion = resolvePendingFinalDeliveryCompletion(payloads);
