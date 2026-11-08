@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "bab59b08f227872314c3426a552670de12fc15dc",
+  "prev": "5e7d1ffe16af8a416aeac563e7b58c65017d70e6",
   "head": "f78a8982d2755b39741cb7fa46a9ed67d4b4bb53",
   "applied": [
     "feat-exec-session-key",
@@ -26,8 +26,7 @@
     "fix-native-completion-work-scope",
     "fix-retained-thread-client-affinity",
     "fix-browser-security-component-updates",
-    "fix-ui-lazy-update-failure-report",
-    "version-bump"
+    "fix-ui-lazy-update-failure-report"
   ],
   "hidden": [],
   "patches": {
@@ -96,9 +95,6 @@
     },
     "raise-image-pixel-limit": {
       "oid": "f78a8982d2755b39741cb7fa46a9ed67d4b4bb53"
-    },
-    "version-bump": {
-      "oid": "f8ebbdb080e529feb6c9b6c40f4909f8cad18cdb"
     }
   }
 }
