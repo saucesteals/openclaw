@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "03bba43bc9ecea87b6a11f2f55db1988deb7436a",
+  "prev": "b254ea30bff39a2f6c6d7eb75463f3474ce506ce",
   "head": "f78a8982d2755b39741cb7fa46a9ed67d4b4bb53",
   "applied": [
     "feat-exec-session-key",
@@ -17,7 +17,7 @@
     "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
-    "fix-browser-security-component",
+    "fix-browser-security-component-updates",
     "fix-ui-lazy-update-failure",
     "raise-image-pixel-limit"
   ],
@@ -30,7 +30,7 @@
     "feat-exec-session-key": {
       "oid": "3b2a22a915b148a450efcfeac691b93d89e537d4"
     },
-    "fix-browser-security-component": {
+    "fix-browser-security-component-updates": {
       "oid": "7b546e6d030fcc9b554d5696a0fe558142f17a4b"
     },
     "fix-channel-admission-evidence": {
