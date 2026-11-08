@@ -1,7 +1,7 @@
-Bottom: a138559698570e238395121723a773106ac33f8c
-Top:    893067903931782ed9d44bda4e04e3888e916941
+Bottom: d0f8526a9e56dbc3f9e940cb33c74e7b1be81a98
+Top:    ac6ed510b811b009686c32321fd6e5adcb4b81c1
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:20:54 -0700
+Date:   2026-11-08 02:30:20 -0800
 
 feat(exec): expose session key to commands
 
