@@ -235,6 +235,63 @@ describe("processDiscordMessage draft streaming final delivery", () => {
     await runProcessDiscordMessage(ctx);
   });
 
+  it.each([false, true])(
+    "rolls completed command failures out with toolProgress=%s",
+    async (toolProgress) => {
+      const draftStream = createMockDraftStreamForTest();
+      let callbackResult: boolean | void = undefined;
+
+      dispatchInboundMessage.mockImplementationOnce(async (params?: DispatchInboundParams) => {
+        callbackResult = await params?.replyOptions?.onItemEvent?.({
+          itemId: "failed-command",
+          kind: "tool",
+          phase: "end",
+          name: "exec",
+          status: "failed",
+          progressText: "Exec exit 1",
+        });
+        for (let index = 0; index < 12; index++) {
+          await params?.replyOptions?.onItemEvent?.({
+            itemId: `failed-${index}`,
+            kind: "tool",
+            phase: "end",
+            name: "exec",
+            status: "failed",
+            progressText: "Exec exit 1",
+          });
+        }
+        await params?.replyOptions?.onItemEvent?.({
+          itemId: "comment-latest",
+          kind: "preamble",
+          phase: "end",
+          progressText: "Recovered; verifying the result",
+        });
+        return createNoQueuedDispatchResult();
+      });
+
+      const ctx = await createAutomaticDraftContext({
+        discordConfig: {
+          streaming: { mode: "progress", progress: { toolProgress, commentary: true } },
+          maxLinesPerMessage: 5,
+        },
+      });
+
+      await runProcessDiscordMessage(ctx);
+
+      expect(callbackResult).toBe(toolProgress);
+      expect(draftStream.update.mock.lastCall?.[0]).toContain("💬 Recovered; verifying the result");
+      if (toolProgress) {
+        expect(draftStream.update).toHaveBeenCalledWith(expect.stringContaining("Exec: failed"), {
+          complete: true,
+        });
+      } else {
+        expect(draftStream.update.mock.calls.some(([text]) => text.includes("Exec: failed"))).toBe(
+          false,
+        );
+      }
+    },
+  );
+
   it("retires coding-profile guild progress only after a confirmed message-tool reply", async () => {
     const elapseProgressDraftStartDelay = useProgressDraftStartDelay();
     const draftStream = createMockDraftStreamForTest();

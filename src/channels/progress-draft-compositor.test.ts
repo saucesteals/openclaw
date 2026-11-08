@@ -647,6 +647,11 @@ describe("channel progress draft compositor", () => {
       expect(update.mock.lastCall?.[1]).toMatchObject({ flush: true });
       await progress.pushPlanProgress(plan);
       for (let index = 0; index < 5; index++) {
+        await progress.pushCommandOutputEvent({
+          phase: "end",
+          toolCallId: `failure-${index}`,
+          exitCode: 1,
+        });
         await progress.pushToolEvent({ name: "read", toolCallId: `call-${index}`, phase: "start" });
         await progress.pushCommentaryProgress(`Inspecting file ${index}`, {
           itemId: `comment-${index}`,
