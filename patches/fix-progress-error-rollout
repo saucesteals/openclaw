@@ -1,7 +1,7 @@
-Bottom: 763ba0322134be74f92dbbc8e3906f306b44b4bb
-Top:    8961f76ff5205e7838554181948bf067780f0acd
+Bottom: 4e65654d0a7af14cf8bfcaad0da7b7efc388ffdc
+Top:    847c45ff076b1e048712e35b9f64e8c429ae5033
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:57:01 -0700
+Date:   2026-11-08 02:30:20 -0800
 
 fix(streaming): let completed errors roll out of progress drafts
 
