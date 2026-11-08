@@ -15,6 +15,7 @@ import {
 } from "../plugins/runtime/gateway-request-scope.js";
 import { retainGatewayRootWorkAdmissionContinuationScope } from "../process/gateway-work-admission.js";
 import { isIncognitoSessionKey } from "../routing/session-key.js";
+import { runOutsideAsyncWorkScope } from "../shared/async-work-scope.js";
 import { createDeferredCore } from "../shared/deferred.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import {
@@ -64,6 +65,14 @@ function getCompletionOwner(
     throw new Error("Harness completion custody does not own this requester");
   }
   return owner;
+}
+
+/** Read the original per-turn scope from its validated custody owner. */
+export function resolveAgentHarnessCompletionCustodyScope(
+  custody: AgentHarnessCompletionCustody,
+  scope: AgentHarnessCompletionScope,
+): AgentHarnessCompletionScope {
+  return getCompletionOwner(custody, scope).scope;
 }
 
 /** Retains admitted completion work for this exact physical requester lifecycle. */
@@ -293,9 +302,12 @@ async function captureAgentHarnessCompletionCustodyOwner(
       scope,
       run(run) {
         assertCurrent();
-        return !executionSettled && root
-          ? root.runSync(() => captured.run(() => runInRequester(run)))
-          : captured.run(() => runInRequester(run));
+        // Retained completion owns its work independently of the settled foreground scope.
+        return runOutsideAsyncWorkScope(() =>
+          !executionSettled && root
+            ? root.runSync(() => captured.run(() => runInRequester(run)))
+            : captured.run(() => runInRequester(run)),
+        );
       },
       emit(run) {
         assertCurrent();
