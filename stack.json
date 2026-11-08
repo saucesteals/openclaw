@@ -1,15 +1,15 @@
 {
   "version": 5,
-  "prev": "549db55bf9554b6338a617c9d5fd5703b9ae353a",
-  "head": "cfc8385a6d5e24942941f284e89467f9fed59a3c",
+  "prev": "fb7803d224b03f3938a0bb1eb5ea060391745910",
+  "head": "b0b3ae4f87bd0491eeee7a357f9997659390e759",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
     "fix-media-completion-tools",
-    "fix-media-failure-status"
+    "fix-media-failure-status",
+    "fix-media-selected-delivery"
   ],
   "unapplied": [
-    "fix-media-selected-delivery",
     "fix-xai-video15-inputs",
     "fix-request-origin-context",
     "custom-no-reminder-disclaimer",
@@ -54,7 +54,7 @@
       "oid": "cfc8385a6d5e24942941f284e89467f9fed59a3c"
     },
     "fix-media-selected-delivery": {
-      "oid": "f6d4fa55053c286a8216f5cd728eb4c4c7926be7"
+      "oid": "b0b3ae4f87bd0491eeee7a357f9997659390e759"
     },
     "fix-native-completion-work-scope": {
       "oid": "8e203a805ee0e65c38316c4f8e17c1c1b6a1d0ca"
