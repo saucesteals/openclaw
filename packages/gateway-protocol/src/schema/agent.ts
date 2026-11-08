@@ -37,10 +37,40 @@ const AgentGeneratedAttachmentSchema = closedObject({
   height: Type.Optional(Type.Number()),
 });
 
+/** Wire metadata only; requester execution authority remains host-owned. */
+const TaskOriginIdSchema = Type.String({
+  minLength: 1,
+  maxLength: 512,
+  pattern: "^(?!\\s)(?![\\s\\S]*\\s$)[^\\u0000-\\u001f\\u007f]+$",
+});
+
+// Mirrors the normalized TaskOriginSnapshot contract without importing agent runtime.
+const TaskOriginSnapshotSchema = Type.Union([
+  closedObject({
+    version: Type.Literal(1),
+    status: Type.Literal("unknown"),
+  }),
+  closedObject({
+    version: Type.Literal(1),
+    status: Type.Literal("known"),
+    channel: TaskOriginIdSchema,
+    accountId: Type.Optional(TaskOriginIdSchema),
+    senderId: TaskOriginIdSchema,
+    sourceSessionKey: TaskOriginIdSchema,
+    sourceSessionId: Type.Optional(TaskOriginIdSchema),
+    sourceRunId: TaskOriginIdSchema,
+    sourceSessionLifecycleRevision: Type.Optional(TaskOriginIdSchema),
+    audience: Type.Optional(TaskOriginIdSchema),
+    groupSpace: Type.Optional(TaskOriginIdSchema),
+    threadId: Type.Optional(TaskOriginIdSchema),
+  }),
+]);
+
 /** Internal completion event surfaced when child automation reports back to a parent run. */
 const AgentInternalEventSchema = closedObject({
   type: Type.Literal(AGENT_INTERNAL_EVENT_TYPE_TASK_COMPLETION),
   source: Type.String({ enum: [...AGENT_INTERNAL_EVENT_SOURCES] }),
+  taskOrigin: Type.Optional(TaskOriginSnapshotSchema),
   childSessionKey: Type.String(),
   childSessionId: Type.Optional(Type.String()),
   announceType: Type.String(),
