@@ -1,6 +1,7 @@
-Bottom: 2ada38b33c430a76f9daa021df2516063cc386bb
-Top:    0709f16613715b508f7281fae30776a72aaf23a9
+Bottom: 6881939e48d96a9776889ddbc65689bd3c443c93
+Top:    a5ad90b1b63561da34d8f216b1e61a642a4d646f
 Author: Jarvis <jarvis@sauce.sh>
-Date:   2026-10-20 16:57:01 -0700
+Date:   2026-11-08 02:30:20 -0800
 
-fix(codex): release terminal pins and confirm thread unload before handoff
+fix(codex): confirm exact-thread unload before binding handoff
+

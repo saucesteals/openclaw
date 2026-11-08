@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "4968ee2328995f1faaaac032911eb603ac8d5c3c",
-  "head": "e0ba840c53e5803dbfa9545cac9f3cd0476add6e",
+  "prev": "1866021d12f6b5c7f21c226cd30d8764f0789ed1",
+  "head": "bc03f945cfb78ccdd4a34d8a3ae5cd2ee9e85ef7",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -14,12 +14,12 @@
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
     "fix-child-completion-origin",
-    "fix-native-completion-work"
+    "fix-native-completion-work",
+    "fix-codex-thread-handoff"
   ],
   "unapplied": [
     "fix-child-completion-origin-schema",
     "fix-native-completion-work-scope",
-    "fix-codex-thread-handoff",
     "fix-retained-thread-client-affinity",
     "fix-browser-security-component-updates",
     "fix-ui-lazy-update-failure-report",
@@ -50,7 +50,7 @@
       "oid": "06eecb363cf93cbcfc5ddf14739b26cb41892355"
     },
     "fix-codex-thread-handoff": {
-      "oid": "03759c804fa45b28de97d696207d89cf1c30ab48"
+      "oid": "bc03f945cfb78ccdd4a34d8a3ae5cd2ee9e85ef7"
     },
     "fix-media-completion-tools": {
       "oid": "dcb034dccb3bb62b94f168abe2ea83db703895fb"
