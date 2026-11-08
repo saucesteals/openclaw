@@ -1,12 +1,12 @@
 {
   "version": 5,
-  "prev": "0cf78e4fa6af0bbde069a76dd81ec4eb512302f4",
-  "head": "3b2a22a915b148a450efcfeac691b93d89e537d4",
+  "prev": "d95fb02d70c6ce497b0a945d27eb13c0d258400d",
+  "head": "86f6ff87d1e06457e362e53ac781da90e63bf3eb",
   "applied": [
-    "feat-exec-session-key"
+    "feat-exec-session-key",
+    "fix-channel-admission-evidence"
   ],
   "unapplied": [
-    "fix-channel-admission-evidence",
     "fix-media-completion-tools",
     "fix-media-failure-status",
     "fix-media-selected-delivery",
@@ -36,7 +36,7 @@
       "oid": "a673f77ae098bd8b95a3d1a75c38f8408e8ef11e"
     },
     "fix-channel-admission-evidence": {
-      "oid": "27a530013652cb00180c06b0c416c09a081141d8"
+      "oid": "86f6ff87d1e06457e362e53ac781da90e63bf3eb"
     },
     "fix-child-completion-origin-schema": {
       "oid": "6a078df604a6c0252b9293ab41fa3d9b86156f83"
