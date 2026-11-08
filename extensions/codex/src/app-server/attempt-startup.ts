@@ -84,6 +84,7 @@ export async function startCodexAttemptThread(params: {
   pluginConfig: CodexPluginConfig;
   computerUseConfig: ResolvedCodexComputerUseConfig;
   clientOptions: CodexAppServerClientOptions;
+  boundThread?: CodexAppServerClientOptions["boundThread"];
   runtimeArtifactRequest?: Readonly<{
     expected?: AgentHarnessRuntimeArtifactBinding;
   }>;
@@ -246,6 +247,7 @@ export async function startCodexAttemptThread(params: {
                 params.assertCurrent?.();
                 params.authority?.assertLegacyCurrent();
               },
+              boundThread: params.boundThread,
               startOptions: params.appServer.start,
               pluginConfig: params.pluginConfig,
               authProfileStore: attemptParams.authProfileStore,

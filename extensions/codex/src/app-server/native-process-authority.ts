@@ -39,6 +39,11 @@ export function getCodexNativeProcessClient(
   return owner;
 }
 
+/** Bounded identity-only diagnostics from the owner; never query or mutate native work. */
+export function readCodexRetainedNativeCommands(client: CodexAppServerClient, threadId: string) {
+  return clients.get(client)?.readRetainedCommands(threadId) ?? { total: 0, commands: [] };
+}
+
 /** Read the native process owner's live inventory, never infer custody from a start event. */
 export async function readCodexRetainedBackgroundCommands(params: {
   client: CodexAppServerClient;
@@ -160,6 +165,18 @@ export class CodexNativeProcessClient {
         owner.cancelClient(this);
       }
     });
+  }
+
+  readRetainedCommands(threadId: string) {
+    const commands = this.threads.get(threadId);
+    return {
+      total: commands?.size ?? 0,
+      commands: [...(commands?.values() ?? [])].slice(0, 10).map((command) => ({
+        itemId: command.itemId.slice(0, 120),
+        turnId: command.turnId.slice(0, 120),
+        processId: command.background?.processId?.slice(0, 120) ?? null,
+      })),
+    };
   }
 
   admit(

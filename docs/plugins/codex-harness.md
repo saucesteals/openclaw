@@ -26,6 +26,15 @@ its temporary loopback address. Upstream, authentication-profile, and creation-t
 policy changes still invalidate thread reuse; live requests continue through the
 current owned proxy.
 
+Background terminals can retain a native thread after its agent turn finishes.
+If its app-server client leaves the general pool, an existing bound conversation
+can continue on that exact client after current startup identity, authentication,
+ownership, and warm-thread policy checks pass. This does not return the retired
+client to the general pool or permit unrelated threads to reuse it. Incompatible
+configuration changes still refuse to unload a protected thread; diagnostics
+distinguish retained work from an active agent turn and identify known terminal
+handles without exposing command contents.
+
 ## Shared output projection
 
 Codex uses the shared native harness projection owners for bounded tool output,
@@ -564,6 +573,18 @@ if its start notification is delayed.
 Retirement revokes captured requester authority immediately, then joins accepted
 native submission and assignment writes before releasing child subscriptions.
 Client disposal joins those writes before releasing retained owners.
+
+When a conversation moves to another app-server process, OpenClaw waits for the
+previous process to confirm that the specific thread has unloaded. An unsubscribe
+acknowledgment alone does not prove that its writer has stopped. Other conversations
+may keep the previous process alive without blocking this handoff. Cancellation
+preserves the conversation and prevents a replacement writer from starting before
+teardown is confirmed.
+
+OpenClaw starts managed stdio servers with no idle thread unload delay
+so native defaults cannot hold this handoff beyond the turn deadline.
+Active turns and retained subscriptions still protect live work. External servers
+accessed through a proxy keep their own unload policy.
 
 An approval or input request shows what needs attention. A native mailbox wait
 shows that the agent is waiting for messages; it does not invent a list of child

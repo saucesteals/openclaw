@@ -11,6 +11,7 @@ import type { CodexAppServerStartOptions } from "./config.js";
 import { codexNativeSubagentMonitorRuntime } from "./native-subagent-monitor.js";
 import { createCodexTestBindingStore } from "./session-binding.test-helpers.js";
 import { withCodexSessionDescendantCancellation } from "./session-cancellation.js";
+import { registerSharedClientAffinityTests } from "./shared-client-affinity.test-support.js";
 import { registerSharedClientAuthRefreshTests } from "./shared-client-auth-refresh.test-support.js";
 import { waitForCodexAppServerClientExit } from "./shared-client-lifecycle.js";
 import {
@@ -39,6 +40,7 @@ export function registerSharedClientLifetimeTests(
   rejectAuth: (error: Error) => void,
 ) {
   registerSharedClientAuthRefreshTests();
+  registerSharedClientAffinityTests(rejectAuth, sendInitializeResult);
 
   it.each(["shared", "isolated"] as const)(
     "joins %s transport startup and closes a client returned after its deadline",
@@ -151,7 +153,14 @@ export function registerSharedClientLifetimeTests(
   it.each([true, false])(
     "preserves binding cleanup ownership (caller retains client: %s)",
     async (callerRetains) => {
-      const harness = createClientHarness();
+      const harness = createClientHarness({
+        onWrite: (line, send) => {
+          const request = JSON.parse(line) as { id: number; method: string };
+          if (request.method === "thread/unsubscribe") {
+            send({ id: request.id, result: { status: "unsubscribed" } });
+          }
+        },
+      });
       vi.spyOn(CodexAppServerClient, "start").mockResolvedValue(harness.client);
       const acquiring = getLeasedSharedCodexAppServerClient({ timeoutMs: 1_000 });
       await sendInitializeResult(harness, "openclaw/0.151.0 (Linux; test)");
@@ -180,9 +189,13 @@ export function registerSharedClientLifetimeTests(
         unsubscribe.resolve();
         // All fixture release work is promise-based; yield past its microtask continuations.
         await setImmediate();
-        expect(settled, "only the caller-held client lease may bypass graceful retirement").toBe(
+        expect(settled, "cross-client cleanup must wait for exact-thread teardown").toBe(
           callerRetains,
         );
+        expect(client.getCloseError()).toBeUndefined();
+        harness.send({ method: "thread/closed", params: { threadId: "previous-thread" } });
+        await releasing;
+        expect(settled).toBe(true);
         expect(client.getCloseError()).toBeUndefined();
       } finally {
         unsubscribe.resolve();

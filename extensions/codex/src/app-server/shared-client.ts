@@ -14,7 +14,10 @@ import {
 } from "./auth-bridge.js";
 import {
   ensureCodexAppServerClientRuntime,
+  hasCodexAppServerLiveThread,
   hasCodexAppServerThreadOwnership,
+  isCodexAppServerLiveThreadClaimed,
+  isCodexAppServerLiveThreadProtected,
   recordCodexAppServerAuthHandoff,
 } from "./client-runtime.js";
 import {
@@ -313,6 +316,77 @@ async function acquireSharedCodexAppServerClient(
     expectedRuntimeArtifact: options?.expectedRuntimeArtifact,
   });
   const key = keyFor(startOptions);
+  // Retired clients can still own a bound thread's background work. Requalify
+  // that exact owner without returning it to the general client pool.
+  const boundThread = options?.boundThread;
+  if (leased && boundThread) {
+    const owner = [...state.liveClients].find(
+      (candidate) => candidate.getInstanceId() === boundThread.clientId,
+    );
+    const ownedEntry = owner ? state.entriesByClient.get(owner) : undefined;
+    if (
+      owner &&
+      ownedEntry &&
+      ownedEntry.client === owner &&
+      state.clients.get(key) !== ownedEntry &&
+      ownedEntry.key === key &&
+      !ownedEntry.closeError &&
+      !owner.getCloseError() &&
+      hasCodexAppServerLiveThread(owner, boundThread.threadId) &&
+      !isCodexAppServerLiveThreadClaimed(owner, boundThread.threadId) &&
+      isCodexAppServerLiveThreadProtected(owner, boundThread.threadId)
+    ) {
+      const release = retainSharedClientEntry(ownedEntry);
+      let qualifying = true;
+      try {
+        const assertOwner = () => {
+          assertCurrent();
+          options?.assertCurrent?.();
+          if (
+            !qualifying ||
+            ownedEntry.client !== owner ||
+            ownedEntry.closeError ||
+            owner.getCloseError() ||
+            !hasCodexAppServerLiveThread(owner, boundThread.threadId) ||
+            isCodexAppServerLiveThreadClaimed(owner, boundThread.threadId) ||
+            !isCodexAppServerLiveThreadProtected(owner, boundThread.threadId)
+          ) {
+            throw new Error("Codex bound conversation client closed during acquisition");
+          }
+        };
+        const authHandoff = await withCodexAppServerAcquireDeadline(
+          remainingTimeoutMs,
+          applyCodexAppServerAuthProfile({
+            client: owner,
+            agentDir,
+            authProfileId:
+              usesNativeAuth || preparedAuth?.kind === "api-key" ? null : authProfileId,
+            preparedAuth,
+            authRequirement,
+            startOptions,
+            config: options?.config,
+            ...(authProfileStore ? { authProfileStore } : {}),
+            assertCurrent: assertOwner,
+            assertCurrentAsync: options?.assertCurrentAsync,
+          }),
+          abandonSignal,
+          "codex app-server bound conversation authentication timed out",
+        );
+        await options?.assertCurrentAsync?.();
+        assertOwner();
+        recordCodexAppServerAuthHandoff(owner, authHandoff);
+        ensureCodexAppServerClientRuntime(owner, { config: options?.config });
+        options?.onStartedClient?.(owner);
+        assertOwner();
+        ownedEntry.anonymousLeases += 1;
+        ownedEntry.activeLeases += 1;
+        return owner;
+      } finally {
+        qualifying = false;
+        release();
+      }
+    }
+  }
   const entry = getOrCreateSharedClientEntry(state, key);
   entry.startupAbort ??= new AbortController();
   entry.closeWhenIdle = false;

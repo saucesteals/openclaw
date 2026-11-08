@@ -13,6 +13,8 @@ export type CodexAppServerClientOptions = {
   authProfileId?: string | null;
   authProfileStore?: AuthProfileStore;
   authBindingFingerprint?: string;
+  /** Continue a bound warm thread on its physical owner, never a new thread. */
+  boundThread?: { clientId: string; threadId: string };
   /** Setup-only generation whose exact local runtime bytes are captured. */
   runtimeArtifactMode?: "capture";
   /** Previously minted exact runtime required before the process may start. */
