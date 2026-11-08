@@ -23,7 +23,6 @@ import {
   createUpdateStatusRefresher,
   projectUpdateSentinel,
   projectUpdateStatusResponse,
-  projectUpdateRunFailure,
   resolveUnknownUpdateOutcomeBanner,
   resolveUpdateStatusBanner,
   resolveUpdateStatusCheckBanner,
@@ -94,6 +93,19 @@ export function createApplicationUpdateOverlays(
   let updateAttempt: UpdateAdmissionAttempt | null = null;
   let currentFailure: UpdateFailureTriage | null = null;
   let diagnosticGeneration = 0;
+  let projectRunFailure:
+    | typeof import("./update-run-failure.runtime.ts").projectUpdateRunFailure
+    | undefined;
+  const prepareRunFailure = (run: UpdateRunRecord | null | undefined) => {
+    if (!projectRunFailure && run && (run.status === "failed" || run.status === "rolled-back")) {
+      // Keep failure-only formatting out of startup. Callers recheck their
+      // connection and request generation after this module-load boundary.
+      return import("./update-run-failure.runtime.ts").then((module) => {
+        projectRunFailure = module.projectUpdateRunFailure;
+      });
+    }
+    return undefined;
+  };
 
   const updateFailureReporter = createUpdateFailureReportController({
     getClient: () => gateway.snapshot.client,
@@ -248,7 +260,7 @@ export function createApplicationUpdateOverlays(
     }
     runId = run.runId;
     updateAttempt = null;
-    const failure = projectUpdateRunFailure(run);
+    const failure = projectRunFailure?.(run) ?? null;
     setCurrentFailure(failure);
     snapshot = {
       ...snapshot,
@@ -274,6 +286,9 @@ export function createApplicationUpdateOverlays(
       const response = await client.request<{ run: UpdateRunRecord | null }>("update.runs.get", {
         runId: id,
       });
+      if (isCurrent()) {
+        await prepareRunFailure(response.run);
+      }
       if (!isCurrent()) {
         return;
       }
@@ -349,6 +364,7 @@ export function createApplicationUpdateOverlays(
       snapshot = { ...snapshot, updateStatusRefreshing };
       publish();
     },
+    prepareStatus: (response) => prepareRunFailure(response.activeRun ?? response.lastRun),
     onStatus: applyUpdateStatusResponse,
     onError: (error, mode) => {
       if (mode === "completion" && snapshot.updateStatusCheckBanner?.mode === "manual") {

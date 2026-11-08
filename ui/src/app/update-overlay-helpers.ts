@@ -1,9 +1,4 @@
-import { LEGACY_UPDATE_RUN_EXPIRED_REASON } from "../../../src/infra/update-run-legacy-expiry.js";
-import {
-  isAcknowledgedAbandonedUpdateRun,
-  type UpdateRunRecord,
-} from "../../../src/infra/update-run-record.js";
-import { renderUpdateRunReport } from "../../../src/infra/update-run-report.js";
+import type { UpdateRunRecord } from "../../../src/infra/update-run-record.js";
 import { classifyUpdateOutcome } from "../../../src/shared/update-outcome.js";
 import type { GatewayBrowserClient, GatewayHelloOk } from "../api/gateway.ts";
 import type { UpdateAvailable, UpdateScheduleState } from "../api/types.ts";
@@ -210,6 +205,7 @@ export function createUpdateStatusRefresher(params: {
   canRefresh: () => boolean;
   isCurrent: (client: GatewayBrowserClient, epoch: number) => boolean;
   onRefreshing: (refreshing: boolean) => void;
+  prepareStatus?: (response: UpdateRestartStatusResponse) => Promise<void> | void;
   onStatus: (response: UpdateRestartStatusResponse) => void;
   onError: (error: unknown, mode: "manual" | "completion") => void;
 }) {
@@ -249,6 +245,20 @@ export function createUpdateStatusRefresher(params: {
       const progress = refreshCheckout ? refresh("background") : null;
       const response = await pending;
       if (response && isCurrent()) {
+        const preparation = params.prepareStatus?.(response);
+        if (preparation) {
+          try {
+            await preparation;
+          } catch (error) {
+            if (mode !== "background" && isCurrent()) {
+              params.onError(error, mode);
+            }
+            return false;
+          }
+          if (!isCurrent()) {
+            return false;
+          }
+        }
         if (refreshCheckout) {
           params.onError(null, "manual");
           params.onStatus(response);
@@ -310,36 +320,6 @@ function projectUpdateCheckoutResponse(
           ),
         }
       : {}),
-  };
-}
-
-export function projectUpdateRunFailure(run: UpdateRunRecord): UpdateFailureTriage | null {
-  if (
-    isAcknowledgedAbandonedUpdateRun(run) ||
-    (run.status !== "failed" && run.status !== "rolled-back")
-  ) {
-    return null;
-  }
-  const step = run.steps.findLast((entry) => entry.status === "failed");
-  return {
-    id: run.runId,
-    reconciledRecord: { id: run.runId, timestampMs: run.finishedAtMs ?? run.updatedAtMs },
-    outcome: "failed",
-    banner: {
-      tone: run.reason === LEGACY_UPDATE_RUN_EXPIRED_REASON ? "warn" : "danger",
-      text: renderUpdateRunReport(run).markdown,
-    },
-    attempt: {
-      timestampMs: run.finishedAtMs ?? run.updatedAtMs,
-      status: run.status,
-      reason: run.reason ?? "unexpected-error",
-      installKind: run.target.kind ?? null,
-      beforeVersion: run.before.version ?? null,
-      beforeSha: run.before.sha ?? null,
-      afterVersion: run.after.version ?? null,
-      afterSha: run.after.sha ?? null,
-      failure: step ? { step: step.step, detail: step.detail ?? "" } : null,
-    },
   };
 }
 
