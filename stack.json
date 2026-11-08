@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "prev": "70491dfea9df1c1cd645be83e45737b247a58f32",
+  "prev": "683130e8d386bb7f6e3380e7b3ed4957b90555cd",
   "head": "f78a8982d2755b39741cb7fa46a9ed67d4b4bb53",
   "applied": [
     "feat-exec-session-key",
@@ -14,7 +14,7 @@
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
     "fix-child-completion-origin-schema",
-    "fix-native-completion-work",
+    "fix-native-completion-work-scope",
     "fix-codex-thread-handoff",
     "fix-retained-thread-client",
     "fix-browser-security-component",
@@ -54,7 +54,7 @@
     "fix-media-selected-delivery": {
       "oid": "b0b3ae4f87bd0491eeee7a357f9997659390e759"
     },
-    "fix-native-completion-work": {
+    "fix-native-completion-work-scope": {
       "oid": "e0ba840c53e5803dbfa9545cac9f3cd0476add6e"
     },
     "fix-progress-error-rollout": {
