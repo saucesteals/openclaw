@@ -1659,28 +1659,22 @@ describe("runReplyAgent reminder commitment guard", () => {
     }).run();
   }
 
-  it("still appends guard note when cron jobs exist but not for the current session", async () => {
+  it("keeps reply unchanged when cron jobs exist but not for the current session", async () => {
     mockCronJob({ id: "unrelated-job", name: "daily-news", sessionKey: "other-session" });
 
     mockReminderReply("I'll remind you tomorrow morning.");
 
     const result = await createRun();
-    expectReplyText(
-      result,
-      "I'll remind you tomorrow morning.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you tomorrow morning.");
   });
 
-  it("still appends guard note when cron store read fails", async () => {
+  it("keeps reply unchanged when cron store read fails", async () => {
     loadCronStoreMock.mockRejectedValueOnce(new Error("store read failed"));
 
     mockReminderReply("I'll remind you after lunch.");
 
     const result = await createRun({ sessionKey: "main" });
-    expectReplyText(
-      result,
-      "I'll remind you after lunch.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
-    );
+    expectReplyText(result, "I'll remind you after lunch.");
   });
 });
 
