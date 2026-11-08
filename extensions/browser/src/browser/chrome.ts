@@ -722,8 +722,7 @@ function buildOpenClawChromeLaunchArgs(params: {
     "--no-first-run",
     "--no-default-browser-check",
     "--disable-sync",
-    "--disable-background-networking",
-    "--disable-component-update",
+    // Keep security component updates enabled: persistent profiles need fresh CRLSets.
     "--disable-features=Translate,MediaRouter",
     "--disable-session-crashed-bubble",
     "--hide-crash-restore-bubble",
