@@ -497,6 +497,7 @@ async function sendSubagentAnnounceDirectlyBound(
               }
               return await runAnnounceAgentCall({
                 agentParams: directAgentParams,
+                taskOrigin: trustedCompletionEvent?.taskOrigin,
                 // Individual result delivery and an owed public synthesis remain
                 // required; optional settle intake may complete without repeating it.
                 replyExpectation: inputReplyExpectation,

@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import type { ReplyPayload } from "../auto-reply/reply-payload.js";
@@ -24,6 +25,7 @@ import {
   hasCommittedOutboundDeliveryEvidence,
   hasUnaccountedMessagingToolAggregateEvidence,
   hasVisibleAgentPayload,
+  hasExplicitlyVisibleAgentPayload,
   hasVisibleCommittedMessagingToolDeliveryEvidence,
   type AgentDeliveryEvidence,
 } from "./embedded-agent-runner/delivery-evidence.js";
@@ -42,17 +44,22 @@ export function resolveCommandRecoveryOptions(params: {
     Array.isArray(entry.restartRecoveryDeliveryMediaUrls)
       ? entry.restartRecoveryDeliveryMediaUrls
       : undefined;
+  const originOptions =
+    entry?.restartRecoveryDeliveryRunId === params.runId
+      ? { ...params.opts, taskOrigin: entry.restartRecoveryTaskOrigin }
+      : params.opts;
   const opts =
     media !== undefined
       ? {
-          ...params.opts,
+          ...originOptions,
           internalDeliveryMediaUrls: [...media],
+          internalDeliveryMediaSelected: entry?.restartRecoveryDeliveryMediaSelected === true,
           internalDeliverySuppressText: entry?.restartRecoverySuppressTextDelivery,
           sourceReplyDeliveryMode: entry?.restartRecoverySourceReplyDeliveryMode,
           disableMessageTool: entry?.restartRecoveryDisableMessageTool,
           forceRestartSafeTools: entry?.restartRecoveryForceSafeTools,
         }
-      : params.opts;
+      : originOptions;
   if (
     (opts.internalDeliverySuppressText === true && opts.internalDeliveryMediaUrls === undefined) ||
     ((opts.internalDeliveryMediaUrls !== undefined || opts.internalDeliverySuppressText === true) &&
@@ -72,12 +79,32 @@ function normalizeOptionalThreadId(value: unknown): string | undefined {
   );
 }
 
-/** Replace model-selected media with the exact host-owned delivery set. */
+/** Preserve eligible fresh selection; recovery uses the exact host-owned delivery set. */
 export function constrainRestartRecoveryDeliveryPayloads(
   payloads: ReplyPayload[] | undefined,
   mediaUrls: string[],
   suppressText = false,
+  trustedLocalMedia = true,
+  allowSelection = false,
 ): ReplyPayload[] {
+  if (
+    allowSelection &&
+    collectDeliveredMediaUrls({
+      payloads: payloads?.filter(
+        (payload) => payload.isError !== true && hasExplicitlyVisibleAgentPayload(payload),
+      ),
+    }).length > 0
+  ) {
+    return (payloads ?? []).map((payload) =>
+      payload.isError === true || !hasExplicitlyVisibleAgentPayload(payload)
+        ? Object.assign({}, payload, {
+            mediaUrl: undefined,
+            mediaUrls: undefined,
+            attachments: undefined,
+          })
+        : payload,
+    );
+  }
   const constrained: ReplyPayload[] = [];
   for (const payload of payloads ?? []) {
     const constrainedPayload: ReplyPayload = {};
@@ -128,7 +155,7 @@ export function constrainRestartRecoveryDeliveryPayloads(
           payloads: [visibleReply],
           toolMediaUrls: exactMediaUrls,
           hostOwnedToolMediaUrls: exactMediaUrls,
-          toolTrustedLocalMedia: true,
+          toolTrustedLocalMedia: trustedLocalMedia,
           sourceReplyDeliveryMode: "automatic",
         }) ?? [];
       if (mergedReply) {
@@ -138,7 +165,7 @@ export function constrainRestartRecoveryDeliveryPayloads(
     }
   }
 
-  constrained.push({ mediaUrls: exactMediaUrls, trustedLocalMedia: true });
+  constrained.push({ mediaUrls: exactMediaUrls, trustedLocalMedia });
   return constrained;
 }
 
@@ -383,6 +410,7 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   disableMessageTool?: boolean;
   entry: SessionEntry;
   forceRestartSafeTools?: boolean;
+  taskOrigin?: SessionEntry["restartRecoveryTaskOrigin"];
   runId: string;
   operatorSource?: SessionEntry["restartRecoveryOperatorSource"];
   sourceIngress?: SessionEntry["restartRecoverySourceIngress"];
@@ -393,12 +421,14 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
   SessionEntry,
   | "restartRecoveryDeliveryContext"
   | "restartRecoveryDeliveryMediaUrls"
+  | "restartRecoveryDeliveryMediaSelected"
   | "restartRecoveryDisableMessageTool"
   | "restartRecoveryDeliveryRunId"
   | "restartRecoveryDeliverySourceRunId"
   | "restartRecoveryHarnessCompletion"
   | "restartRecoveryForceSafeTools"
   | "restartRecoveryOperatorSource"
+  | "restartRecoveryTaskOrigin"
   | "restartRecoverySourceIngress"
   | "restartRecoverySourceReplyDeliveryMode"
   | "restartRecoverySuppressTextDelivery"
@@ -418,11 +448,13 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
         : {}),
       restartRecoveryDeliveryContext: entry.restartRecoveryDeliveryContext,
       restartRecoveryDeliveryMediaUrls: entry.restartRecoveryDeliveryMediaUrls,
+      restartRecoveryDeliveryMediaSelected: entry.restartRecoveryDeliveryMediaSelected,
       restartRecoveryDisableMessageTool: entry.restartRecoveryDisableMessageTool,
       restartRecoverySuppressTextDelivery: entry.restartRecoverySuppressTextDelivery,
       restartRecoveryDeliveryRunId: params.runId,
       restartRecoveryDeliverySourceRunId: entry.restartRecoveryDeliverySourceRunId,
       restartRecoveryOperatorSource: entry.restartRecoveryOperatorSource,
+      restartRecoveryTaskOrigin: entry.restartRecoveryTaskOrigin,
       restartRecoverySourceIngress: entry.restartRecoverySourceIngress,
       restartRecoverySourceReplyDeliveryMode: entry.restartRecoverySourceReplyDeliveryMode,
       restartRecoveryForceSafeTools: entry.restartRecoveryForceSafeTools,
@@ -443,12 +475,14 @@ export function buildCurrentRunRestartRecoveryClaim(params: {
       createsScopedDeliveryClaim && params.deliveryMediaUrls !== undefined
         ? [...params.deliveryMediaUrls]
         : undefined,
+    restartRecoveryDeliveryMediaSelected: undefined,
     restartRecoveryDisableMessageTool:
       createsScopedDeliveryClaim && params.disableMessageTool === true ? true : undefined,
     restartRecoverySuppressTextDelivery:
       createsScopedDeliveryClaim && params.suppressTextDelivery === true ? true : undefined,
     restartRecoveryDeliveryRunId: createsScopedDeliveryClaim ? params.runId : undefined,
     restartRecoveryDeliverySourceRunId: params.sourceRunId,
+    restartRecoveryTaskOrigin: params.taskOrigin,
     restartRecoveryOperatorSource: createsScopedDeliveryClaim ? params.operatorSource : undefined,
     restartRecoverySourceIngress: createsScopedDeliveryClaim ? params.sourceIngress : undefined,
     restartRecoverySourceReplyDeliveryMode: params.sourceRunId
@@ -545,4 +579,70 @@ export function bindCommandHarnessCompletionAssertion(params: {
     ),
   };
   return { opts: guarded };
+}
+
+/** Freeze normalized media under the active recovery claim before transport starts. */
+export async function freezeCurrentRunDeliveryMedia(params: {
+  agentId: string;
+  sessionStore?: Record<string, SessionEntry>;
+  sessionKey?: string;
+  storePath: string;
+  sessionId: string;
+  runId: string;
+  mediaUrls: string[];
+  assertCurrent: () => void;
+}): Promise<SessionEntry> {
+  const { sessionStore, sessionKey, mediaUrls, runId } = params;
+  const current = sessionKey ? sessionStore?.[sessionKey] : undefined;
+  if (
+    !sessionStore ||
+    !sessionKey ||
+    !current ||
+    (!mediaUrls.length && current.restartRecoveryDeliveryMediaSelected !== true) ||
+    mediaUrls.length > 64
+  ) {
+    throw new Error("generated-media selection requires its active recovery owner and media");
+  }
+  // Recovery may remove already-receipted payloads from this send. Never narrow
+  // the canonical selection to that per-send subset.
+  const selection =
+    current.restartRecoveryDeliveryMediaSelected === true
+      ? (current.restartRecoveryDeliveryMediaUrls ?? [])
+      : mediaUrls;
+  if (mediaUrls.some((url) => !selection.includes(url))) {
+    throw new Error("generated-media retry changed its frozen selection");
+  }
+  const { persistAgentSession } = await import("./command/attempt-execution.shared.js");
+  let authorized = false;
+  const persisted = await persistAgentSession({
+    agentId: params.agentId,
+    sessionStore,
+    sessionKey,
+    storePath: params.storePath,
+    initialEntry: current,
+    entry: {
+      ...current,
+      restartRecoveryDeliveryMediaUrls: [...selection],
+      restartRecoveryDeliveryMediaSelected: true,
+    },
+    shouldPersist: (fresh) => {
+      params.assertCurrent();
+      authorized =
+        fresh?.sessionId === params.sessionId &&
+        fresh.restartRecoveryDeliveryRunId === runId &&
+        fresh.lifecycleRevision === current.lifecycleRevision &&
+        (fresh.restartRecoveryDeliveryMediaSelected !== true ||
+          isDeepStrictEqual(fresh.restartRecoveryDeliveryMediaUrls, selection));
+      return authorized;
+    },
+  });
+  if (
+    !authorized ||
+    persisted?.restartRecoveryDeliveryRunId !== runId ||
+    persisted.restartRecoveryDeliveryMediaSelected !== true ||
+    !isDeepStrictEqual(persisted.restartRecoveryDeliveryMediaUrls, selection)
+  ) {
+    throw new Error("generated-media selection lost its recovery owner");
+  }
+  return persisted;
 }

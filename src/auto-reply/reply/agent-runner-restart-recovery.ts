@@ -7,6 +7,7 @@ import {
   type RunReplyAgentParams,
 } from "./agent-runner-core.js";
 import { buildThreadingToolContext } from "./agent-runner-utils.js";
+import { captureChannelTaskOrigin } from "./channel-run-admission.js";
 import { replyRunRegistry, type ReplyOperation } from "./reply-run-registry.js";
 import {
   acquireReplyOperationSessionActor,
@@ -69,6 +70,14 @@ export function createReplyAgentRestartRecoveryController(
     operatorAuthority: followupRun.operatorAuthority,
     inputProvenance: followupRun.run.inputProvenance,
     lifecycleGeneration: replyOperation.lifecycleGeneration,
+    resolveTaskOrigin: (sourceRunId) =>
+      captureChannelTaskOrigin(
+        followupRun,
+        sourceRunId,
+        sessionKey,
+        replyOperation.lifecycleGeneration,
+        replyOperation.sessionId,
+      ),
     admissionRunId,
     executionRunId: opts?.runId,
     getEntry: () =>

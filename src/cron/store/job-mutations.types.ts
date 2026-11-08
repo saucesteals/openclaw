@@ -12,6 +12,7 @@ type CronJobMutationOptions = Pick<
   | "enabledExplicit"
   | "systemOwned"
   | "createdActor"
+  | "taskOrigin"
   | "inferenceBinding"
   | "sourceConversation"
   | "operatorSource"

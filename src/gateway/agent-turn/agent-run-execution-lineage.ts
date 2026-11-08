@@ -5,6 +5,7 @@ import {
   readAgentRuntimeExecutionLineage,
 } from "../agent-runtime-execution-lineage.js";
 import type { AgentRuntimeIdentity } from "../agent-runtime-identity-token.js";
+import type { StartAgentRunExecutionParams } from "./agent-run-execution-types.js";
 
 type ExecutionIdentitySpawnFacts = Pick<
   ExecutionIdentityAdmissionFacts,
@@ -67,4 +68,18 @@ export function resolveExecutionIdentitySpawnFacts(
       ],
     }),
   };
+}
+
+/** Resolve attribution at dispatch, after preparation awaits have settled. */
+export function resolveAgentRunTaskOrigin(
+  params: Pick<StartAgentRunExecutionParams, "client" | "context">,
+  identity: AgentRuntimeIdentity | undefined,
+) {
+  const internal = params.client?.internal;
+  return (
+    internal?.taskOrigin ??
+    (identity && params.context.validateAgentRuntimeApprovalAuthority?.(identity) === true
+      ? identity.taskOrigin
+      : undefined)
+  );
 }

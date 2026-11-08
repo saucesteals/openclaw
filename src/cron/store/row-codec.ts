@@ -2,6 +2,7 @@ import { isDeepStrictEqual } from "node:util";
 import { safeParseJsonRecord } from "@openclaw/normalization-core/json-coercion";
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot } from "../../agents/task-origin.js";
 import { operatorStandingGrantPublication } from "../../gateway/operator-approval-store.publication.js";
 import { sha256Hex } from "../../infra/crypto-digest.js";
 import { jsonSetPath } from "../../infra/database-engine/json-values.js";
@@ -135,6 +136,7 @@ function normalizeCronJobForSqlite(job: CronStoreFile["jobs"][number]): CronStor
       : createdAtMs;
   return {
     ...normalized,
+    taskOrigin: normalizeTaskOriginSnapshot(raw.taskOrigin),
     createdAtMs,
     updatedAtMs,
     state: isRecord(normalized.state) ? (normalized.state as CronJobState) : {},
@@ -191,6 +193,7 @@ export function rowToCronJob(
   return {
     ...runtimeConfig,
     id: row.job_id,
+    taskOrigin: normalizeTaskOriginSnapshot(jobJson.taskOrigin),
     ...(toolsAllowExecTarget ? { toolsAllowExecTarget } : {}),
     ...(toolsAllowExecTargetRequirement ? { toolsAllowExecTargetRequirement } : {}),
     createdAtMs,

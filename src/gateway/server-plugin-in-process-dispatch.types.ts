@@ -22,6 +22,7 @@ export type PrepareInProcessAgentExecutionOptions = {
 };
 
 export type DispatchGatewayMethodInProcessOptions = {
+  taskOrigin?: import("../agents/task-origin.js").TaskOriginSnapshot;
   privateCompletion?: true;
   /** Trusted input-owner policy; not accepted from the wire request. */
   replyExpectation?: ReplyExpectation;

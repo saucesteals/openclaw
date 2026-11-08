@@ -1,3 +1,4 @@
+import { isConfiguredCommandOwner } from "../../auto-reply/command-auth.js";
 import type { EmbeddedRunAttemptInternalParams } from "../embedded-agent-runner/run/internal-params.js";
 
 export function withoutPluginHarnessPrivateState(
@@ -24,5 +25,12 @@ export function withoutPluginHarnessPrivateState(
     __openclawSourceReplyDeliveryRuntime: _sourceReplyDeliveryRuntime,
     ...pluginParams
   } = params;
-  return pluginParams;
+  const taskOrigin = params.admittedRunContext.taskOrigin;
+  const taskOriginOwnerStatus =
+    taskOrigin?.status === "known" && params.config
+      ? isConfiguredCommandOwner(params.config, taskOrigin)
+        ? ("configured_owner" as const)
+        : ("not_configured_owner" as const)
+      : ("unknown" as const);
+  return { ...pluginParams, taskOrigin, taskOriginOwnerStatus };
 }

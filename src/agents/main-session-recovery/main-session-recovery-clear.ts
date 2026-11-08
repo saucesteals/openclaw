@@ -72,7 +72,9 @@ export function buildMainSessionRecoveryAfterAgentRunPatch(
     return {};
   }
   return {
-    ...(clearForceSafeTools ? { restartRecoveryForceSafeTools: undefined } : {}),
+    ...(clearForceSafeTools
+      ? { restartRecoveryForceSafeTools: undefined, restartRecoveryTaskOrigin: undefined }
+      : {}),
     // Accepted queued turns retain independent claims. Their release owner clears
     // the recovery cycle after the last claim, not a preceding model completion.
     ...(entry.mainRestartRecovery?.foregroundClaims

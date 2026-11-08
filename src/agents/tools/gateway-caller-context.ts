@@ -44,7 +44,9 @@ import {
   attachInternalToolExecutionPreparer,
   getInternalToolExecutionPreparer,
 } from "../runtime/internal-hooks.js";
+import { normalizeTaskOriginSnapshot, type TaskOriginSnapshot } from "../task-origin.js";
 import { readToolStringParam, type AnyAgentTool } from "./common.js";
+import type { GatewayToolCallerSource } from "./gateway-caller-context.types.js";
 import type { GatewayToolCallerReceiptAdmission } from "./gateway-caller-receipt.types.js";
 
 type ReceiptAuthority = (() => boolean | void) &
@@ -55,6 +57,7 @@ type GatewayToolCallerIdentity = {
   personalToolUser?: string;
   personalToolIdentityScoped?: true;
   personalToolSelection?: GatewayToolOperatorSelection;
+  taskOrigin?: TaskOriginSnapshot;
   agentId: string;
   sessionKey: string;
   /** Restrict-only executable surface captured for internal follow-ups. */
@@ -109,18 +112,6 @@ type GatewayToolCallerIdentity = {
   turnSourceTo?: string;
   turnSourceAccountId?: string;
   turnSourceThreadId?: string | number;
-};
-
-type GatewayToolCallerSource = {
-  agentSessionKey?: string;
-  gatewayUiCommandTarget?: GatewayUiCommandTarget;
-  agentChannel?: string;
-  currentMessagingTarget?: string;
-  currentChannelId?: string;
-  agentTo?: string;
-  agentAccountId?: string;
-  currentThreadTs?: string;
-  agentThreadId?: string | number;
 };
 
 const gatewayToolCallerStorage = new AsyncLocalStorage<GatewayToolCallerIdentity>();
@@ -268,6 +259,7 @@ export function createAdmittedGatewayToolCallerIdentity(
     agentId,
     sessionKey,
     operationalRunInstance: params.admittedRunContext.operationalRunInstance,
+    taskOrigin: normalizeTaskOriginSnapshot(params.admittedRunContext.taskOrigin),
     ...(delegatedAuthority ? { approvalAuthority: delegatedAuthority } : {}),
     ...(operatorAuthority ? { operatorAuthority } : {}),
     ...(params.receiptAuthority ? { approvalAuthorityCheck: params.receiptAuthority } : {}),
@@ -393,15 +385,12 @@ export function resolveGatewayPersonalToolParticipant(
   }
   if (runtimeIdentity) {
     const registered = captureActiveEmbeddedRunPersonalToolParticipants(runtimeIdentity, options);
-    if (!registered) {
-      return undefined;
-    }
-    const participant = registered.participants?.resolve(undefined, options);
+    const participant = registered?.participants?.resolve(undefined, options);
     return (
       participant && {
         ...participant,
         assertCurrent: composeSessionSourceAssertion([
-          registered.assertCurrent,
+          registered?.assertCurrent,
           participant.assertCurrent,
         ]),
       }
@@ -643,6 +632,7 @@ export async function withGatewayToolCallerIdentity<T>(
       personalToolSelection: inheritedValue("personalToolSelection"),
       ...(fullPermission !== undefined ? { fullPermission } : {}),
       ...(operationalRunInstance ? { operationalRunInstance } : {}),
+      taskOrigin: normalizeTaskOriginSnapshot(inheritedOwner?.taskOrigin ?? identity.taskOrigin),
       ...(embeddedRunToolAuthorityBinding ? { embeddedRunToolAuthorityBinding } : {}),
       ...(approvalAuthority ? { approvalAuthority } : {}),
       ...(operatorAuthority ? { operatorAuthority } : {}),

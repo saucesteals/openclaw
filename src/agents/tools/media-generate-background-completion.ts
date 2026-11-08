@@ -34,6 +34,7 @@ export type MediaGenerationTaskHandle = {
   detach: boolean;
   requesterTranscript?: SessionTranscriptTargetBinding & { lifecycleRevision: string | null };
   taskLabel: string;
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
 };
 
 function isMediaGenerationSourceCurrent(handle: MediaGenerationTaskHandle): boolean {
@@ -193,6 +194,7 @@ export async function wakeMediaGenerationTaskCompletion(params: {
   const internalEvents: AgentInternalEvent[] = [
     {
       type: "task_completion",
+      taskOrigin: handle.taskOrigin,
       source: params.eventSource,
       childSessionKey: `${params.toolName}:${handle.taskId}`,
       childSessionId: handle.taskId,

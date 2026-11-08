@@ -12,6 +12,9 @@ import type { RestoredCronContinuation } from "./agent-handler-helpers.js";
 import type { PreparedAgentRunDispatch } from "./agent-run-admission-types.js";
 import type { AgentTurnContext, AgentTurnIo, AgentTurnPrincipal } from "./types.js";
 
+export type { AgentRunTerminalOutcome } from "../../agents/agent-run-terminal-outcome.js";
+export type { MainSessionRecoveryPendingTarget } from "../../agents/main-session-recovery/main-session-recovery-store.js";
+
 export type StartAgentRunExecutionParams = {
   assertContextCurrent?: () => void;
   prepared: PreparedAgentRunDispatch;

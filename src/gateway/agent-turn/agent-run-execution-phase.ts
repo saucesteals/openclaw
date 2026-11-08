@@ -8,16 +8,10 @@ import {
   attachAgentCommandAdmissionFacts,
   attachAgentCommandRecoveryAdmissionFacts,
 } from "../../agents/agent-command-admission-facts.js";
-import {
-  buildAgentRunTerminalOutcome,
-  type AgentRunTerminalOutcome,
-} from "../../agents/agent-run-terminal-outcome.js";
+import { buildAgentRunTerminalOutcome } from "../../agents/agent-run-terminal-outcome.js";
 import { repairMainSessionRecoveryMutation } from "../../agents/main-session-recovery/main-session-recovery-lifecycle.js";
 import { scheduleMainSessionRecoveryPendingTarget } from "../../agents/main-session-recovery/main-session-recovery-owner-release.js";
-import {
-  releaseMainSessionRecoveryOwner,
-  type MainSessionRecoveryPendingTarget,
-} from "../../agents/main-session-recovery/main-session-recovery-store.js";
+import { releaseMainSessionRecoveryOwner } from "../../agents/main-session-recovery/main-session-recovery-store.js";
 import { withPreparedModelRuntimePluginGenerationScope } from "../../agents/prepared-model-runtime-generation-scope.js";
 import { resolveScheduledToolPolicyContext } from "../../agents/scheduled-tool-policy.js";
 import { resolveIngressWorkspaceOverrideForSessionRun } from "../../agents/spawned-context.js";
@@ -60,8 +54,15 @@ import {
 import { createAgentRunDiagnostics } from "./agent-run-diagnostics.js";
 import { withAgentRunDispatchExecutionIdentity } from "./agent-run-dispatch-execution-identity.js";
 import { projectWithdrawnAgentInput } from "./agent-run-dispatch-outcome.js";
-import { resolveExecutionIdentitySpawnFacts } from "./agent-run-execution-lineage.js";
-import type { StartAgentRunExecutionParams } from "./agent-run-execution-types.js";
+import {
+  resolveAgentRunTaskOrigin,
+  resolveExecutionIdentitySpawnFacts,
+} from "./agent-run-execution-lineage.js";
+import type {
+  AgentRunTerminalOutcome,
+  MainSessionRecoveryPendingTarget,
+  StartAgentRunExecutionParams,
+} from "./agent-run-execution-types.js";
 import { dispatchAgentRunWithMedia } from "./agent-run-media.js";
 import { settleUnstartedGatewayFollowup } from "./agent-run-subagent.js";
 import {
@@ -299,9 +300,7 @@ async function executeAgentRun(params: StartAgentRunExecutionParams): Promise<vo
           });
         }
 
-        let message = prepared.userTurn.message;
-        let execApprovalContinuationPromptRange =
-          prepared.userTurn.execApprovalContinuationPromptRange;
+        let { message, execApprovalContinuationPromptRange } = prepared.userTurn;
         const execApprovalContinuationTranscriptPromptRange = execApprovalContinuationPromptRange;
 
         // Admission owns plugin/settlement adoption; other inter-session work
@@ -534,6 +533,7 @@ async function executeAgentRun(params: StartAgentRunExecutionParams): Promise<vo
                 acpTurnSource: params.request.acpTurnSource,
                 internalEvents: params.request.internalEvents,
                 runtimeContextFragments: params.client?.internal?.runtimeContextFragments,
+                taskOrigin: resolveAgentRunTaskOrigin(params, agentRuntimeIdentity),
                 inputProvenance: params.inputProvenance,
                 privateCompletion: prepared.userTurn.privateCompletion,
                 replyExpectation: prepared.userTurn.replyExpectation,

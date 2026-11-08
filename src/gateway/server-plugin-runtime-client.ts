@@ -35,6 +35,7 @@ export function createSyntheticPluginRuntimeClient(
       | "cronRunContinuation"
       | "internalDeliveryMediaUrls"
       | "runtimeContextFragments"
+      | "taskOrigin"
       | "internalDeliverySuppressText"
       | "internalDeliverySuppressErrors"
       | "pluginRuntimeOwnerId"
@@ -65,6 +66,7 @@ export function createSyntheticPluginRuntimeClient(
     },
     internal: {
       syntheticClient: true,
+      ...(params?.taskOrigin ? { taskOrigin: params.taskOrigin } : {}),
       ...(params?.operatorRoleActor ? { operatorRoleActor: params.operatorRoleActor } : {}),
       ...(params?.operatorRunAuthority
         ? { operatorRunAuthority: params.operatorRunAuthority }

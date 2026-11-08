@@ -16,7 +16,6 @@ import { cronScriptFailureMetadata } from "../script-failure.js";
 import { ownsCronSource } from "../source-schedule.js";
 import { appendCronPayloadText } from "../stream-schedule.js";
 import type {
-  CronJob,
   CronJobExecutionResult,
   CronStoredJob,
   CronNextCheckProposal,
@@ -246,7 +245,7 @@ export async function executeJobCore(
 
 async function executeMainSessionCronJob(
   state: CronServiceState,
-  job: CronJob,
+  job: CronStoredJob,
   abortSignal: AbortSignal | undefined,
   onHeartbeatExecutionStarted?: ExecuteJobCoreOptions["onHeartbeatExecutionStarted"],
   activeJobMarker?: CronActiveJobMarker,
@@ -278,6 +277,7 @@ async function executeMainSessionCronJob(
     state.deps.enqueueSystemEvent(text, {
       agentId,
       contextKey: `cron:${job.id}`,
+      taskOrigin: job.taskOrigin,
       ...(deliveryContext ? { deliveryContext } : {}),
     }),
   );
@@ -506,7 +506,7 @@ async function executeDetachedCronJob(
 
 async function executeScriptCronJob(
   state: CronServiceState,
-  job: CronJob,
+  job: CronStoredJob,
   abortSignal: AbortSignal | undefined,
   options?: ExecuteJobCoreOptions,
 ) {
@@ -592,7 +592,11 @@ async function executeScriptCronJob(
       job.sessionTarget === "main"
         ? await resolveMainSessionCronDeliveryContext(state, job)
         : undefined;
-    const eventOptions = { agentId, ...(deliveryContext ? { deliveryContext } : {}) };
+    const eventOptions = {
+      agentId,
+      taskOrigin: job.taskOrigin,
+      ...(deliveryContext ? { deliveryContext } : {}),
+    };
     if (job.sessionTarget === "main" && notify) {
       state.deps.enqueueSystemEvent(notify, {
         ...eventOptions,

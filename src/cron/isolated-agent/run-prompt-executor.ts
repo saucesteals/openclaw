@@ -206,6 +206,7 @@ export function createCronPromptExecutor(
       operatorAuthority: params.operatorAuthority,
       admissionSource: params.admissionSource,
       deliveryAttemptFence: params.deliveryAttemptFence,
+      taskOrigin: params.job.taskOrigin,
       cfg: params.cfgWithAgentDefaults,
       agentId: params.agentId,
       runId,

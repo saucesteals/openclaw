@@ -18,6 +18,7 @@ import { isGatewayRpcUnavailableError } from "../../../gateway/transport-error.j
 import type { WorkerTurnExecutionIdentity } from "../../../gateway/worker-environments/placement-turn-claim-events.js";
 import { getActiveAgentRunDelegatedAuthority } from "../../../infra/agent-run-registry.js";
 import { getPluginRuntimeGatewayRequestScope } from "../../../plugins/runtime/gateway-request-scope.js";
+import { normalizeTaskOriginSnapshot } from "../../task-origin.js";
 import {
   getGatewayToolCallerIdentity,
   resolveGatewayToolOperatorSelection,
@@ -54,7 +55,11 @@ export function captureSubagentSpawnGatewayContext() {
   const operatorAuthority =
     resolveGatewayToolOperatorSelection().operatorAuthority ??
     gatewayScope?.client?.internal?.operatorRunAuthority;
-  return { gatewayContextResolver, operatorAuthority };
+  return {
+    gatewayContextResolver,
+    operatorAuthority,
+    taskOrigin: normalizeTaskOriginSnapshot(gatewayCaller?.taskOrigin),
+  };
 }
 
 async function dispatchSubagentGateway(

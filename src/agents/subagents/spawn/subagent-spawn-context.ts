@@ -4,7 +4,7 @@ import { resolveThreadBindingSpawnPolicy } from "../../../channels/thread-bindin
 import type { SessionEntry } from "../../../config/sessions/types.js";
 import type { OpenClawConfig } from "../../../config/types.openclaw.js";
 import type { ContextEngine, SubagentSpawnPreparation } from "../../../context-engine/types.js";
-import { summarizeSpawnError } from "../../spawn-pipeline.js";
+import { summarizeSpawnError, type SpawnBackendAdapter } from "../../spawn-pipeline.js";
 import {
   ensureContextEnginesInitialized,
   forkSessionEntryFromParent,
@@ -12,6 +12,10 @@ import {
   resolveGatewaySessionStoreTargetInWorker,
 } from "./subagent-spawn.runtime.js";
 import type { SpawnSubagentContextMode } from "./subagent-spawn.types.js";
+
+export type SubagentSpawnBackendAdapter = SpawnBackendAdapter<{
+  contextEnginePreparation?: PreparedContextEngineSubagentSpawn;
+}>;
 
 type PreparedSpawnContext =
   | {

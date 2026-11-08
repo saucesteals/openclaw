@@ -27,8 +27,10 @@ import {
   type RuntimeContextFragment,
 } from "./internal-runtime-context.js";
 import { wrapPromptDataBlock } from "./sanitize-for-prompt.js";
+import { buildTaskOriginContext, type TaskOriginSnapshot } from "./task-origin.js";
 
 type AgentTaskCompletionInternalEvent = {
+  taskOrigin?: TaskOriginSnapshot;
   type: typeof AGENT_INTERNAL_EVENT_TYPE_TASK_COMPLETION;
   source: AgentInternalEventSource;
   childSessionKey: string;
@@ -189,6 +191,15 @@ function formatTaskCompletionEvent(
         ];
   lines.push(
     `source: ${event.source}`,
+    ...(mode === "data"
+      ? []
+      : [
+          buildTaskOriginContext({
+            contextScope: "event",
+            taskOrigin: event.taskOrigin,
+            inputProvenance: { kind: "internal", sourceTool: event.source },
+          }),
+        ]),
     `session_key: ${sessionKey}`,
     `session_id: ${sessionId}`,
     `type: ${announceType}`,
@@ -228,7 +239,13 @@ export function buildAgentInternalEventContext(
     ...(events ?? []).flatMap((event): RuntimeContextFragment[] => [
       {
         kind: "runtime-instruction",
-        text: "A background task completed. Keep internal details private and use its result to reply in your normal assistant voice.",
+        text:
+          "A background task completed. Keep internal details private and use its result to reply in your normal assistant voice.\n" +
+          buildTaskOriginContext({
+            contextScope: "event",
+            taskOrigin: event.taskOrigin,
+            inputProvenance: { kind: "internal", sourceTool: event.source },
+          }),
       },
       { kind: "conversation-data", text: formatTaskCompletionEvent(event, "data") },
       { kind: "runtime-instruction", text: event.replyInstruction },
@@ -246,7 +263,7 @@ export function buildGeneratedMediaDeliveryContext(
       kind: "runtime-instruction",
       text: retry
         ? "Deliver only the generated media listed below. Do not resend any other attachment."
-        : "Deliver the generated media listed below to the user.",
+        : "Deliver the generated media listed below. If the user requested conversion or stitching, finish that work and attach the final files instead; standard delivery saves your selected files before sending and retries that same selection.",
     },
     {
       kind: "conversation-data",

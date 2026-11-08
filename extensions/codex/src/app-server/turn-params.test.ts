@@ -126,6 +126,11 @@ describe("buildTurnStartParams temporal context", () => {
     const firstTurn = await buildTurnStartParams(params, options);
     expect(firstTurn.input).toEqual([{ type: "text", text: "run exactly", text_elements: [] }]);
     expect(firstTurn.additionalContext).toEqual({
+      openclaw_task_origin: {
+        kind: "application",
+        value: expect.stringContaining('"status":"unknown"'),
+      },
+      openclaw_current_sender: { kind: "untrusted", value: JSON.stringify({ sender: null }) },
       openclaw_active_computer: {
         kind: "application",
         value: "Current active computer: active_node=unknown (host presence unavailable)",
@@ -337,6 +342,11 @@ describe("buildTurnStartParams native supervised settings", () => {
     expect(request).not.toHaveProperty("collaborationMode");
     expect(request).not.toHaveProperty("personality");
     expect(request.additionalContext).toEqual({
+      openclaw_task_origin: {
+        kind: "application",
+        value: expect.stringContaining('"status":"unknown"'),
+      },
+      openclaw_current_sender: { kind: "untrusted", value: JSON.stringify({ sender: null }) },
       openclaw_active_computer: {
         kind: "application",
         value: "Current active computer: active_node=unknown (host presence unavailable)",
@@ -351,5 +361,64 @@ describe("buildTurnStartParams native supervised settings", () => {
       },
       openclaw_permission_change: { kind: "application", value: notice },
     });
+  });
+});
+
+describe("buildTurnStartParams current sender", () => {
+  it("replaces human attribution on internal and unattributed turns, then restores it", async () => {
+    const params = createParams("/tmp/session.jsonl", "/repo");
+    const options = { threadId: "thread-1", cwd: "/repo", appServer: createAppServerOptions() };
+    const sender = async () =>
+      JSON.parse(
+        (await buildTurnStartParams(params, options)).additionalContext!.openclaw_current_sender!
+          .value,
+      );
+    params.trigger = "user";
+    params.senderId = "friend-id";
+    params.senderName = "Friend";
+    expect(await sender()).toEqual({ sender: { id: "friend-id", name: "Friend" } });
+    params.inputProvenance = { kind: "inter_session", sourceTool: "video_generate" };
+    expect(await sender()).toEqual({ sender: null });
+    params.inputProvenance = { kind: "internal_system" };
+    expect(await sender()).toEqual({ sender: null });
+    params.inputProvenance = undefined;
+    params.trigger = "cron";
+    expect(await sender()).toEqual({ sender: null });
+    params.trigger = "user";
+    params.senderId = undefined;
+    params.senderName = undefined;
+    expect(await sender()).toEqual({ sender: null });
+    params.senderId = "owner-id";
+    params.inputProvenance = { kind: "external_user" };
+    expect(await sender()).toEqual({ sender: { id: "owner-id" } });
+  });
+});
+
+describe("buildTurnStartParams task origin", () => {
+  it("keeps the original requester distinct from a newer sender and explicitly clears legacy origin", async () => {
+    const params = createParams("/tmp/session.jsonl", "/repo");
+    const options = { threadId: "thread-1", cwd: "/repo", appServer: createAppServerOptions() };
+    params.senderId = "new-owner";
+    params.taskOriginOwnerStatus = "not_configured_owner";
+    params.inputProvenance = { kind: "inter_session", sourceTool: "video_generate" };
+    params.taskOrigin = {
+      version: 1,
+      status: "known",
+      channel: "discord",
+      senderId: "original-friend",
+      sourceSessionKey: "source-room",
+      sourceRunId: "original-run",
+    };
+    const context = async () =>
+      (await buildTurnStartParams(params, options)).additionalContext!.openclaw_task_origin!;
+    const knownOrigin = await context();
+    expect(knownOrigin.kind).toBe("application");
+    expect(knownOrigin.value).toContain('"senderId":"original-friend"');
+    expect(knownOrigin.value).not.toContain("new-owner");
+    expect(knownOrigin.value).toContain('"originalRequesterOwnerStatus":"not_configured_owner"');
+    params.taskOrigin = undefined;
+    const unknownOrigin = await context();
+    expect(unknownOrigin.value).toContain('"status":"unknown"');
+    expect(unknownOrigin.value).not.toContain("original-friend");
   });
 });

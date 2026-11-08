@@ -13,6 +13,38 @@ export function registerInProcessGatewayDispatchPreparationTests({
   startTurn: Mock;
   waitForTurn: Mock;
 }): void {
+  it("explicitly marks profile-less host-owned agent launches as system actors", async () => {
+    const context = createContext();
+    const taskOrigin = {
+      version: 1 as const,
+      status: "known" as const,
+      channel: "discord",
+      senderId: "friend",
+      sourceSessionKey: "source",
+      sourceRunId: "original",
+    };
+    startTurn.mockImplementation(async ({ principal, io }) => {
+      expect(principal.authenticatedUserProfile).toBeUndefined();
+      expect(principal.internal).toMatchObject({
+        operatorRoleActor: { kind: "system" },
+        taskOrigin,
+      });
+      io.emitAcceptance([true, { runId: "system-run", status: "accepted" }, undefined]);
+    });
+
+    await dispatchGatewayMethodInProcess(
+      "agent",
+      { message: "run child", idempotencyKey: "system-run" },
+      {
+        forceSyntheticClient: true,
+        taskOrigin,
+        agentRunTracking: "native_subagent",
+        syntheticScopes: ["operator.write"],
+        resolveGatewayContext: () => context,
+      },
+    );
+  });
+
   it.each([
     { method: "agent", outcome: "current" },
     { method: "agent", outcome: "replaced" },

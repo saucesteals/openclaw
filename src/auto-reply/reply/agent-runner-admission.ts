@@ -20,7 +20,7 @@ import { captureCommandOwnerAssertion } from "../command-owner-authority.js";
 import type { AgentTurnParams } from "./agent-runner-execution.types.js";
 import { resolveReplyScheduledToolPolicy } from "./agent-runner-run-params.js";
 import { resolveQueuedReplyRuntimeConfig } from "./agent-runner-utils.js";
-import { prepareChannelRunAdmission } from "./channel-run-admission.js";
+import { captureChannelTaskOrigin, prepareChannelRunAdmission } from "./channel-run-admission.js";
 import { resolveFollowupAbortSignal } from "./queue/types.js";
 
 /** Owns reply admission and closes its delivery grant after deferred and terminal writes settle. */
@@ -66,6 +66,7 @@ export function prepareReplyTurnExecution(params: AgentTurnParams, runId: string
           deliveryAttemptFence: automation.deliveryAttemptFence ?? null,
           operatorAuthority: params.followupRun.operatorAuthority,
           channelRequester: resolveCronAuthenticatedChannelRequester(automation.job),
+          taskOrigin: automation.job.taskOrigin,
           toolsAllow: resolveCronRunToolsAllow(automation.job),
           scheduledToolPolicy: resolveReplyScheduledToolPolicy(params.followupRun.run),
           executionIdentity: automation.executionIdentity,
@@ -86,6 +87,7 @@ export function prepareReplyTurnExecution(params: AgentTurnParams, runId: string
       operatorAuthority: params.followupRun.operatorAuthority,
       evidence: params.followupRun.channelAdmissionEvidence,
       gatewayLocalUserIngress: params.followupRun.gatewayLocalUserIngress,
+      taskOrigin: captureChannelTaskOrigin(params.followupRun, runId, params.sessionKey),
       assertSourceCurrent,
       onAdmitted,
     });

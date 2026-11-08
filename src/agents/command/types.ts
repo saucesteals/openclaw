@@ -164,6 +164,8 @@ export type AgentCommandOpts = {
   internalEvents?: AgentInternalEvent[];
   runtimeContextFragments?: RuntimeContextFragment[];
   inputProvenance?: InputProvenance;
+  /** Host-owned task attribution; never accepted from public agent arguments. */
+  taskOrigin?: import("../task-origin.js").TaskOriginSnapshot;
   /** Internal runs can execute against a session without updating visible status/model/usage. */
   sessionEffects?: "visible" | "internal";
   /** Internal handoffs can write transcript turns without changing user-facing model/usage state. */
@@ -187,6 +189,8 @@ export type AgentCommandOpts = {
   codeModeOverride?: boolean | "auto";
   /** Host-owned exact media set for a scoped automatic recovery delivery. */
   internalDeliveryMediaUrls?: string[];
+  /** Internal restored claim: never reselect media during recovery. */
+  internalDeliveryMediaSelected?: boolean;
   internalDeliverySuppressText?: boolean;
   /** Host-owned: deliver only authored output; runtime error payloads stay out of the chat. */
   internalDeliverySuppressErrors?: boolean;
@@ -273,6 +277,7 @@ export const AGENT_COMMAND_PUBLIC_INGRESS_DEFAULTS = Object.freeze({
   toolBindings: undefined,
   taskSuggestionDeliveryMode: undefined,
   runtimeContextFragments: undefined,
+  taskOrigin: undefined,
   senderIsOwner: false,
   mainRestartRecoveryOwnerLease: undefined,
   mainRestartRecoveryAdmitted: undefined,

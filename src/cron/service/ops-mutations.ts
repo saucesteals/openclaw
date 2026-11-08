@@ -127,6 +127,7 @@ export async function add(
         enabledExplicit: opts?.enabledExplicit,
         systemOwned: opts?.systemOwned,
         createdActor: opts?.createdActor,
+        taskOrigin: opts?.taskOrigin,
         inferenceBinding: opts?.inferenceBinding,
         sourceConversation: opts?.sourceConversation,
         operatorSource: opts?.operatorSource,

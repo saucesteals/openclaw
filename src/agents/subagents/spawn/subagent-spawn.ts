@@ -10,11 +10,7 @@ import { getCanonicalGatewayContextResolver } from "../../../plugins/runtime/gat
 import { hasDeliveryTargetFields } from "../../../utils/delivery-context.shared.js";
 import { runWithAgentToolSourceExecutionScope } from "../../agent-tool-source-execution-guard.js";
 import { prepareNativeDelegatedToolPolicy } from "../../delegated-tool-policy.js";
-import {
-  runSpawnPipeline,
-  summarizeSpawnError,
-  type SpawnBackendAdapter,
-} from "../../spawn-pipeline.js";
+import { runSpawnPipeline, summarizeSpawnError } from "../../spawn-pipeline.js";
 import { withGatewayToolOperatorContinuation } from "../../tools/gateway-caller-context.js";
 import { cleanupMaterializedSubagentAttachments } from "../subagent-attachment-cleanup.js";
 import { activateSwarmRun } from "../swarm/swarm-scheduler.js";
@@ -37,6 +33,7 @@ import {
   prepareSubagentSessionContext,
   rollbackPreparedContextEngine,
   type PreparedContextEngineSubagentSpawn,
+  type SubagentSpawnBackendAdapter,
 } from "./subagent-spawn-context.js";
 import type {
   SpawnSubagentContext,
@@ -78,7 +75,8 @@ export async function spawnSubagentDirect(
   const label = params.label?.trim() || "";
   const requestThreadBinding = params.thread === true;
   const sandboxMode = params.sandbox === "require" ? "require" : "inherit";
-  const { gatewayContextResolver, operatorAuthority } = captureSubagentSpawnGatewayContext();
+  const { gatewayContextResolver, operatorAuthority, taskOrigin } =
+    captureSubagentSpawnGatewayContext();
   const requestResolution = await resolveSubagentSpawnRequest(params, ctx);
   if (!requestResolution.ok) {
     return requestResolution.result;
@@ -456,10 +454,9 @@ export async function spawnSubagentDirect(
         isCurrent: isCleanupCurrent,
         ...(cleanupOwner ? { callGateway: cleanupOwner.callGateway } : {}),
       });
-    type SubagentBackendState = { contextEnginePreparation?: PreparedContextEngineSubagentSpawn };
     let registrationRequired = true;
     let acceptedRunCleanupError: string | undefined;
-    const adapter: SpawnBackendAdapter<SubagentBackendState> = {
+    const adapter: SubagentSpawnBackendAdapter = {
       retainRegistrationScope(scope) {
         canCleanupCreatedSession = scope.canCleanupSession;
         canAbortRegisteredRun = scope.canAbortAcceptedRun;
@@ -555,6 +552,7 @@ export async function spawnSubagentDirect(
           runId,
           requesterTurnRunId: ctx.requesterTurnRunId,
           ...childTarget,
+          taskOrigin,
           controllerSessionKey: ownership.controllerSessionKey,
           sessionEntry: childEntry,
           requesterSessionKey: ownership.completionRequesterSessionKey,

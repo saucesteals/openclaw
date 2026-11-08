@@ -39,6 +39,7 @@ import { resolveSystemEventQueueKey } from "./system-event-ownership.js";
 import {
   consumeSelectedSystemEventEntries,
   peekSystemEventEntries,
+  resolveSystemEventTaskOrigin,
   type SystemEvent,
 } from "./system-events.js";
 
@@ -232,6 +233,10 @@ export async function runHeartbeatOnce(opts: HeartbeatRunOptions): Promise<Heart
             // Isolated heartbeats mint a fresh session ID per run, so nothing later
             // reuses this run's bundle MCP runtime; retire it at settlement.
             ...(prepared.run.kind === "isolated" ? { cleanupBundleMcpOnRunEnd: true } : {}),
+            inheritedTaskOrigin: resolveSystemEventTaskOrigin([
+              ...prepared.inspectedSystemEventsToConsume,
+              ...(prepared.inspectsRunQueue ? prepared.genericEvents : []),
+            ]),
             replyConversation: prepareReplyConversation({
               ctx: heartbeatContext,
               sessionEntry: suppressOriginatingContext ? undefined : prepared.conversationEntry,

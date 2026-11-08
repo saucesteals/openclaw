@@ -158,6 +158,7 @@ export type CronServiceDeps = {
       sessionKey?: string;
       contextKey?: string;
       deliveryContext?: DeliveryContext;
+      taskOrigin?: import("../../agents/task-origin.js").TaskOriginSnapshot;
     },
   ) => CronSystemEventEnqueueResult;
   /**
@@ -459,6 +460,7 @@ export type CronAddOptions = {
   operatorSource?: NonNullable<CronStoredJob["operatorSource"]>["source"];
   inferenceBinding?: CronStoredJob["inferenceBinding"];
   sourceConversation?: CronStoredJob["sourceConversation"];
+  taskOrigin?: CronStoredJob["taskOrigin"];
   /** Selected revisions captured from a validated caller session, never public input. */
   skillLibrarySelections?: CronStoredJob["skillLibrarySelections"];
   matchesExisting?: (job: CronJob) => boolean;

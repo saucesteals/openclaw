@@ -1,5 +1,6 @@
 import { isDeepStrictEqual } from "node:util";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeTaskOriginSnapshot } from "../../agents/task-origin.js";
 import { getSqliteWorkerStateContext } from "../../infra/sqlite-worker-state-context.js";
 import type { OpenClawStateDatabase } from "../../state/openclaw-state-db-contract.js";
 import { runOpenClawStateWriteTransaction } from "../../state/openclaw-state-db.js";
@@ -123,6 +124,7 @@ export function planCronJobMutation(
             scheduledToolPolicy: options.scheduledToolPolicy ?? undefined,
           },
         );
+        nextJob.taskOrigin = normalizeTaskOriginSnapshot(options.taskOrigin);
         if (options.createdActor) {
           nextJob.createdActor = structuredClone(options.createdActor);
         }
