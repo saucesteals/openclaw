@@ -399,6 +399,7 @@ export function resolvePreparedExecEnvironment(params: {
   localGitConfigParameters?: string;
   managedLocalIdentity?: boolean;
   localProcessEnv?: Readonly<Record<string, string>>;
+  sessionKey?: string;
   warnings: string[];
 }): {
   env: Record<string, string>;
@@ -511,6 +512,10 @@ export function resolvePreparedExecEnvironment(params: {
           containerWorkdir: params.containerWorkdir ?? params.sandbox.containerWorkdir,
         })
       : (hostEnvResult?.env ?? inheritedBaseEnv);
+
+  if (params.sessionKey) {
+    env.OPENCLAW_SESSION_KEY = params.sessionKey;
+  }
 
   if (!params.sandbox && params.host === "gateway" && !requestedEnv?.PATH) {
     const shellPath = getShellPathFromLoginShell({
