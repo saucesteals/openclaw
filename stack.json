@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "prev": "8196ea3ea301d0615371c11fb0b7a4b5e4b3d2a3",
-  "head": "3195c43c2ba55994c21a0e4143d45b1b459f2e32",
+  "prev": "4968ee2328995f1faaaac032911eb603ac8d5c3c",
+  "head": "e0ba840c53e5803dbfa9545cac9f3cd0476add6e",
   "applied": [
     "feat-exec-session-key",
     "fix-channel-admission-evidence",
@@ -13,7 +13,8 @@
     "custom-no-reminder-disclaimer",
     "fix-progress-error-rollout",
     "fix-codex-installer-alias",
-    "fix-child-completion-origin"
+    "fix-child-completion-origin",
+    "fix-native-completion-work"
   ],
   "unapplied": [
     "fix-child-completion-origin-schema",
@@ -59,6 +60,9 @@
     },
     "fix-media-selected-delivery": {
       "oid": "b0b3ae4f87bd0491eeee7a357f9997659390e759"
+    },
+    "fix-native-completion-work": {
+      "oid": "e0ba840c53e5803dbfa9545cac9f3cd0476add6e"
     },
     "fix-native-completion-work-scope": {
       "oid": "8e203a805ee0e65c38316c4f8e17c1c1b6a1d0ca"
